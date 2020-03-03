@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using CapstoneMasons.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneMasons
 {
@@ -24,6 +26,9 @@ namespace CapstoneMasons
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddDbContext<AppDbContext>(
+                    options => options.UseInMemoryDatabase("CapstoneMasons"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

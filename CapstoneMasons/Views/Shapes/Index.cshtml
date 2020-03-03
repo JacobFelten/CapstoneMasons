@@ -1,0 +1,53 @@
+﻿@model IEnumerable<CapstoneMasons.Models.Shape>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BarSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LegCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Qty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumCompleted)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BarSize)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LegCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Qty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumCompleted)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ShapeID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ShapeID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ShapeID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

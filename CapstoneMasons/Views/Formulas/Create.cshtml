@@ -1,0 +1,53 @@
+﻿@model CapstoneMasons.Models.Formula
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Formula</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BarSize" class="control-label"></label>
+                <input asp-for="BarSize" class="form-control" />
+                <span asp-validation-for="BarSize" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Degree" class="control-label"></label>
+                <input asp-for="Degree" class="form-control" />
+                <span asp-validation-for="Degree" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PinNumber" class="control-label"></label>
+                <input asp-for="PinNumber" class="form-control" />
+                <span asp-validation-for="PinNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InGained" class="control-label"></label>
+                <input asp-for="InGained" class="form-control" />
+                <span asp-validation-for="InGained" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastChanged" class="control-label"></label>
+                <input asp-for="LastChanged" class="form-control" />
+                <span asp-validation-for="LastChanged" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

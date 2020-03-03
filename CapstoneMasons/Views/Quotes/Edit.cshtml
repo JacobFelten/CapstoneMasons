@@ -1,0 +1,54 @@
+﻿@model CapstoneMasons.Models.Quote
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Quote</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="QuoteID" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OrderNum" class="control-label"></label>
+                <input asp-for="OrderNum" class="form-control" />
+                <span asp-validation-for="OrderNum" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateQuoted" class="control-label"></label>
+                <input asp-for="DateQuoted" class="form-control" />
+                <span asp-validation-for="DateQuoted" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PickedUp" /> @Html.DisplayNameFor(model => model.PickedUp)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Open" /> @Html.DisplayNameFor(model => model.Open)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

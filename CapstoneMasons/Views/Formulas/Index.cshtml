@@ -1,0 +1,59 @@
+﻿@model IEnumerable<CapstoneMasons.Models.Formula>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BarSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Degree)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PinNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InGained)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastChanged)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BarSize)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Degree)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PinNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InGained)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastChanged)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.FormulaID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.FormulaID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.FormulaID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
