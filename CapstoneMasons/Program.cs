@@ -21,6 +21,8 @@ namespace CapstoneMasons
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.CaptureStartupErrors(true);
+                    webBuilder.UseSetting("detailedErrors", "true");
                 });
     }
 }

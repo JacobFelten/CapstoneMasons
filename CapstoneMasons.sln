@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapstoneMasons", "CapstoneMasons\CapstoneMasons.csproj", "{752A4C5A-6C06-425C-ADF2-67C35FC1FD2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CapstoneMasons", "CapstoneMasons\CapstoneMasons.csproj", "{752A4C5A-6C06-425C-ADF2-67C35FC1FD2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaptstonexUnit", "CaptstonexUnit\CaptstonexUnit.csproj", "{9AACC1A7-618E-41C6-9EF0-2FA2E2BFCCEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{752A4C5A-6C06-425C-ADF2-67C35FC1FD2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{752A4C5A-6C06-425C-ADF2-67C35FC1FD2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{752A4C5A-6C06-425C-ADF2-67C35FC1FD2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AACC1A7-618E-41C6-9EF0-2FA2E2BFCCEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AACC1A7-618E-41C6-9EF0-2FA2E2BFCCEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AACC1A7-618E-41C6-9EF0-2FA2E2BFCCEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AACC1A7-618E-41C6-9EF0-2FA2E2BFCCEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
