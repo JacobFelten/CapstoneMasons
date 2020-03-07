@@ -56,6 +56,15 @@ namespace CapstoneMasons
                 .AddEntityFrameworkStores<AppDbContext>();//default becuase we do not need a user model?
             services.AddControllersWithViews();
 
+            services.AddTransient<IFormulaRepository, FakeFormulaRepository>();
+            services.AddTransient<IShapeRepository, FakeShapeRepository>();
+            services.AddTransient<IQuoteRepository, FakeQuoteRepository>();
+            /*
+            services.AddTransient<IFormulaRepository, FormulaRepository>();
+            services.AddTransient<IShapeRepository, ShapeRepository>();
+            services.AddTransient<IQuoteRepository, QuoteRepository>();
+            */
+
             services.AddDbContext<AppDbContext>(
                     options => options.UseSqlServer(
                         Configuration["ConnectionStrings:localdb"]));

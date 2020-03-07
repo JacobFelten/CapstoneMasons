@@ -12,17 +12,17 @@ namespace CapstoneMasons.Controllers
 {
     public class QuotesController : Controller
     {
-        private readonly AppDbContext _context;
+        IQuoteRepository repo;
 
-        public QuotesController(AppDbContext context)
+        public QuotesController(IQuoteRepository repository)
         {
-            _context = context;
+            repo = repository;
         }
 
         // GET: Quotes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Quotes.ToListAsync());
+            return View(await repo.Quotes);
         }
 
         // GET: Quotes/Details/5
@@ -33,8 +33,7 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var quote = await _context.Quotes
-                .FirstOrDefaultAsync(m => m.QuoteID == id);
+            var quote = await repo.GetQuoteByIdAsync(id);
             if (quote == null)
             {
                 return NotFound();
@@ -58,8 +57,7 @@ namespace CapstoneMasons.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(quote);
-                await _context.SaveChangesAsync();
+                await repo.AddQuoteAsync(quote);
                 return RedirectToAction(nameof(Index));
             }
             return View(quote);
@@ -73,7 +71,7 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await repo.GetQuoteByIdAsync(id);
             if (quote == null)
             {
                 return NotFound();
@@ -86,23 +84,25 @@ namespace CapstoneMasons.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("QuoteID,Name,OrderNum,DateQuoted,PickedUp,Open")] Quote quote)
+        public async Task<IActionResult> Edit(int id, [Bind("QuoteID,Name,OrderNum,DateQuoted,PickedUp,Open")] Quote newQuote)
         {
-            if (id != quote.QuoteID)
+            if (id != newQuote.QuoteID)
             {
                 return NotFound();
             }
+
+            Quote oldQuote = null;
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(quote);
-                    await _context.SaveChangesAsync();
+                    oldQuote = await repo.GetQuoteByIdAsync(newQuote.QuoteID);
+                    await repo.UpdateQuoteAsync(oldQuote, newQuote);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QuoteExists(quote.QuoteID))
+                    if (!QuoteExists(oldQuote.QuoteID))
                     {
                         return NotFound();
                     }
@@ -113,7 +113,7 @@ namespace CapstoneMasons.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(quote);
+            return View(oldQuote);
         }
 
         // GET: Quotes/Delete/5
@@ -124,8 +124,7 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var quote = await _context.Quotes
-                .FirstOrDefaultAsync(m => m.QuoteID == id);
+            var quote = await repo.GetQuoteByIdAsync(id);
             if (quote == null)
             {
                 return NotFound();
@@ -139,15 +138,15 @@ namespace CapstoneMasons.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var quote = await _context.Quotes.FindAsync(id);
-            _context.Quotes.Remove(quote);
-            await _context.SaveChangesAsync();
+            var quote = await repo.GetQuoteByIdAsync(id);
+            await repo.DeleteQuoteAsync(quote);
             return RedirectToAction(nameof(Index));
         }
 
         private bool QuoteExists(int id)
         {
-            return _context.Quotes.Any(e => e.QuoteID == id);
+            var quotes = (IQueryable<Quote>)repo.GetAllQuotesAsync();
+            return quotes.Any(e => e.QuoteID == id);
         }
     }
 }

@@ -12,17 +12,17 @@ namespace CapstoneMasons.Controllers
 {
     public class ShapesController : Controller
     {
-        private readonly AppDbContext _context;
+        IShapeRepository repo;
 
-        public ShapesController(AppDbContext context)
+        public ShapesController(IShapeRepository repository)
         {
-            _context = context;
+            repo = repository;
         }
 
         // GET: Shapes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Shapes.ToListAsync());
+            return View(await repo.Shapes);
         }
 
         // GET: Shapes/Details/5
@@ -33,8 +33,7 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var shape = await _context.Shapes
-                .FirstOrDefaultAsync(m => m.ShapeID == id);
+            var shape = await repo.GetShapeByIdAsync(id);
             if (shape == null)
             {
                 return NotFound();
@@ -58,8 +57,7 @@ namespace CapstoneMasons.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(shape);
-                await _context.SaveChangesAsync();
+                await repo.AddShapeAsync(shape);
                 return RedirectToAction(nameof(Index));
             }
             return View(shape);
@@ -73,7 +71,7 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var shape = await _context.Shapes.FindAsync(id);
+            var shape = await repo.GetShapeByIdAsync(id);
             if (shape == null)
             {
                 return NotFound();
@@ -86,23 +84,25 @@ namespace CapstoneMasons.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ShapeID,BarSize,LegCount,Qty,NumCompleted")] Shape shape)
+        public async Task<IActionResult> Edit(int id, [Bind("ShapeID,BarSize,LegCount,Qty,NumCompleted")] Shape newShape)
         {
-            if (id != shape.ShapeID)
+            if (id != newShape.ShapeID)
             {
                 return NotFound();
             }
+
+            Shape oldShape = null;
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(shape);
-                    await _context.SaveChangesAsync();
+                    oldShape = await repo.GetShapeByIdAsync(newShape.ShapeID);
+                    await repo.UpdateShapesAsync(oldShape, newShape);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ShapeExists(shape.ShapeID))
+                    if (!ShapeExists(oldShape.ShapeID))
                     {
                         return NotFound();
                     }
@@ -113,7 +113,7 @@ namespace CapstoneMasons.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(shape);
+            return View(oldShape);
         }
 
         // GET: Shapes/Delete/5
@@ -124,8 +124,7 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var shape = await _context.Shapes
-                .FirstOrDefaultAsync(m => m.ShapeID == id);
+            var shape = await repo.GetShapeByIdAsync(id);
             if (shape == null)
             {
                 return NotFound();
@@ -139,15 +138,15 @@ namespace CapstoneMasons.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var shape = await _context.Shapes.FindAsync(id);
-            _context.Shapes.Remove(shape);
-            await _context.SaveChangesAsync();
+            var shape = await repo.GetShapeByIdAsync(id);
+            await repo.DeleteShapeAsync(shape);
             return RedirectToAction(nameof(Index));
         }
 
         private bool ShapeExists(int id)
         {
-            return _context.Shapes.Any(e => e.ShapeID == id);
+            var shapes = (IQueryable<Shape>)repo.GetAllShapesAsync();
+            return shapes.Any(e => e.ShapeID == id);
         }
     }
 }
