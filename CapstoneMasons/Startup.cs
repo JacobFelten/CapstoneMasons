@@ -105,7 +105,7 @@ namespace CapstoneMasons
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppDbContext context, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -132,7 +132,8 @@ namespace CapstoneMasons
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
-            //AppDbContext.CreateAdminAccount(serviceProvider, Configuration).Wait(); missing database
+            context.Database.Migrate(); //to be removed when published?
+            AppDbContext.CreateAdminAccount(serviceProvider, Configuration).Wait();
         }
     }
 }

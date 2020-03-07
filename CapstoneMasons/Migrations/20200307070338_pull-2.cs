@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CapstoneMasons.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class pull2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,7 +53,7 @@ namespace CapstoneMasons.Migrations
                     MandrelID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Radius = table.Column<decimal>(nullable: false)
+                    Radius = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -192,8 +192,8 @@ namespace CapstoneMasons.Migrations
                     BarSize = table.Column<int>(nullable: false),
                     Degree = table.Column<int>(nullable: false),
                     MandrelID = table.Column<int>(nullable: true),
-                    PinNumber = table.Column<decimal>(nullable: false),
-                    InGained = table.Column<decimal>(nullable: false),
+                    PinNumber = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    InGained = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     LastChanged = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
@@ -214,7 +214,7 @@ namespace CapstoneMasons.Migrations
                     CostID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Price = table.Column<decimal>(nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     LastChanged = table.Column<DateTime>(nullable: false),
                     QuoteID = table.Column<int>(nullable: true)
                 },
@@ -258,7 +258,7 @@ namespace CapstoneMasons.Migrations
                 {
                     LegID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Length = table.Column<decimal>(nullable: false),
+                    Length = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Degree = table.Column<int>(nullable: false),
                     MandrelID = table.Column<int>(nullable: true),
                     ShapeID = table.Column<int>(nullable: true)

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneMasons.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200303102556_CreateIdentitySchema")]
-    partial class CreateIdentitySchema
+    [Migration("20200307070338_pull-2")]
+    partial class pull2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -35,7 +35,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int?>("QuoteID")
                         .HasColumnType("int");
@@ -61,7 +61,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("InGained")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("LastChanged")
                         .HasColumnType("datetime2");
@@ -70,7 +70,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("PinNumber")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("FormulaID");
 
@@ -90,7 +90,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Length")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int?>("MandrelID")
                         .HasColumnType("int");
@@ -118,7 +118,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Radius")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("MandrelID");
 

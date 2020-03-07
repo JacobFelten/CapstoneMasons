@@ -33,7 +33,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int?>("QuoteID")
                         .HasColumnType("int");
@@ -59,7 +59,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("InGained")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("LastChanged")
                         .HasColumnType("datetime2");
@@ -68,7 +68,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("PinNumber")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("FormulaID");
 
@@ -88,7 +88,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Length")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int?>("MandrelID")
                         .HasColumnType("int");
@@ -116,7 +116,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Radius")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("MandrelID");
 
