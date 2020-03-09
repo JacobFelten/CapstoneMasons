@@ -10,7 +10,9 @@ namespace CapstoneMasons.Repositories
     {
         public Task<List<Shape>> Shapes { get; }
 
-        public Task<bool> AddShapeAsync(Shape s);
+        public Task<bool> AddShapeAsync(int? qID, Shape s);
+
+        public Task<bool> AddShapeLegAsync(Shape s, Leg l);
 
         public Task<bool> DeleteShapeAsync(Shape s);
 

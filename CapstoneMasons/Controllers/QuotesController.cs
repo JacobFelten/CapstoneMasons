@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
+using CapstoneMasons.ViewModels;
 
 namespace CapstoneMasons.Controllers
 {
@@ -61,6 +62,12 @@ namespace CapstoneMasons.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(quote);
+        }
+
+        public IActionResult ReviewQuote(Quote q)
+        {
+            ReviewQuote rQ = new ReviewQuote();
+            return View(rQ);
         }
 
         // GET: Quotes/Edit/5

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
+using CapstoneMasons.ViewModels;
 
 namespace CapstoneMasons.Controllers
 {
@@ -53,14 +54,19 @@ namespace CapstoneMasons.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ShapeID,BarSize,LegCount,Qty,NumCompleted")] Shape shape)
+        public async Task<IActionResult> Create(CreateShape cS)
         {
             if (ModelState.IsValid)
             {
-                await repo.AddShapeAsync(shape);
+                await repo.AddShapeAsync(cS.QuoteID, cS.Shape);
+                for (int i = 0; i < cS.Shape.LegCount; i++)
+                {
+                    Leg l = new Leg();
+                    await repo.AddShapeLegAsync(cS.Shape, l);
+                }
                 return RedirectToAction(nameof(Index));
             }
-            return View(shape);
+            return View(cS.Shape);
         }
 
         // GET: Shapes/Edit/5

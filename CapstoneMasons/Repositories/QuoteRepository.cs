@@ -47,6 +47,14 @@ namespace CapstoneMasons.Repositories
             if (q != null)
             {
                 result = true;
+                foreach (Cost c in q.Costs)
+                    context.Costs.Remove(c);
+                foreach (Shape s in q.Shapes)
+                {
+                    foreach (Leg l in s.Legs)
+                        context.Legs.Remove(l);
+                    context.Shapes.Remove(s)
+                }               
                 context.Quotes.Remove(q);
                 context.SaveChanges();
             }

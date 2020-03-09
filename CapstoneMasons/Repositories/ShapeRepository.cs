@@ -27,13 +27,28 @@ namespace CapstoneMasons.Repositories
             }
         }
 
-        public Task<bool> AddShapeAsync(Shape s)
+        public Task<bool> AddShapeAsync(int? qID, Shape s)
         {
             bool result = false;
-            if (s != null)
+            if (s != null && qID != null)
             {
+                Quote quote = context.Quotes.First(q => q.QuoteID == qID);
+                quote.Shapes.Add(s);
+                context.Quotes.Update(quote);
                 result = true;
                 context.Shapes.Add(s);
+                context.SaveChanges();
+            }
+            return Task.FromResult<bool>(result);
+        }
+
+        public Task<bool> AddShapeLegAsync(Shape s, Leg l)
+        {
+            bool result = false;
+            if (s != null && l != null)
+            {
+                s.Legs.Add(l);
+                context.Shapes.Update(s);
                 context.SaveChanges();
             }
             return Task.FromResult<bool>(result);
@@ -45,6 +60,8 @@ namespace CapstoneMasons.Repositories
             if (s != null)
             {
                 result = true;
+                foreach (Leg l in s.Legs)
+                    context.Legs.Remove(l);
                 context.Shapes.Remove(s);
                 context.SaveChanges();
             }

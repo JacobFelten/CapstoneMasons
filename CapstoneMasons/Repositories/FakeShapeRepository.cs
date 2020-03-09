@@ -9,6 +9,7 @@ namespace CapstoneMasons.Repositories
     public class FakeShapeRepository : IShapeRepository
     {
         List<Shape> shapes = new List<Shape>();
+        List<Quote> quotes = new List<Quote>();
 
         public Task<List<Shape>> Shapes
         {
@@ -18,13 +19,28 @@ namespace CapstoneMasons.Repositories
             }
         }
 
-        public Task<bool> AddShapeAsync(Shape s)
+        //This is not from the interface. It's just for adding quotes for testing instead of pulling from context.
+        public List<Quote> Quotes { get { return quotes; } }
+
+        public Task<bool> AddShapeAsync(int? qID, Shape s)
         {
             bool result = false;
-            if (s != null)
+            if (s != null && qID != null)
             {
+                Quote quote = quotes.First(q => q.QuoteID == qID);
+                quote.Shapes.Add(s);
                 result = true;
                 shapes.Add(s);
+            }
+            return Task.FromResult<bool>(result);
+        }
+
+        public Task<bool> AddShapeLegAsync(Shape s, Leg l)
+        {
+            bool result = false;
+            if (s != null && l != null)
+            {
+                s.Legs.Add(l);
             }
             return Task.FromResult<bool>(result);
         }
