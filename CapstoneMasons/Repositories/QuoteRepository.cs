@@ -53,7 +53,7 @@ namespace CapstoneMasons.Repositories
                 {
                     foreach (Leg l in s.Legs)
                         context.Legs.Remove(l);
-                    context.Shapes.Remove(s)
+                    context.Shapes.Remove(s);
                 }               
                 context.Quotes.Remove(q);
                 context.SaveChanges();

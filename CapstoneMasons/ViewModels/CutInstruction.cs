@@ -8,7 +8,7 @@ namespace CapstoneMasons.ViewModels
     public class CutInstruction
     {
         public int CutQty { get; set; }
-        public int PerLength { get; set; }
+        public decimal PerLength { get; set; }
         public string PerType { get; set; }
         public int ForQty { get; set; }
     }

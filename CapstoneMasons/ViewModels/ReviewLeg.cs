@@ -7,10 +7,10 @@ namespace CapstoneMasons.ViewModels
 {
     public class ReviewLeg
     {
-        public int Length { get; set; }
+        public decimal Length { get; set; }
         public int Degree { get; set; }
-        public int Mandrel { get; set; }
-        public int PinNumber { get; set; }
-        public int InGained { get; set; }
+        public string Mandrel { get; set; }
+        public decimal PinNumber { get; set; }
+        public decimal InGained { get; set; }
     }
 }

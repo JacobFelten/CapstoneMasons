@@ -10,9 +10,9 @@ namespace CapstoneMasons.ViewModels
         public int QuoteID { get; set; }
         public string Name { get; set; }
         public string OrderNum { get; set; }
-        public int TotalCost { get; set; }
+        public decimal TotalCost { get; set; }
         public List<UsedBar> BarsUsed { get; set; }
-        public int SetUpCharge { get; set; }
+        public decimal SetUpCharge { get; set; }
         public List<RemnantList> FinalRemnants { get; set; }
         public List<ReviewShape> Shapes { get; set; }
     }

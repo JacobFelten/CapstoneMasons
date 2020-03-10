@@ -7,7 +7,7 @@ namespace CapstoneMasons.ViewModels
 {
     public class Remnant
     {
-        public int Length { get; set; }
+        public decimal Length { get; set; }
         public int Qty { get; set; }
         public bool UsedAgain { get; set; }
     }

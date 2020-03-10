@@ -11,7 +11,7 @@ namespace CapstoneMasons.ViewModels
         public int Qty { get; set; }
         public int BarSize { get; set; }
         public int NumOfBars { get; set; }
-        public int CutLength { get; set; }
+        public decimal CutLength { get; set; }
         public List<CutInstruction> Instructions { get; set; }
         public List<ReviewLeg> Legs { get; set; }
         public List<Remnant> Remnants { get; set; }

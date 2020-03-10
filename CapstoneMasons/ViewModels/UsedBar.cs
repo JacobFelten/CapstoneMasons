@@ -9,10 +9,10 @@ namespace CapstoneMasons.ViewModels
     {
         public int BarSize { get; set; }
         public int NumOfBars { get; set; }
-        public int BarCost { get; set; }
+        public decimal BarCost { get; set; }
         public int NumOfCuts { get; set; }
-        public int CutCost { get; set; }
+        public decimal CutCost { get; set; }
         public int NumOfBends { get; set; }
-        public int BendCost { get; set; }
+        public decimal BendCost { get; set; }
     }
 }
