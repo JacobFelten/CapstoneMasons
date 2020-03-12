@@ -18,14 +18,14 @@ namespace CapstoneMasons.Repositories
 
         public Task<List<Quote>> Quotes
         {
-            get 
-            { 
+            get
+            {
                 return context.Quotes
                     .Include(q => q.Costs)
                     .Include(q => q.Shapes)
                         .ThenInclude(s => s.Legs)
                             .ThenInclude(l => l.Mandrel)
-                    .ToListAsync(); 
+                    .ToListAsync();
             }
         }
 
@@ -54,7 +54,7 @@ namespace CapstoneMasons.Repositories
                     foreach (Leg l in s.Legs)
                         context.Legs.Remove(l);
                     context.Shapes.Remove(s);
-                }               
+                }
                 context.Quotes.Remove(q);
                 context.SaveChanges();
             }
@@ -99,6 +99,25 @@ namespace CapstoneMasons.Repositories
                     oldQ.Shapes.Add(s);
                 context.Quotes.Update(oldQ);
                 context.SaveChanges();
+                result = true;
+            }
+            return Task.FromResult<bool>(result);
+        }
+        public Task<IQueryable<Cost>> BarCosts
+        {
+            get
+            {
+                return Task.FromResult<IQueryable<Cost>>(context.Costs.AsQueryable<Cost>()
+                    .Where(c => c.Name.Contains("Cost")));
+            }
+        }
+        public Task<bool> UpdateCostAsync(Cost oldC, Cost newC)
+        {
+            bool result = false;
+            if (oldC != null && newC != null)
+            {
+                oldC.LastChanged = DateTime.Now;
+                oldC.Price = newC.Price;
                 result = true;
             }
             return Task.FromResult<bool>(result);
