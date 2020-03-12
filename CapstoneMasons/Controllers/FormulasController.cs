@@ -12,17 +12,17 @@ namespace CapstoneMasons.Controllers
 {
     public class FormulasController : Controller
     {
-        private readonly AppDbContext _context;
+        IFormulaRepository repo;
 
-        public FormulasController(AppDbContext context)
+        public FormulasController(IFormulaRepository repository)
         {
-            _context = context;
+            repo = repository;
         }
 
         // GET: Formulas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Formulas.ToListAsync());
+            return View(await repo.Formulas);
         }
 
         // GET: Formulas/Details/5
@@ -33,8 +33,8 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var formula = await _context.Formulas
-                .FirstOrDefaultAsync(m => m.FormulaID == id);
+            var formula = await repo.GetFormulaByIdAsync(id);
+
             if (formula == null)
             {
                 return NotFound();
@@ -58,8 +58,7 @@ namespace CapstoneMasons.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(formula);
-                await _context.SaveChangesAsync();
+                await repo.AddFormulaAsync(formula);
                 return RedirectToAction(nameof(Index));
             }
             return View(formula);
@@ -73,7 +72,7 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var formula = await _context.Formulas.FindAsync(id);
+            var formula = await repo.GetFormulaByIdAsync(id);
             if (formula == null)
             {
                 return NotFound();
@@ -86,23 +85,25 @@ namespace CapstoneMasons.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FormulaID,BarSize,Degree,PinNumber,InGained,LastChanged")] Formula formula)
+        public async Task<IActionResult> Edit(int id, [Bind("FormulaID,BarSize,Degree,PinNumber,InGained,LastChanged")] Formula newFormula)
         {
-            if (id != formula.FormulaID)
+            if (id != newFormula.FormulaID)
             {
                 return NotFound();
             }
+
+            Formula oldFormula = null;
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(formula);
-                    await _context.SaveChangesAsync();
+                    oldFormula = await repo.GetFormulaByIdAsync(newFormula.FormulaID);
+                    await repo.UpdateFormulaAsync(oldFormula, newFormula);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FormulaExists(formula.FormulaID))
+                    if (!FormulaExists(oldFormula.FormulaID))
                     {
                         return NotFound();
                     }
@@ -113,7 +114,7 @@ namespace CapstoneMasons.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(formula);
+            return View(oldFormula);
         }
 
         // GET: Formulas/Delete/5
@@ -124,8 +125,7 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            var formula = await _context.Formulas
-                .FirstOrDefaultAsync(m => m.FormulaID == id);
+            var formula = await repo.GetFormulaByIdAsync(id);
             if (formula == null)
             {
                 return NotFound();
@@ -139,15 +139,15 @@ namespace CapstoneMasons.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var formula = await _context.Formulas.FindAsync(id);
-            _context.Formulas.Remove(formula);
-            await _context.SaveChangesAsync();
+            var formula = await repo.GetFormulaByIdAsync(id);
+            await repo.DeleteFormulaAsync(formula);
             return RedirectToAction(nameof(Index));
         }
 
         private bool FormulaExists(int id)
         {
-            return _context.Formulas.Any(e => e.FormulaID == id);
+            var formulas = (IQueryable<Formula>)repo.GetAllFormulasAsync();
+            return formulas.Any(e => e.FormulaID == id);
         }
     }
 }
