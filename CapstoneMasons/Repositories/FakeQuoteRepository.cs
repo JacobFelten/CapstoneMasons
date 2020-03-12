@@ -9,12 +9,26 @@ namespace CapstoneMasons.Repositories
     public class FakeQuoteRepository : IQuoteRepository
     {
         private List<Quote> quotes = new List<Quote>();
-
+        private List<Cost> barCosts = new List<Cost>();
+        public FakeQuoteRepository() { }
+        public FakeQuoteRepository(List<Cost> costs)
+        {
+            barCosts = costs;
+        }
         public Task<List<Quote>> Quotes
         {
             get
             {
                 return Task.FromResult<List<Quote>>(quotes);
+            }
+        }
+
+        public Task<IQueryable<Cost>> BarCosts
+        {
+            get
+            {
+                return Task.FromResult<IQueryable<Cost>>(barCosts.AsQueryable<Cost>()
+                    .Where(c => c.CostID < 15));
             }
         }
 
@@ -76,6 +90,17 @@ namespace CapstoneMasons.Repositories
                     oldQ.Costs.Add(c);
                 foreach (Shape s in newQ.Shapes)
                     oldQ.Shapes.Add(s);
+                result = true;
+            }
+            return Task.FromResult<bool>(result);
+        }
+        public Task<bool> UpdateCostAsync(Cost oldC, Cost newC)
+        {
+            bool result = false;
+            if (oldC != null && newC != null)
+            {
+                oldC.LastChanged = DateTime.Now;
+                oldC.Price = newC.Price;
                 result = true;
             }
             return Task.FromResult<bool>(result);

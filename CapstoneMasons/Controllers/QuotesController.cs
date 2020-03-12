@@ -72,7 +72,7 @@ namespace CapstoneMasons.Controllers
             rQ.QuoteID = q.QuoteID; //done
             rQ.Name = q.Name; //done
             rQ.OrderNum = q.OrderNum; //done
-            
+
             //After filling the shapes with instructions the shapes are sorted by bar size
             //then by shape length so the instructions make sense.
             rQ.Shapes = await CreateShapesAsync(q);
@@ -186,7 +186,7 @@ namespace CapstoneMasons.Controllers
         private async Task<List<ReviewShape>> CreateShapesAsync(Quote q)
         {
             List<ReviewShape> rSList = new List<ReviewShape>();
-            foreach(Shape s in q.Shapes)
+            foreach (Shape s in q.Shapes)
             {
                 ReviewShape rS = new ReviewShape();
                 rS.ShapeID = s.ShapeID;
@@ -277,7 +277,7 @@ namespace CapstoneMasons.Controllers
                                     Length = remnant,
                                     Qty = remnants[rIndex].Qty,
                                     UsedAgain = false
-                                }); 
+                                });
                                 cIList.Add(new CutInstruction
                                 {
                                     CutQty = perBar,
@@ -400,7 +400,7 @@ namespace CapstoneMasons.Controllers
         }
 
         //Returns both the shapes per bar and the length of the remnant at the end of each bar
-        private int GetShapesPerBar(decimal shapeLength,decimal barLength, out decimal remnant)
+        private int GetShapesPerBar(decimal shapeLength, decimal barLength, out decimal remnant)
         {
             remnant = barLength % shapeLength;
             return (int)Math.Floor(barLength / shapeLength);
@@ -444,7 +444,7 @@ namespace CapstoneMasons.Controllers
                     rL.Mandrel = null;
                     rL.PinNumber = 0;
                     rL.InGained = 0;
-                }                
+                }
                 rLList.Add(rL);
             }
             return rLList;
@@ -465,7 +465,7 @@ namespace CapstoneMasons.Controllers
                     RemnantList rL = FillRemnantList(listList[i]);
                     rL.BarSize = listList[i][0].BarSize;
                     result.Add(rL);
-                }                   
+                }
 
             return result;
         }
@@ -484,7 +484,7 @@ namespace CapstoneMasons.Controllers
                     {
                         result.Remnants.Add(rSList[i].Remnants[j]);
                     }
-                }    
+                }
             }
             return result;
         }
@@ -604,5 +604,71 @@ namespace CapstoneMasons.Controllers
         }
 
         #endregion
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BarCost(List<Cost> Costs)
+        {
+            var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
+            if (ModelState.IsValid)
+            {
+                for (int i = 0; i < 15; i++)//could be foreach too 
+                {
+                    if (costsQuote.FirstOrDefault(c => c.CostID == i).Price != Costs[i].Price)
+                    {
+                        await repo.UpdateCostAsync(costsQuote.FirstOrDefault(c => c.CostID == i), Costs[i]);
+                    }
+                }
+                costsQuote = await repo.BarCosts;
+                return View(costsQuote.ToList());
+            }
+            return View(costsQuote.ToList());
+        }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<Quote> UpdatePrices(Quote quote)
+        {
+            quote.Costs.Clear();
+            var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
+            var sumLegs = 0m;
+            var total = 0m;
+
+            foreach (Shape shape in quote.Shapes)
+            {
+                var barCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Bar");
+                if (!quote.Costs.Contains(barCost))//if it doesnt contain add cost
+                    quote.Costs.Add(barCost);//Adding Cost per Bar
+                total += barCost.Price * shape.Qty;
+
+                foreach (Leg leg in shape.Legs)
+                {
+                    sumLegs += leg.Length;
+                }
+                if (sumLegs != 240)
+                {
+                    var cutCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Cut");
+                    if (!quote.Costs.Contains(cutCost))
+                        quote.Costs.Add(cutCost);//Adding Cost per cut
+                    //total += costsQuote.Costs.Find(c => c.Name == shape.BarSize.ToString() + "Cut").Price*quote.; //add cut prices later?
+                }
+
+                for (int i = 0; i < shape.LegCount - 1; i++)
+                {
+                    var bendCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Bend");
+                    if (!quote.Costs.Contains(bendCost))
+                        quote.Costs.Add(bendCost);//Adding Cost per bend
+                    total += bendCost.Price;
+                }
+
+            }
+            if (total < costsQuote.FirstOrDefault(c => c.Name == "Setup Min").Price)
+            {
+                quote.Costs.Add(costsQuote.FirstOrDefault(c => c.Name == "Setup"));//BarSize3Cut
+                total += costsQuote.FirstOrDefault(c => c.Name == "Setup").Price;
+            }
+
+            return quote;
+        }
     }
 }
