@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
+using CapstoneMasons.ViewModels;
 
 namespace CapstoneMasons.Controllers
 {
@@ -22,7 +23,19 @@ namespace CapstoneMasons.Controllers
         // GET: Formulas
         public async Task<IActionResult> Index()
         {
-            return View(await repo.Formulas);
+            var fList = await repo.Formulas;
+            var barSizes = new List<int>();
+            var degrees = new List<int>();
+            var mandrels = new List<Mandrel>();
+            FillFormulaSearch(fList, in barSizes, in degrees, in mandrels);
+            var fS = new FormulaSearch
+            {
+                SearchResults = fList,
+                BarSizes = barSizes,
+                Degrees = degrees,
+                Mandrels = mandrels
+            };
+            return View(fS);
         }
 
         // GET: Formulas/Details/5
@@ -144,10 +157,28 @@ namespace CapstoneMasons.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        #region Other Methods
         private bool FormulaExists(int id)
         {
             var formulas = (IQueryable<Formula>)repo.GetAllFormulasAsync();
             return formulas.Any(e => e.FormulaID == id);
         }
+
+        private void FillFormulaSearch(List<Formula> fList, in List<int> barSizes, in List<int> degrees, in List<Mandrel> mandrels)
+        {
+            foreach(Formula f in fList)
+            {
+                if (!barSizes.Contains(f.BarSize))
+                    barSizes.Add(f.BarSize);
+                if (!degrees.Contains(f.Degree))
+                    degrees.Add(f.Degree);
+                if (f.Mandrel != null && !mandrels.Contains(f.Mandrel))
+                    mandrels.Add(f.Mandrel);
+            }
+            barSizes.Sort();
+            degrees.Sort();
+            mandrels.Sort((a, b) => a.Radius.CompareTo(b.Radius));
+        }
+        #endregion
     }
 }

@@ -1,59 +1,122 @@
-﻿@model IEnumerable<CapstoneMasons.Models.Formula>
+﻿@model FormulaSearch
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Formulas";
 }
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<form method="post" asp-action="SearchFormulas">
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Bar Size</label>
+                <select class="form-control" name="barSize">
+                    <option value="@null">All</option>
+                    @foreach (int i in Model.BarSizes)
+                    {
+                        if (i == Model.BarSize)
+                        {
+                            <option value="@i" selected>@i</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Bend Degree</label>
+                <select class="form-control" name="degrees">
+                    <option value="@null">All</option>
+                    @foreach (int i in Model.Degrees)
+                    {
+                        if (i == Model.BendDegree)
+                        {
+                            <option value="@i" selected>@i</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Mandrel</label>
+                <select class="form-control" name="degrees">
+                    <option value="@null">All</option>
+                    @foreach (Mandrel m in Model.Mandrels)
+                    {
+                        if (m.MandrelID == Model.MandrelID)
+                        {
+                            <option value="@m.MandrelID" selected>@m.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@m.MandrelID">@m.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.BarSize)
+                Bar Size
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Degree)
+                Bend Degree
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PinNumber)
+                Mandrel
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.InGained)
+                Pin #
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastChanged)
+                Inches Gained
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BarSize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Degree)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PinNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InGained)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastChanged)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FormulaID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FormulaID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FormulaID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.SearchResults) 
+        {
+            <tr>
+                <td>
+                    @item.BarSize
+                </td>
+                <td>
+                    @item.Degree 
+                </td>
+                <td>
+                    @(item.Mandrel != null ? item.Mandrel.Name : "n/a")
+                </td>
+                <td>
+                    @item.PinNumber.ToString("G29")
+                </td>
+                <td>
+                    @item.InGained.ToString("G29")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.FormulaID">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.FormulaID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<p>
+    <a class="btn btn-light text-center" asp-action="Create">Create New</a>
+</p>
