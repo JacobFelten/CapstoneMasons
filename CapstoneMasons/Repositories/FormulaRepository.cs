@@ -21,6 +21,11 @@ namespace CapstoneMasons.Repositories
             get { return context.Formulas.Include(f => f.Mandrel).ToListAsync(); }
         }
 
+        public Task<List<Mandrel>> Mandrels
+        {
+            get { return context.Mandrels.ToListAsync(); }
+        }
+
         public Task<bool> AddFormulaAsync(Formula f)
         {
             bool result = false;
@@ -81,6 +86,22 @@ namespace CapstoneMasons.Repositories
                 result = true;
             }
             return Task.FromResult<bool>(result);
+        }
+
+        public async Task<Mandrel> GetMandrelByIdAsync(int? id)
+        {
+            if (id != null)
+            {
+                foreach (Mandrel m in await Mandrels)
+                    if (m.MandrelID == id)
+                        return m;
+                return null;
+            }
+            else
+            {
+                return null;
+            }
+
         }
     }
 }
