@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
+using CapstoneMasons.ViewModels;
 
 namespace CapstoneMasons.Controllers
 {
@@ -54,10 +55,11 @@ namespace CapstoneMasons.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FormulaID,BarSize,Degree,PinNumber,InGained,LastChanged")] Formula formula)
+        public async Task<IActionResult> Create(FormulaCreate fCreate)
         {
             if (ModelState.IsValid)
             {
+                Formula formula = new Formula { BarSize = fCreate.BarSize, Degree = fCreate.Degree, }
                 await repo.AddFormulaAsync(formula);
                 return RedirectToAction(nameof(Index));
             }

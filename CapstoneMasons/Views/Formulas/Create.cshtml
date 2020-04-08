@@ -1,4 +1,4 @@
-﻿@model CapstoneMasons.Models.Formula
+﻿@model CapstoneMasons.ViewModels.FormulaCreate
 
 @{
     ViewData["Title"] = "Create";
@@ -13,29 +13,43 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="BarSize" class="control-label"></label>
-                <input asp-for="BarSize" class="form-control" />
                 <span asp-validation-for="BarSize" class="text-danger"></span>
+                <label asp-for="BarSize" class="control-label">Bar Size:</label>
+                <select asp-for="BarSize" class="form-control">
+                    <option value="3">#3</option>
+                    <option value="4">#4</option>
+                    <option value="5">#5</option>
+                    <option value="6">#6</option>
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="Degree" class="control-label"></label>
-                <input asp-for="Degree" class="form-control" />
                 <span asp-validation-for="Degree" class="text-danger"></span>
+                <label asp-for="Degree" class="control-label">Degree:</label>
+                <input asp-for="Degree" class="form-control" />
             </div>
             <div class="form-group">
-                <label asp-for="PinNumber" class="control-label"></label>
-                <input asp-for="PinNumber" class="form-control" />
+                <span asp-validation-for="MandrelID" class="text-danger"></span>
+                <label asp-for="MandrelID" class="control-label">Mandrel Size:</label>
+                <select asp-for="MandrelID" class="form-control">
+                    @foreach(Mandrel m in Model.Mandrels)
+                    {
+                        <option value="@m.MandrelID">@m.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
                 <span asp-validation-for="PinNumber" class="text-danger"></span>
+                <label asp-for="PinNumber" class="control-label">Pin Placement:</label>
+                <input asp-for="PinNumber" class="form-control" />
             </div>
             <div class="form-group">
-                <label asp-for="InGained" class="control-label"></label>
-                <input asp-for="InGained" class="form-control" />
                 <span asp-validation-for="InGained" class="text-danger"></span>
+                <label asp-for="InGained" class="control-label">Inches Gained:</label>
+                <input asp-for="InGained" class="form-control" />
             </div>
             <div class="form-group">
-                <label asp-for="LastChanged" class="control-label"></label>
-                <input asp-for="LastChanged" class="form-control" />
-                <span asp-validation-for="LastChanged" class="text-danger"></span>
+                <label asp-for="LastChanged" class="control-label">Date Time:</label>
+                <input asp-for="LastChanged" class="form-control disabled" value="@System.DateTime.Today" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
