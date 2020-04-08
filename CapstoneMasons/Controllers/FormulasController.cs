@@ -23,11 +23,17 @@ namespace CapstoneMasons.Controllers
         // GET: Formulas
         public async Task<IActionResult> Index()
         {
-            var fList = await repo.Formulas;
+            var tempFList = await repo.Formulas;
+            IOrderedEnumerable<Formula> orderedEnumerable = tempFList.OrderBy(f => f.BarSize)
+                .ThenBy(f => f.Degree);
+                //.ThenBy(f => f.Mandrel.Radius);
+            var fList = new List<Formula>();
+            foreach (Formula f in orderedEnumerable)
+                fList.Add(f);
             var barSizes = new List<int>();
             var degrees = new List<int>();
             var mandrels = new List<Mandrel>();
-            FillFormulaSearch(fList, in barSizes, in degrees, in mandrels);
+            FillFormulaSearchDropdowns(fList, in barSizes, in degrees, in mandrels);
             var fS = new FormulaSearch
             {
                 SearchResults = fList,
@@ -36,6 +42,45 @@ namespace CapstoneMasons.Controllers
                 Mandrels = mandrels
             };
             return View(fS);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchFormulas(int? barSize, int? degree, int? mandrelID)
+        {
+            var tempFList = await repo.Formulas;
+            IOrderedEnumerable<Formula> orderedEnumerable = tempFList.OrderBy(f => f.BarSize)
+                .ThenBy(f => f.Degree);
+                //.ThenBy(f => f.Mandrel.Radius);
+            var fList = new List<Formula>();
+            foreach (Formula f in orderedEnumerable)
+                fList.Add(f);
+            var m = await repo.GetMandrelByIdAsync(mandrelID);
+            var resultList = new List<Formula>();
+            foreach(Formula f in fList)
+            {
+                if ((barSize == null || f.BarSize == barSize) &&
+                    (degree == null || f.Degree == degree) &&
+                    (mandrelID == null || f.Mandrel == m))
+                {
+                    resultList.Add(f);
+                }
+                    
+            }
+            var barSizes = new List<int>();
+            var degrees = new List<int>();
+            var mandrels = new List<Mandrel>();
+            FillFormulaSearchDropdowns(fList, in barSizes, in degrees, in mandrels);
+            var fS = new FormulaSearch
+            {
+                SearchResults = resultList,
+                BarSizes = barSizes,
+                Degrees = degrees,
+                Mandrels = mandrels,
+                BarSize = barSize,
+                BendDegree = degree,
+                MandrelID = mandrelID
+            };
+            return View("Index", fS);
         }
 
         // GET: Formulas/Details/5
@@ -164,7 +209,7 @@ namespace CapstoneMasons.Controllers
             return formulas.Any(e => e.FormulaID == id);
         }
 
-        private void FillFormulaSearch(List<Formula> fList, in List<int> barSizes, in List<int> degrees, in List<Mandrel> mandrels)
+        private void FillFormulaSearchDropdowns(List<Formula> fList, in List<int> barSizes, in List<int> degrees, in List<Mandrel> mandrels)
         {
             foreach(Formula f in fList)
             {

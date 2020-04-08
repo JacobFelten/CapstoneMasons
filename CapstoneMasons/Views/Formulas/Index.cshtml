@@ -30,7 +30,7 @@
         <div class="col">
             <div class="form-group">
                 <label>Bend Degree</label>
-                <select class="form-control" name="degrees">
+                <select class="form-control" name="degree">
                     <option value="@null">All</option>
                     @foreach (int i in Model.Degrees)
                     {
@@ -49,7 +49,7 @@
         <div class="col">
             <div class="form-group">
                 <label>Mandrel</label>
-                <select class="form-control" name="degrees">
+                <select class="form-control" name="mandrelID">
                     <option value="@null">All</option>
                     @foreach (Mandrel m in Model.Mandrels)
                     {
@@ -66,7 +66,15 @@
             </div>
         </div>
     </div>
+    <div class="text-center">
+        <button class="btn btn-light text-center" type="submit">Search</button>
+    </div>
 </form>
+
+@if (Model.SearchResults == null || Model.SearchResults.Count == 0)
+{
+    <h1 class="text-center">There are no formulas that match that search.</h1>
+}
 
 <table class="table">
     <thead>
