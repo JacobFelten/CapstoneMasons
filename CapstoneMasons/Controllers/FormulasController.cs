@@ -59,7 +59,7 @@ namespace CapstoneMasons.Controllers
         {
             if (ModelState.IsValid)
             {
-                Formula formula = new Formula { BarSize = fCreate.BarSize, Degree = fCreate.Degree, }
+                Formula formula = new Formula { BarSize = fCreate.BarSize, Degree = fCreate.Degree, Mandrel = }
                 await repo.AddFormulaAsync(formula);
                 return RedirectToAction(nameof(Index));
             }
