@@ -9,10 +9,16 @@ namespace CapstoneMasons.Repositories
     public class FakeFormulaRepository : IFormulaRepository
     {
         List<Formula> formulas = new List<Formula>();
+        List<Mandrel> mandrels = new List<Mandrel>();
 
         public Task<List<Formula>> Formulas
         {
             get { return Task.FromResult<List<Formula>>(formulas); }
+        }
+
+        public Task<List<Mandrel>> Mandrels
+        {
+            get { return Task.FromResult<List<Mandrel>>(mandrels); }
         }
 
         public Task<bool> AddFormulaAsync(Formula f)
@@ -71,6 +77,22 @@ namespace CapstoneMasons.Repositories
                 result = true;
             }
             return Task.FromResult<bool>(result);
+        }
+
+        public async Task<Mandrel> GetMandrelByIdAsync(int? id)
+        {
+            if (id != null)
+            {
+                foreach (Mandrel m in await Mandrels)
+                    if (m.MandrelID == id)
+                        return m;
+                return null;
+            }
+            else
+            {
+                return null;
+            }
+
         }
     }
 }
