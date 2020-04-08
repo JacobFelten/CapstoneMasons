@@ -102,9 +102,10 @@ namespace CapstoneMasons.Controllers
         }
 
         // GET: Formulas/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            FormulaCreate fCreate = new FormulaCreate { Mandrels = await repo.Mandrels };
+            return View(fCreate);
         }
 
         // POST: Formulas/Create
@@ -116,11 +117,12 @@ namespace CapstoneMasons.Controllers
         {
             if (ModelState.IsValid)
             {
-                Formula formula = new Formula { BarSize = fCreate.BarSize, Degree = fCreate.Degree, Mandrel = }
+
+                Formula formula = new Formula { BarSize = fCreate.BarSize, Degree = fCreate.Degree, Mandrel = await repo.GetMandrelByIdAsync(fCreate.MandrelID), PinNumber = fCreate.PinNumber, InGained = fCreate.InGained, LastChanged = System.DateTime.Now};
                 await repo.AddFormulaAsync(formula);
                 return RedirectToAction(nameof(Index));
             }
-            return View(formula);
+            return View(fCreate);
         }
 
         // GET: Formulas/Edit/5

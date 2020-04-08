@@ -19,7 +19,7 @@ namespace CapstoneMasons.ViewModels
         [Range(0, 360)]
         public int Degree { get; set; }
         public int MandrelID { get; set; }
-        [Required(ErrorMessage = "Input a the pin you used.")]
+        [Required(ErrorMessage = "Input the slot where the pin was placed.")]
         public string PinNumber { get; set; }
         [Column(TypeName = "decimal(18,4)")]
         public decimal InGained { get; set; }

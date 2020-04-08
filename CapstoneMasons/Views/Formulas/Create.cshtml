@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <span asp-validation-for="BarSize" class="text-danger"></span>
                 <label asp-for="BarSize" class="control-label">Bar Size:</label>
@@ -39,17 +39,13 @@
             </div>
             <div class="form-group">
                 <span asp-validation-for="PinNumber" class="text-danger"></span>
-                <label asp-for="PinNumber" class="control-label">Pin Placement:</label>
+                <label asp-for="PinNumber" class="control-label">Pin # Placement:</label>
                 <input asp-for="PinNumber" class="form-control" />
             </div>
             <div class="form-group">
                 <span asp-validation-for="InGained" class="text-danger"></span>
                 <label asp-for="InGained" class="control-label">Inches Gained:</label>
                 <input asp-for="InGained" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="LastChanged" class="control-label">Date Time:</label>
-                <input asp-for="LastChanged" class="form-control disabled" value="@System.DateTime.Today" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
