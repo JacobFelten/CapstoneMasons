@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneMasons.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200408012144_initial")]
-    partial class initial
+    [Migration("20200408223924_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -69,8 +69,8 @@ namespace CapstoneMasons.Migrations
                     b.Property<int?>("MandrelID")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("PinNumber")
-                        .HasColumnType("decimal(18,4)");
+                    b.Property<string>("PinNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("FormulaID");
 

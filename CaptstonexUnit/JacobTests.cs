@@ -259,7 +259,7 @@ namespace CaptstonexUnit
                 BarSize = 4,
                 Degree = 90,
                 Mandrel = mandrel1,
-                PinNumber = 16.5m,
+                PinNumber = "16.5",
                 InGained = 1.5m,
                 LastChanged = DateTime.Now
             });
@@ -269,7 +269,7 @@ namespace CaptstonexUnit
                 BarSize = 5,
                 Degree = 90,
                 Mandrel = mandrel2,
-                PinNumber = 15,
+                PinNumber = "15",
                 InGained = 2,
                 LastChanged = DateTime.Now
             });
@@ -341,17 +341,17 @@ namespace CaptstonexUnit
                     Assert.Equal(30, rQ.Shapes[0].Legs[0].Length);
                     Assert.Equal(90, rQ.Shapes[0].Legs[0].Degree);
                     Assert.Equal("Small", rQ.Shapes[0].Legs[0].Mandrel);
-                    Assert.Equal(16.5m, rQ.Shapes[0].Legs[0].PinNumber);
+                    Assert.Equal("16.5", rQ.Shapes[0].Legs[0].PinNumber);
                     Assert.Equal(1.5m, rQ.Shapes[0].Legs[0].InGained);
                     Assert.Equal(18, rQ.Shapes[0].Legs[1].Length);
                     Assert.Equal(90, rQ.Shapes[0].Legs[1].Degree);
                     Assert.Equal("Small", rQ.Shapes[0].Legs[1].Mandrel);
-                    Assert.Equal(16.5m, rQ.Shapes[0].Legs[1].PinNumber);
+                    Assert.Equal("16.5", rQ.Shapes[0].Legs[1].PinNumber);
                     Assert.Equal(1.5m, rQ.Shapes[0].Legs[1].InGained);
                     Assert.Equal(30, rQ.Shapes[0].Legs[2].Length);
                     Assert.Equal(0, rQ.Shapes[0].Legs[2].Degree);
                     Assert.Null(rQ.Shapes[0].Legs[2].Mandrel);
-                    Assert.Equal(0, rQ.Shapes[0].Legs[2].PinNumber);
+                    Assert.Equal("", rQ.Shapes[0].Legs[2].PinNumber);
                     Assert.Equal(0, rQ.Shapes[0].Legs[2].InGained);
                 Assert.Equal(2, rQ.Shapes[0].Remnants.Count);
                     Assert.Equal(15, rQ.Shapes[0].Remnants[0].Length);
@@ -374,12 +374,12 @@ namespace CaptstonexUnit
                     Assert.Equal(36, rQ.Shapes[1].Legs[0].Length);
                     Assert.Equal(90, rQ.Shapes[1].Legs[0].Degree);
                     Assert.Equal("Medium", rQ.Shapes[1].Legs[0].Mandrel);
-                    Assert.Equal(15, rQ.Shapes[1].Legs[0].PinNumber);
+                    Assert.Equal("15", rQ.Shapes[1].Legs[0].PinNumber);
                     Assert.Equal(2, rQ.Shapes[1].Legs[0].InGained);
                     Assert.Equal(36, rQ.Shapes[1].Legs[1].Length);
                     Assert.Equal(0, rQ.Shapes[1].Legs[1].Degree);
                     Assert.Null(rQ.Shapes[1].Legs[1].Mandrel);
-                    Assert.Equal(0, rQ.Shapes[1].Legs[1].PinNumber);
+                    Assert.Equal("", rQ.Shapes[1].Legs[1].PinNumber);
                     Assert.Equal(0, rQ.Shapes[1].Legs[1].InGained);
                 Assert.Single(rQ.Shapes[1].Remnants);
                     Assert.Equal(30, rQ.Shapes[1].Remnants[0].Length);
@@ -403,12 +403,12 @@ namespace CaptstonexUnit
                     Assert.Equal(12, rQ.Shapes[2].Legs[0].Length);
                     Assert.Equal(90, rQ.Shapes[2].Legs[0].Degree);
                     Assert.Equal("Medium", rQ.Shapes[2].Legs[0].Mandrel);
-                    Assert.Equal(15, rQ.Shapes[2].Legs[0].PinNumber);
+                    Assert.Equal("15", rQ.Shapes[2].Legs[0].PinNumber);
                     Assert.Equal(2, rQ.Shapes[2].Legs[0].InGained);
                     Assert.Equal(12, rQ.Shapes[2].Legs[1].Length);
                     Assert.Equal(0, rQ.Shapes[2].Legs[1].Degree);
                     Assert.Null(rQ.Shapes[2].Legs[1].Mandrel);
-                    Assert.Equal(0, rQ.Shapes[2].Legs[1].PinNumber);
+                    Assert.Equal("", rQ.Shapes[2].Legs[1].PinNumber);
                     Assert.Equal(0, rQ.Shapes[2].Legs[1].InGained);
                 Assert.Equal(2, rQ.Shapes[2].Remnants.Count);
                     Assert.Equal(8, rQ.Shapes[2].Remnants[0].Length);
