@@ -12,8 +12,7 @@ namespace CapstoneMasons.Models
         public int BarSize { get; set; }
         public int Degree { get; set; }
         public Mandrel Mandrel { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
-        public decimal PinNumber { get; set; }
+        public string PinNumber { get; set; }
         [Column(TypeName = "decimal(18,4)")]
         public decimal InGained { get; set; }
         public DateTime LastChanged { get; set; }

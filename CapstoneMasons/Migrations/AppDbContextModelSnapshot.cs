@@ -67,8 +67,8 @@ namespace CapstoneMasons.Migrations
                     b.Property<int?>("MandrelID")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("PinNumber")
-                        .HasColumnType("decimal(18,4)");
+                    b.Property<string>("PinNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("FormulaID");
 

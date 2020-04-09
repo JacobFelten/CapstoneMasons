@@ -10,6 +10,8 @@ namespace CapstoneMasons.Repositories
     {
         public Task<List<Formula>> Formulas { get; }
 
+        public Task<List<Mandrel>> Mandrels { get; }
+
         public Task<bool> AddFormulaAsync(Formula f);
 
         public Task<bool> DeleteFormulaAsync(Formula f);
@@ -19,5 +21,9 @@ namespace CapstoneMasons.Repositories
         public Task<Formula> GetFormulaByIdAsync(int? id);
 
         public Task<bool> UpdateFormulaAsync(Formula oldF, Formula newF);
+
+        public Task<bool> AddMandrelAsync(Mandrel m);
+
+        public Task<Mandrel> GetMandrelByIdAsync(int? id);
     }
 }

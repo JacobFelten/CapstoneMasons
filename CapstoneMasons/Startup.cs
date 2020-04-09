@@ -51,19 +51,21 @@ namespace CapstoneMasons
             }
 
             //database
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();//default becuase we do not need a user model?
             services.AddControllersWithViews();
 
+            /*
             services.AddTransient<IFormulaRepository, FakeFormulaRepository>();
             services.AddTransient<IShapeRepository, FakeShapeRepository>();
             services.AddTransient<IQuoteRepository, FakeQuoteRepository>();
-            /*
+            */
+            
             services.AddTransient<IFormulaRepository, FormulaRepository>();
             services.AddTransient<IShapeRepository, ShapeRepository>();
             services.AddTransient<IQuoteRepository, QuoteRepository>();
-            */
+            
 
             services.AddDbContext<AppDbContext>(
                     options => options.UseSqlServer(
@@ -133,6 +135,7 @@ namespace CapstoneMasons
                 endpoints.MapRazorPages();
             });
             context.Database.Migrate(); //to be removed when published?
+            SeedData.Seed(context);
             AppDbContext.CreateAdminAccount(serviceProvider, Configuration).Wait();
         }
     }
