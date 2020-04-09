@@ -51,7 +51,7 @@ namespace CapstoneMasons
             }
 
             //database
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();//default becuase we do not need a user model?
             services.AddControllersWithViews();
