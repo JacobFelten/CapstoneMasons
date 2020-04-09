@@ -94,6 +94,9 @@
             <th>
                 Inches Gained
             </th>
+            <th>
+                Last Edited
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -111,10 +114,13 @@
                     @(item.Mandrel != null ? item.Mandrel.Name : "n/a")
                 </td>
                 <td>
-                    @item.PinNumber.ToString("G29")
+                    @item.PinNumber
                 </td>
                 <td>
                     @item.InGained.ToString("G29")
+                </td>
+                <td>
+                    @item.LastChanged.ToString("MM/dd/yyyy")
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.FormulaID">Edit</a> |
