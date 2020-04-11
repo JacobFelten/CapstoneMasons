@@ -33,7 +33,7 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("QuoteID")
                         .HasColumnType("int");

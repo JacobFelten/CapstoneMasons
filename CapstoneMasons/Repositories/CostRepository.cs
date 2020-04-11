@@ -18,7 +18,7 @@ namespace CapstoneMasons.Repositories
 
         public Task<List<Cost>> Costs
         {
-            get { return context.Costs.Include(c => c.Price).ToListAsync(); }
+            get { return context.Costs.ToListAsync(); }
         }
 
         public Task<bool> AddCostAsync(Cost c)
@@ -61,6 +61,7 @@ namespace CapstoneMasons.Repositories
             if (oldC != null && newC != null)
             {
                 oldC.Price = newC.Price;
+                oldC.LastChanged = DateTime.Now;
                 context.Costs.Update(oldC);
                 context.SaveChanges();
                 result = true;

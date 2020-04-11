@@ -30,13 +30,17 @@
 					#3
 				</th>
 				<th>
-					<input asp-for="Bar3GlobalCost" placeholder="Bar3GlobalCost" class="form-control" />
+					<input asp-for="Bar3GlobalCost" value=@Model.Bar3GlobalCost.Price class="form-control" />
+					<label asp-for="Bar3GlobalCost" class="control-label">Edited: @Model.Bar3GlobalCost.LastChanged</label>
 				</th>
 				<th>
-					<input asp-for="Bar3BendCost" placeholder="Bar3BendCost" class="form-control" />
+					<input asp-for="Bar3BendCost" value=@Model.Bar3BendCost.Price class="form-control" />
+					<label asp-for="Bar3BendCost" class="control-label">Edited: @Model.Bar3BendCost.LastChanged</label>
+
 				</th>
 				<th>
-					<input asp-for="Bar3CutCost" placeholder="Bar3CutCost" class="form-control" />
+					<input asp-for="Bar3CutCost" value=@Model.Bar3CutCost.Price class="form-control" />
+					<label asp-for="Bar3CutCost" class="control-label">Edited: @Model.Bar3CutCost.LastChanged</label>
 				</th>
 			</tr>
 			<tr>
@@ -44,13 +48,16 @@
 					#4
 				</th>
 				<th>
-					<input asp-for="Bar4GlobalCost" placeholder="Bar4GlobalCost" class="form-control" />
+					<input asp-for="Bar4GlobalCost" value=@Model.Bar4GlobalCost.Price class="form-control" />
+					<label asp-for="Bar4GlobalCost" class="control-label">Edited: @Model.Bar4GlobalCost.LastChanged</label>
 				</th>
 				<th>
-					<input asp-for="Bar4BendCost" placeholder="Bar4BendCost" class="form-control" />
+					<input asp-for="Bar4BendCost" value=@Model.Bar4BendCost.Price class="form-control" />
+					<label asp-for="Bar4BendCost" class="control-label">Edited: @Model.Bar4BendCost.LastChanged</label>
 				</th>
 				<th>
-					<input asp-for="Bar4CutCost" placeholder="Bar4CutCost" class="form-control" />
+					<input asp-for="Bar4CutCost" value=@Model.Bar4CutCost.Price class="form-control" />
+					<label asp-for="Bar4CutCost" class="control-label">Edited: @Model.Bar4CutCost.LastChanged</label>
 				</th>
 			</tr>
 			<tr>
@@ -58,13 +65,16 @@
 					#5
 				</th>
 				<th>
-					<input asp-for="Bar5GlobalCost" placeholder="Bar5GlobalCost" class="form-control" />
+					<input asp-for="Bar5GlobalCost" value=@Model.Bar5GlobalCost.Price class="form-control" />
+					<label asp-for="Bar5GlobalCost" class="control-label">Edited: @Model.Bar5GlobalCost.LastChanged</label>
 				</th>
 				<th>
-					<input asp-for="Bar5BendCost" placeholder="Bar5BendCost" class="form-control" />
+					<input asp-for="Bar5BendCost" value=@Model.Bar5BendCost.Price class="form-control" />
+					<label asp-for="Bar5BendCost" class="control-label">Edited: @Model.Bar5BendCost.LastChanged</label>
 				</th>
 				<th>
-					<input asp-for="Bar5CutCost" placeholder="Bar5CutCost" class="form-control" />
+					<input asp-for="Bar5CutCost" value=@Model.Bar5CutCost.Price class="form-control" />
+					<label asp-for="Bar5CutCost" class="control-label">Edited: @Model.Bar5CutCost.LastChanged</label>
 				</th>
 			</tr>
 			<tr>
@@ -72,13 +82,16 @@
 					#6
 				</th>
 				<th>
-					<input asp-for="Bar6GlobalCost" placeholder="Bar6GlobalCost" class="form-control" />
+					<input asp-for="Bar6GlobalCost" value=@Model.Bar6GlobalCost.Price class="form-control" />
+					<label asp-for="Bar6GlobalCost" class="control-label">Edited: @Model.Bar6GlobalCost.LastChanged</label>
 				</th>
 				<th>
-					<input asp-for="Bar6BendCost" placeholder="Bar6BendCost" class="form-control" />
+					<input asp-for="Bar6BendCost" value=@Model.Bar6BendCost.Price class="form-control" />
+					<label asp-for="Bar6BendCost" class="control-label">Edited: @Model.Bar6BendCost.LastChanged</label>
 				</th>
 				<th>
-					<input asp-for="Bar6CutCost" placeholder="Bar6CutCost" class="form-control" />
+					<input asp-for="Bar6CutCost" value=@Model.Bar6CutCost.Price class="form-control" />
+					<label asp-for="Bar6CutCost" class="control-label">Edited: @Model.Bar6CutCost.LastChanged</label>
 				</th>
 			</tr>
 		</tbody>
@@ -98,10 +111,12 @@
 		<tbody>
 			<tr>
 				<th>
-					<input asp-for="SetupCharge" placeholder="SetupCharge" class="form-control" />
+					<input asp-for="SetupCharge" value=@Model.SetupCharge.Price class="form-control" />
+					<label asp-for="SetupCharge" class="control-label">Edited: @Model.SetupCharge.LastChanged</label>
 				</th>
 				<th>
-					<input asp-for="MinimumOrderCost" placeholder="MinimumOrderCost" class="form-control" />
+					<input asp-for="MinimumOrderCost" value=@Model.MinimumOrderCost.Price class="form-control" />
+					<label asp-for="MinimumOrderCost" class="control-label">Edited: @Model.MinimumOrderCost.LastChanged</label>
 				</th>
 			</tr>
 		</tbody>

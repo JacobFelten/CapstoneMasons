@@ -53,19 +53,22 @@ namespace CapstoneMasons.Repositories
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar3GlobalCost.Name,
-                    Price = 3.00M
+                    Price = 3.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar3BendCost.Name,
-                    Price = 1.00M
+                    Price = 1.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar3CutCost.Name,
-                    Price = 1.00M
+                    Price = 1.00M,
+                    LastChanged = DateTime.Now
                 });
 
 
@@ -73,19 +76,22 @@ namespace CapstoneMasons.Repositories
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar4GlobalCost.Name,
-                    Price = 4.00M
+                    Price = 4.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar4BendCost.Name,
-                    Price = 2.00M
+                    Price = 2.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar4CutCost.Name,
-                    Price = 2.00M
+                    Price = 2.00M,
+                    LastChanged = DateTime.Now
                 });
 
 
@@ -93,19 +99,22 @@ namespace CapstoneMasons.Repositories
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar5GlobalCost.Name,
-                    Price = 5.00M
+                    Price = 5.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar5BendCost.Name,
-                    Price = 3.00M
+                    Price = 3.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar5CutCost.Name,
-                    Price = 3.00M
+                    Price = 3.00M,
+                    LastChanged = DateTime.Now
                 });
 
 
@@ -113,19 +122,22 @@ namespace CapstoneMasons.Repositories
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar6GlobalCost.Name,
-                    Price = 6.00M
+                    Price = 6.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar6BendCost.Name,
-                    Price = 4.00M
+                    Price = 4.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.Bar6CutCost.Name,
-                    Price = 4.00M
+                    Price = 4.00M,
+                    LastChanged = DateTime.Now
                 });
 
 
@@ -134,13 +146,15 @@ namespace CapstoneMasons.Repositories
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.SetupCharge.Name,
-                    Price = 15.00M
+                    Price = 15.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.Costs.Add(new Cost
                 {
                     Name = KnownObjects.MinimumOrderCost.Name,
-                    Price = 200.00M
+                    Price = 200.00M,
+                    LastChanged = DateTime.Now
                 });
 
                 context.SaveChanges();
