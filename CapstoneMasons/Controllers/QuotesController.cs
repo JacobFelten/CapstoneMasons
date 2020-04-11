@@ -442,7 +442,7 @@ namespace CapstoneMasons.Controllers
                 else
                 {
                     rL.Mandrel = null;
-                    rL.PinNumber = 0;
+                    rL.PinNumber = "";
                     rL.InGained = 0;
                 }
                 rLList.Add(rL);

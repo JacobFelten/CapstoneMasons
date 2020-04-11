@@ -22,6 +22,8 @@ namespace CapstoneMasons.Repositories
 
         public Task<bool> UpdateFormulaAsync(Formula oldF, Formula newF);
 
+        public Task<bool> AddMandrelAsync(Mandrel m);
+
         public Task<Mandrel> GetMandrelByIdAsync(int? id);
     }
 }

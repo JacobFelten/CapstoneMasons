@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CapstoneMasons.Migrations
 {
-    public partial class initial : Migration
+    public partial class migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -192,7 +192,7 @@ namespace CapstoneMasons.Migrations
                     BarSize = table.Column<int>(nullable: false),
                     Degree = table.Column<int>(nullable: false),
                     MandrelID = table.Column<int>(nullable: true),
-                    PinNumber = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    PinNumber = table.Column<string>(nullable: true),
                     InGained = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     LastChanged = table.Column<DateTime>(nullable: false)
                 },
