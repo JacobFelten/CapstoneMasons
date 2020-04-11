@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CapstoneMasons.Repositories;
+using CapstoneMasons.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -30,7 +31,8 @@ namespace CapstoneMasons
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+                opt.TokenLifespan = TimeSpan.FromHours(2));
             //https settings
             services.AddHsts(options =>
             {
@@ -53,6 +55,7 @@ namespace CapstoneMasons
             //database
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();//default becuase we do not need a user model?
             services.AddControllersWithViews();
 
@@ -65,7 +68,9 @@ namespace CapstoneMasons
             services.AddTransient<IFormulaRepository, FormulaRepository>();
             services.AddTransient<IShapeRepository, ShapeRepository>();
             services.AddTransient<IQuoteRepository, QuoteRepository>();
-            
+            services.AddTransient<IEmailSender, EmailSender>();
+
+
 
             services.AddDbContext<AppDbContext>(
                     options => options.UseSqlServer(
@@ -91,7 +96,7 @@ namespace CapstoneMasons
                 // User settings.
                 options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = false;
+                options.User.RequireUniqueEmail = true;
             });
 
             services.ConfigureApplicationCookie(options =>
@@ -104,6 +109,12 @@ namespace CapstoneMasons
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
+
+            var emailConfig = Configuration
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig); //email service
+            services.AddScoped<IEmailSender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -123,9 +134,9 @@ namespace CapstoneMasons
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
