@@ -23,7 +23,7 @@ namespace CapstoneMasons.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Credits()
         {
             return View();
         }

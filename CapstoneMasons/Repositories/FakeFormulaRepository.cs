@@ -79,6 +79,17 @@ namespace CapstoneMasons.Repositories
             return Task.FromResult<bool>(result);
         }
 
+        public Task<bool> AddMandrelAsync(Mandrel m)
+        {
+            bool result = false;
+            if (m != null)
+            {
+                result = true;
+                mandrels.Add(m);
+            }
+            return Task.FromResult<bool>(result);
+        }
+
         public async Task<Mandrel> GetMandrelByIdAsync(int? id)
         {
             if (id != null)

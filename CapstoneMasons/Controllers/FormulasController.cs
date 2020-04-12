@@ -23,13 +23,7 @@ namespace CapstoneMasons.Controllers
         // GET: Formulas
         public async Task<IActionResult> Index()
         {
-            var tempFList = await repo.Formulas;
-            IOrderedEnumerable<Formula> orderedEnumerable = tempFList.OrderBy(f => f.BarSize)
-                .ThenBy(f => f.Degree);
-                //.ThenBy(f => f.Mandrel.Radius);
-            var fList = new List<Formula>();
-            foreach (Formula f in orderedEnumerable)
-                fList.Add(f);
+            var fList = SortFormulas(await repo.Formulas);
             var barSizes = new List<int>();
             var degrees = new List<int>();
             var mandrels = new List<Mandrel>();
@@ -47,13 +41,7 @@ namespace CapstoneMasons.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchFormulas(int? barSize, int? degree, int? mandrelID)
         {
-            var tempFList = await repo.Formulas;
-            IOrderedEnumerable<Formula> orderedEnumerable = tempFList.OrderBy(f => f.BarSize)
-                .ThenBy(f => f.Degree);
-                //.ThenBy(f => f.Mandrel.Radius);
-            var fList = new List<Formula>();
-            foreach (Formula f in orderedEnumerable)
-                fList.Add(f);
+            var fList = SortFormulas(await repo.Formulas);
             var m = await repo.GetMandrelByIdAsync(mandrelID);
             var resultList = new List<Formula>();
             foreach(Formula f in fList)
@@ -212,6 +200,10 @@ namespace CapstoneMasons.Controllers
             return formulas.Any(e => e.FormulaID == id);
         }
 
+        //This method takes a list of formulas and fills lists of bar sizes, degrees, and mandrels with all the
+        //unique occurrences of those things in the list of formulas. If the current formula in the loop is of bar size 5
+        //for example, the code checks to make sure the list of bar sizes doesn't allready have 5 before adding it. These
+        //lists are then sorted and used to fill the dropdowns on the Formulas Index page.
         private void FillFormulaSearchDropdowns(List<Formula> fList, in List<int> barSizes, in List<int> degrees, in List<Mandrel> mandrels)
         {
             foreach(Formula f in fList)
@@ -226,6 +218,18 @@ namespace CapstoneMasons.Controllers
             barSizes.Sort();
             degrees.Sort();
             mandrels.Sort((a, b) => a.Radius.CompareTo(b.Radius));
+        }
+
+        //This method sorts a list of formulas first by bar size, then by degrees, then by mandrel size.
+        private List<Formula> SortFormulas(List<Formula> tempFList)
+        {
+            IOrderedEnumerable<Formula> orderedEnumerable = tempFList.OrderBy(f => f.BarSize)
+                .ThenBy(f => f.Degree)
+                .ThenBy(f => f.Mandrel.Radius);
+            var fList = new List<Formula>();
+            foreach (Formula f in orderedEnumerable)
+                fList.Add(f);
+            return fList;
         }
         #endregion
     }

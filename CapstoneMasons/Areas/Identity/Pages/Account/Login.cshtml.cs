@@ -79,7 +79,12 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                IdentityUser signedUser = await _userManager.FindByEmailAsync(Input.Email);//transform email to password
+                if (signedUser == null)
+                {
+                    signedUser = new IdentityUser() {UserName = "" };
+                }
+                var result = await _signInManager.PasswordSignInAsync(signedUser.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

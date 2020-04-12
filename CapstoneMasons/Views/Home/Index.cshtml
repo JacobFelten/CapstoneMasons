@@ -1,8 +1,55 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<style>
+    .div-wrapper {
+        /*height: 200px;*/
+        margin-top: 10px;
+        /*border: 2px inset #ddd;*/
+        border-radius: 8px;
+    }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    .div-to-align {
+        /* width: 75%;*/
+        padding: 40px 20px;
+        /* .... */
+    }
+</style>
+    <div class="text-center">
+        <h1 class="display-4" hidden>Masons' Order and Formula Tracker</h1>
+        <p hidden>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+        <div class="section-1-container section-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col section-1 section-description">
+                        <h1>Masons' Order and Formula Tracker</h1>
+                        <div class="divider-1"><span></span></div>
+                        <p>Under Construction</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 offset-1 col-lg-8 offset-lg-2 div-wrapper d-flex justify-content-center align-items-center">
+                        <a class="btn btn-secondary nav-stacked" asp-controller="Quotes" asp-action="Create">
+                            <div class="div-to-align bg-secondary text-white font-weight-bold">
+                                <h5>New Quote</h5>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 offset-1 col-lg-8 offset-lg-2 div-wrapper d-flex justify-content-center align-items-center">
+                        <a class="btn btn-secondary" asp-controller="Quotes" asp-action="Index">
+                            <div class="div-to-align bg-secondary text-white font-weight-bold">
+                                <h5>View Open Quotes</h5>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 offset-1 col-lg-8 offset-lg-2 div-wrapper d-flex justify-content-center align-items-center">
+                        <a class="btn btn-secondary" asp-controller="Quotes" asp-action="Deleted">
+                            <div class="div-to-align bg-secondary text-white font-weight-bold">
+                                <h5>View Closed Quotes</h5>
+                            </div>
+                        </a>
+                    </div></div>
+                </div>
+            </div>
+        </div>
