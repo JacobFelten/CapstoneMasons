@@ -17,7 +17,7 @@
             <div class="container">
                 <a class="btn btn-dark ml-auto mr-1 navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home/Quotes</a>
                 <a class="btn btn-dark ml-auto mr-1" asp-area="" asp-controller="Formulas" asp-action="Index">Bend Formulas</a>
-                <a class="btn btn-dark ml-auto mr-1" asp-area="" asp-controller="Home" asp-action="Globalcosts">Bar Cost</a>
+                <a class="btn btn-dark ml-auto mr-1" asp-area="" asp-controller="Costs" asp-action="Globalcosts">Bar Cost</a>
                 @if (SignInManager.IsSignedIn(User))
                 {
                     <form class="ml-auto mr-1" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
