@@ -33,5 +33,71 @@ namespace CapstoneMasons.Infrastructure
             Name = "Large",
             Radius = 4
         };
+
+
+        public static Cost Bar3GlobalCost = new Cost
+        {
+            Name = "Bar3GlobalCost"
+        };
+        public static Cost Bar3BendCost = new Cost
+        {
+            Name = "Bar3BendCost"
+        };
+        public static Cost Bar3CutCost = new Cost
+        {
+            Name = "Bar3CutCost"
+        };
+
+
+        public static Cost Bar4GlobalCost = new Cost
+        {
+            Name = "Bar4GlobalCost"
+        };
+        public static Cost Bar4BendCost = new Cost
+        {
+            Name = "Bar4BendCost"
+        };
+        public static Cost Bar4CutCost = new Cost
+        {
+            Name = "Bar4CutCost"
+        };
+
+
+        public static Cost Bar5GlobalCost = new Cost
+        {
+            Name = "Bar5GlobalCost"
+        };
+        public static Cost Bar5BendCost = new Cost
+        {
+            Name = "Bar5BendCost"
+        };
+        public static Cost Bar5CutCost = new Cost
+        {
+            Name = "Bar5CutCost"
+        };
+
+
+        public static Cost Bar6GlobalCost = new Cost
+        {
+            Name = "Bar6GlobalCost"
+        };
+        public static Cost Bar6BendCost = new Cost
+        {
+            Name = "Bar6BendCost"
+        };
+        public static Cost Bar6CutCost = new Cost
+        {
+            Name = "Bar6CutCost"
+        };
+
+
+        public static Cost SetupCharge = new Cost
+        {
+            Name = "SetupCharge"
+        };
+        public static Cost MinimumOrderCost = new Cost
+        {
+            Name = "MinimumOrderCost"
+        };
     }
 }

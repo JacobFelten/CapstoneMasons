@@ -68,10 +68,8 @@ namespace CapstoneMasons
             services.AddTransient<IFormulaRepository, FormulaRepository>();
             services.AddTransient<IShapeRepository, ShapeRepository>();
             services.AddTransient<IQuoteRepository, QuoteRepository>();
+            services.AddTransient<ICostRepository, CostRepository>();
             services.AddTransient<IEmailSender, EmailSender>();
-
-
-
             services.AddDbContext<AppDbContext>(
                     options => options.UseSqlServer(
                         Configuration["ConnectionStrings:localdb"]));
