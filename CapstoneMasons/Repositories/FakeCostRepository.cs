@@ -59,5 +59,19 @@ namespace CapstoneMasons.Repositories
             }
             return Task.FromResult<bool>(result);
         }
+
+        public async Task<Cost> FindCostByNameAsync(string costName)
+        {
+            foreach (Cost c in await Costs)
+            {
+                if (c.Name == costName)
+                {
+                    return c;
+                }
+            }
+
+            return null;
+
+        }
     }
 }
