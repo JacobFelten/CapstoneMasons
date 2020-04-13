@@ -200,6 +200,18 @@ namespace CapstoneMasons.Controllers
             return formulas.Any(e => e.FormulaID == id);
         }
 
+        private bool MandrilUseable(FormulaCreate fCreate)
+        {
+            bool usable = true;
+            if(fCreate.BarSize == 3)
+            {
+                switch()
+            }
+            
+
+            
+            return usable;
+        }
         //This method takes a list of formulas and fills lists of bar sizes, degrees, and mandrels with all the
         //unique occurrences of those things in the list of formulas. If the current formula in the loop is of bar size 5
         //for example, the code checks to make sure the list of bar sizes doesn't allready have 5 before adding it. These
