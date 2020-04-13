@@ -51,9 +51,101 @@ namespace CapstoneMasons.Controllers
 
         
         [HttpPost]
-        public async Task<ViewResult> GlobalCosts(GlobalCosts globals)
+        public async Task<IActionResult> GlobalCosts(int bar3GlobalID, decimal bar3GlobalCost, int bend3GlobalID, decimal bar3BendCost, int cut3GlobalID, decimal bar3CutCost,
+            int bar4GlobalID, decimal bar4GlobalCost, int bend4GlobalID, decimal bar4BendCost, int cut4GlobalID, decimal bar4CutCost,
+            int bar5GlobalID, decimal bar5GlobalCost, int bend5GlobalID, decimal bar5BendCost, int cut5GlobalID, decimal bar5CutCost,
+            int bar6GlobalID, decimal bar6GlobalCost, int bend6GlobalID, decimal bar6BendCost, int cut6GlobalID, decimal bar6CutCost,
+            int setupGlobalID, decimal setupCharge, int minOrderGlobalID, decimal minimumOrderCost)
         {
+            GlobalCosts globals = new GlobalCosts();
             List<Cost> globalCosts = await repo.Costs;
+
+            globals.Bar3GlobalCost = new Cost 
+            {
+                CostID = bar3GlobalID,
+                Name = KnownObjects.Bar3GlobalCost.Name,
+                Price = bar3GlobalCost
+            };
+            globals.Bar3BendCost = new Cost
+            {
+                CostID = bend3GlobalID,
+                Name = KnownObjects.Bar3BendCost.Name,
+                Price = bar3BendCost
+            };
+            globals.Bar3CutCost = new Cost
+            {
+                CostID = cut3GlobalID,
+                Name = KnownObjects.Bar3CutCost.Name,
+                Price = bar3CutCost
+            };
+            globals.Bar4GlobalCost = new Cost
+            {
+                CostID = bar4GlobalID,
+                Name = KnownObjects.Bar4GlobalCost.Name,
+                Price = bar4GlobalCost
+            };
+            globals.Bar4BendCost = new Cost
+            {
+                CostID = bend4GlobalID,
+                Name = KnownObjects.Bar4BendCost.Name,
+                Price = bar4BendCost
+            };
+            globals.Bar4CutCost = new Cost
+            {
+                CostID = cut4GlobalID,
+                Name = KnownObjects.Bar4CutCost.Name,
+                Price = bar4CutCost
+            };
+            globals.Bar5GlobalCost = new Cost
+            {
+                CostID = bar5GlobalID,
+                Name = KnownObjects.Bar5GlobalCost.Name,
+                Price = bar5GlobalCost
+            };
+            globals.Bar5BendCost = new Cost
+            {
+                CostID = bend5GlobalID,
+                Name = KnownObjects.Bar5BendCost.Name,
+                Price = bar5BendCost
+            };
+            globals.Bar5CutCost = new Cost
+            {
+                CostID = cut5GlobalID,
+                Name = KnownObjects.Bar5CutCost.Name,
+                Price = bar5CutCost
+            };
+
+            globals.Bar6GlobalCost = new Cost
+            {
+                CostID = bar6GlobalID,
+                Name = KnownObjects.Bar6GlobalCost.Name,
+                Price = bar6GlobalCost
+            };
+            globals.Bar6BendCost = new Cost
+            {
+                CostID = bend6GlobalID,
+                Name = KnownObjects.Bar6BendCost.Name,
+                Price = bar6BendCost
+            };
+            globals.Bar6CutCost = new Cost
+            {
+                CostID = cut6GlobalID,
+                Name = KnownObjects.Bar6CutCost.Name,
+                Price = bar6CutCost
+            };
+
+            globals.SetupCharge = new Cost
+            {
+                CostID = setupGlobalID,
+                Name = KnownObjects.SetupCharge.Name,
+                Price = setupCharge
+            };
+            globals.MinimumOrderCost = new Cost
+            {
+                CostID = minOrderGlobalID,
+                Name = KnownObjects.MinimumOrderCost.Name,
+                Price = minimumOrderCost
+            };
 
             await CheckCosts(globals.Bar3GlobalCost);
             await CheckCosts(globals.Bar3BendCost);
@@ -70,7 +162,7 @@ namespace CapstoneMasons.Controllers
             await CheckCosts(globals.SetupCharge);
             await CheckCosts(globals.MinimumOrderCost);
 
-            return View(globals);
+            return RedirectToAction("GlobalCosts");
         }
 
         private async Task CheckCosts(Cost cost)

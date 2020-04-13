@@ -143,7 +143,7 @@ namespace CapstoneMasons
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
-            context.Database.Migrate(); //to be removed when published?
+            //context.Database.Migrate(); //to be removed when published?
             SeedData.Seed(context);
             AppDbContext.CreateAdminAccount(serviceProvider, Configuration).Wait();
         }
