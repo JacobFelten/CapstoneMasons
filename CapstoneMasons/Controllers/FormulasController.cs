@@ -92,7 +92,7 @@ namespace CapstoneMasons.Controllers
         // GET: Formulas/Create
         public async Task<IActionResult> Create()
         {
-            FormulaCreate fCreate = new FormulaCreate { Mandrels = await repo.Mandrels };
+            FormulaCreate fCreate = new FormulaCreate { Mandrels = await repo.Mandrels, Usable = true};
             return View(fCreate);
         }
 
@@ -103,12 +103,20 @@ namespace CapstoneMasons.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FormulaCreate fCreate)
         {
+            fCreate.Mandrels = await repo.Mandrels;
+            bool use = await MandrelUseable(fCreate);
             if (ModelState.IsValid)
             {
+                if (use == true)
+                {
+                    Formula formula = new Formula { BarSize = fCreate.BarSize, Degree = fCreate.Degree, Mandrel = await repo.GetMandrelByIdAsync(fCreate.MandrelID), PinNumber = fCreate.PinNumber, InGained = fCreate.InGained, LastChanged = System.DateTime.Now};
 
-                Formula formula = new Formula { BarSize = fCreate.BarSize, Degree = fCreate.Degree, Mandrel = await repo.GetMandrelByIdAsync(fCreate.MandrelID), PinNumber = fCreate.PinNumber, InGained = fCreate.InGained, LastChanged = System.DateTime.Now};
-                await repo.AddFormulaAsync(formula);
-                return RedirectToAction(nameof(Index));
+                    fCreate.Usable = true;
+                    await repo.AddFormulaAsync(formula);
+                    return RedirectToAction(nameof(Index));
+                }
+                fCreate.Usable = false;
+                return View(fCreate);
             }
             return View(fCreate);
         }
@@ -200,16 +208,82 @@ namespace CapstoneMasons.Controllers
             return formulas.Any(e => e.FormulaID == id);
         }
 
-        private bool MandrilUseable(FormulaCreate fCreate)
+        private async Task<bool> MandrelUseable(FormulaCreate fCreate)
         {
             bool usable = true;
+            Mandrel m = await repo.GetMandrelByIdAsync(fCreate.MandrelID);
             if(fCreate.BarSize == 3)
             {
-                switch()
+                switch (m.Name)
+                {
+                    case "None":
+                        usable = true;
+                        break;
+                    case "Small":
+                        usable = true;
+                        break;
+                    case "Medium":
+                        usable = true;
+                        break;
+                    case "Large":
+                        usable = true;
+                        break;
+                }
             }
-            
-
-            
+            if (fCreate.BarSize == 4)
+            {
+                switch (m.Name)
+                {
+                    case "None":
+                        usable = false;
+                        break;
+                    case "Small":
+                        usable = true;
+                        break;
+                    case "Medium":
+                        usable = true;
+                        break;
+                    case "Large":
+                        usable = true;
+                        break;
+                }
+            }
+            if (fCreate.BarSize == 5)
+            {
+                switch (m.Name)
+                {
+                    case "None":
+                        usable = false;
+                        break;
+                    case "Small":
+                        usable = false;
+                        break;
+                    case "Medium":
+                        usable = true;
+                        break;
+                    case "Large":
+                        usable = true;
+                        break;
+                }
+            }
+            if (fCreate.BarSize == 6)
+            {
+                switch (m.Name)
+                {
+                    case "None":
+                        usable = false;
+                        break;
+                    case "Small":
+                        usable = false;
+                        break;
+                    case "Medium":
+                        usable = false;
+                        break;
+                    case "Large":
+                        usable = true;
+                        break;
+                }
+            }
             return usable;
         }
         //This method takes a list of formulas and fills lists of bar sizes, degrees, and mandrels with all the
