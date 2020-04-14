@@ -14,7 +14,7 @@
             @if(Model.Usable == false)
             {
                 <div class="alert alert-warning" role="alert">
-                    You must pick a mandrel size that fits with the bar size.
+                    @Model.UsableMessage
                 </div>
             }
             <div asp-validation-summary="All" class="text-danger"></div>
