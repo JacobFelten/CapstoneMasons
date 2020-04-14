@@ -61,7 +61,8 @@ namespace CapstoneMasons.Repositories
             if (oldC != null && newC != null)
             {
                 oldC.Price = newC.Price;
-                oldC.LastChanged = DateTime.Now;
+                oldC.LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
                 context.Costs.Update(oldC);
                 context.SaveChanges();
                 result = true;
