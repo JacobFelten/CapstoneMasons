@@ -1,42 +1,62 @@
-﻿@model CapstoneMasons.Models.Formula
+﻿@model CapstoneMasons.ViewModels.FormulaCreate
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Create</h1>
 
 <h4>Formula</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="FormulaID" />
+            @if (Model.Usable == false)
+            {
+                <div class="alert alert-warning" role="alert">
+                    @Model.UsableMessage
+                </div>
+            }
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="FormulaID" type="hidden" value="@Model.FormulaID" />
+            <input asp-for="LastChanged" type="hidden" value="@Model.LastChanged" />
+            <input asp-for="BarSize" type="hidden" value="@Model.BarSize" />
+            <input asp-for="Degree" type="hidden" value="@Model.Degree" />
+            <input asp-for="MandrelID" type="hidden" value="@Model.MandrelID" />
             <div class="form-group">
-                <label asp-for="BarSize" class="control-label"></label>
-                <input asp-for="BarSize" class="form-control" />
                 <span asp-validation-for="BarSize" class="text-danger"></span>
+                <label asp-for="BarSize" class="control-label">Bar Size:</label>
+                <select asp-for="BarSize" class="form-control" disabled>
+                    <option value="@Model.BarSize">#@Model.BarSize</option>
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="Degree" class="control-label"></label>
-                <input asp-for="Degree" class="form-control" />
                 <span asp-validation-for="Degree" class="text-danger"></span>
+                <label asp-for="Degree" class="control-label">Degree:</label>
+                <input asp-for="Degree" class="form-control" disabled />
             </div>
             <div class="form-group">
-                <label asp-for="PinNumber" class="control-label"></label>
-                <input asp-for="PinNumber" class="form-control" />
+                <span asp-validation-for="MandrelID" class="text-danger"></span>
+                <label asp-for="MandrelID" class="control-label">Mandrel Size:</label>
+                <select asp-for="MandrelID" class="form-control" disabled>
+                    @foreach (Mandrel m in Model.Mandrels)
+                    {
+                        if (m.MandrelID == Model.MandrelID)
+                        {
+                            <option value="@m.MandrelID">@m.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
                 <span asp-validation-for="PinNumber" class="text-danger"></span>
+                <label asp-for="PinNumber" class="control-label">Pin # Placement:</label>
+                <input asp-for="PinNumber" class="form-control" />
             </div>
             <div class="form-group">
-                <label asp-for="InGained" class="control-label"></label>
-                <input asp-for="InGained" class="form-control" />
                 <span asp-validation-for="InGained" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastChanged" class="control-label"></label>
-                <input asp-for="LastChanged" class="form-control" />
-                <span asp-validation-for="LastChanged" class="text-danger"></span>
+                <label asp-for="InGained" class="control-label">Inches Gained:</label>
+                <input asp-for="InGained" class="form-control" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

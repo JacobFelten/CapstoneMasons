@@ -12,6 +12,7 @@ namespace CapstoneMasons.ViewModels
     {
         //Input Data
         public List<Mandrel> Mandrels { get; set; }
+        public int? FormulaID { get; set; }
 
         //Output Data
         public int BarSize { get; set; }
@@ -27,5 +28,6 @@ namespace CapstoneMasons.ViewModels
 
         //Misc Data
         public bool Usable { get; set; }
+        public string UsableMessage { get; set; }
     }
 }

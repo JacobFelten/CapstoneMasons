@@ -81,6 +81,8 @@ namespace CapstoneMasons.Repositories
                 oldF.Mandrel = newF.Mandrel;
                 oldF.PinNumber = newF.PinNumber;
                 oldF.InGained = newF.InGained;
+                oldF.LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
                 context.Formulas.Update(oldF);
                 context.SaveChanges();
                 result = true;

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
 using CapstoneMasons.ViewModels;
+using CapstoneMasons.Infrastructure;
 
 namespace CapstoneMasons.Controllers
 {
@@ -104,17 +105,31 @@ namespace CapstoneMasons.Controllers
         public async Task<IActionResult> Create(FormulaCreate fCreate)
         {
             fCreate.Mandrels = await repo.Mandrels;
-            bool use = await MandrelUseable(fCreate);
+            string useMessage = await MandrelUseable(fCreate);
             if (ModelState.IsValid)
             {
-                if (use == true)
+                if (useMessage == "")
                 {
-                    Formula formula = new Formula { BarSize = fCreate.BarSize, Degree = fCreate.Degree, Mandrel = await repo.GetMandrelByIdAsync(fCreate.MandrelID), PinNumber = fCreate.PinNumber, InGained = fCreate.InGained, LastChanged = System.DateTime.Now};
-
-                    fCreate.Usable = true;
-                    await repo.AddFormulaAsync(formula);
-                    return RedirectToAction(nameof(Index));
+                    Formula formula = new Formula 
+                    { 
+                        BarSize = fCreate.BarSize,
+                        Degree = fCreate.Degree,
+                        Mandrel = await repo.GetMandrelByIdAsync(fCreate.MandrelID),
+                        PinNumber = fCreate.PinNumber,
+                        InGained = fCreate.InGained,
+                        LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                    };
+                    if (! await FormulaExists(formula))
+                    {
+                        fCreate.Usable = true;
+                        await repo.AddFormulaAsync(formula);
+                        return RedirectToAction(nameof(Index));
+                    }
+                    fCreate.UsableMessage = "There already exists a formula with that bar size, bend degree, and mandrel.";
+                    fCreate.Usable = false;
+                    return View(fCreate);
                 }
+                fCreate.UsableMessage = useMessage;
                 fCreate.Usable = false;
                 return View(fCreate);
             }
@@ -134,7 +149,19 @@ namespace CapstoneMasons.Controllers
             {
                 return NotFound();
             }
-            return View(formula);
+            FormulaCreate fCreate = new FormulaCreate 
+            { 
+                Mandrels = await repo.Mandrels,
+                FormulaID = id,
+                Usable = true,
+                BarSize = formula.BarSize,
+                Degree = formula.Degree,
+                MandrelID = formula.Mandrel.MandrelID,
+                PinNumber = formula.PinNumber,
+                InGained = formula.InGained,
+                LastChanged = formula.LastChanged
+            };
+            return View(fCreate);
         }
 
         // POST: Formulas/Edit/5
@@ -142,14 +169,19 @@ namespace CapstoneMasons.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FormulaID,BarSize,Degree,PinNumber,InGained,LastChanged")] Formula newFormula)
+        public async Task<IActionResult> Edit(FormulaCreate fCreate)
         {
-            if (id != newFormula.FormulaID)
-            {
-                return NotFound();
-            }
-
             Formula oldFormula = null;
+            Formula newFormula = new Formula 
+            { 
+                FormulaID = (int)fCreate.FormulaID,
+                BarSize = fCreate.BarSize,
+                Degree = fCreate.Degree,
+                Mandrel = await repo.GetMandrelByIdAsync(fCreate.MandrelID),
+                PinNumber = fCreate.PinNumber,
+                InGained = fCreate.InGained,
+                LastChanged = fCreate.LastChanged 
+            };
 
             if (ModelState.IsValid)
             {
@@ -171,7 +203,7 @@ namespace CapstoneMasons.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(oldFormula);
+            return View(fCreate);
         }
 
         // GET: Formulas/Delete/5
@@ -208,25 +240,30 @@ namespace CapstoneMasons.Controllers
             return formulas.Any(e => e.FormulaID == id);
         }
 
-        private async Task<bool> MandrelUseable(FormulaCreate fCreate)
+        private async Task<string> MandrelUseable(FormulaCreate fCreate)
         {
-            bool usable = true;
+            string usable = "";
+            string error4 = "#4 rebar can only use " + KnownObjects.SmallMandrel.Name + ", " + KnownObjects.MediumMandrel.Name + ", and " +
+                KnownObjects.LargeMandrel.Name + " mandrels.";
+            string error5 = "#5 rebar can only use " + KnownObjects.MediumMandrel.Name + " and " +
+                KnownObjects.LargeMandrel.Name + " mandrels.";
+            string error6 = "#6 rebar can only use " + KnownObjects.LargeMandrel.Name + " mandrels.";
             Mandrel m = await repo.GetMandrelByIdAsync(fCreate.MandrelID);
             if(fCreate.BarSize == 3)
             {
                 switch (m.Name)
                 {
                     case "None":
-                        usable = true;
+                        usable = "";
                         break;
                     case "Small":
-                        usable = true;
+                        usable = "";
                         break;
                     case "Medium":
-                        usable = true;
+                        usable = "";
                         break;
                     case "Large":
-                        usable = true;
+                        usable = "";
                         break;
                 }
             }
@@ -235,16 +272,16 @@ namespace CapstoneMasons.Controllers
                 switch (m.Name)
                 {
                     case "None":
-                        usable = false;
+                        usable = error4;
                         break;
                     case "Small":
-                        usable = true;
+                        usable = "";
                         break;
                     case "Medium":
-                        usable = true;
+                        usable = "";
                         break;
                     case "Large":
-                        usable = true;
+                        usable = "";
                         break;
                 }
             }
@@ -253,16 +290,16 @@ namespace CapstoneMasons.Controllers
                 switch (m.Name)
                 {
                     case "None":
-                        usable = false;
+                        usable = error5;
                         break;
                     case "Small":
-                        usable = false;
+                        usable = error5;
                         break;
                     case "Medium":
-                        usable = true;
+                        usable = "";
                         break;
                     case "Large":
-                        usable = true;
+                        usable = "";
                         break;
                 }
             }
@@ -271,16 +308,16 @@ namespace CapstoneMasons.Controllers
                 switch (m.Name)
                 {
                     case "None":
-                        usable = false;
+                        usable = error6;
                         break;
                     case "Small":
-                        usable = false;
+                        usable = error6;
                         break;
                     case "Medium":
-                        usable = false;
+                        usable = error6;
                         break;
                     case "Large":
-                        usable = true;
+                        usable = "";
                         break;
                 }
             }
@@ -316,6 +353,18 @@ namespace CapstoneMasons.Controllers
             foreach (Formula f in orderedEnumerable)
                 fList.Add(f);
             return fList;
+        }
+
+        private async Task<bool> FormulaExists(Formula formula)
+        {
+            foreach (Formula f in await repo.Formulas)
+            {
+                if (f.BarSize == formula.BarSize && f.Degree == formula.Degree && f.Mandrel == formula.Mandrel)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         #endregion
     }
