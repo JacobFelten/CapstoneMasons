@@ -1,0 +1,140 @@
+﻿@model GlobalCosts
+
+@{
+    ViewData["Title"] = "GlobalCosts";
+}
+
+<h1>Prices and Fees</h1>
+
+<form method="post" asp-action="UpdateGlobalCosts">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>
+					Bar #
+				</th>
+				<th>
+					Bar Cost
+				</th>
+				<th>
+					Bend Cost
+				</th>
+				<th>
+					Cut Cost
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th>
+					#3
+				</th>
+				<th>
+					<input type="hidden" name="bar3GlobalID" value="@Model.Bar3GlobalCost.CostID" />
+					<input name="bar3GlobalCost" value=@Model.Bar3GlobalCost.Price class="form-control" />
+					<label asp-for="Bar3GlobalCost" class="control-label">Edited: @Model.Bar3GlobalCost.LastChanged</label>
+				</th>
+                <th>
+                    <input type="hidden" name="bend3GlobalID" value="@Model.Bar3BendCost.CostID" />
+                    <input name="bar3BendCost" value=@Model.Bar3BendCost.Price class="form-control" />
+                    <label asp-for="Bar3BendCost" class="control-label">Edited: @Model.Bar3BendCost.LastChanged</label>
+
+                </th>
+                <th>
+                    <input type="hidden" name="cut3GlobalID" value="@Model.Bar3CutCost.CostID" />
+                    <input name="bar3CutCost" value=@Model.Bar3CutCost.Price class="form-control" />
+                    <label asp-for="Bar3CutCost" class="control-label">Edited: @Model.Bar3CutCost.LastChanged</label>
+                </th>
+			</tr>
+			<tr>
+				<th>
+					#4
+				</th>
+                <th>
+                    <input type="hidden" name="bar4GlobalID" value="@Model.Bar4GlobalCost.CostID" />
+                    <input name="bar4GlobalCost" value=@Model.Bar4GlobalCost.Price class="form-control" />
+                    <label asp-for="Bar4GlobalCost" class="control-label">Edited: @Model.Bar4GlobalCost.LastChanged</label>
+                </th>
+                <th>
+                    <input type="hidden" name="bend4GlobalID" value="@Model.Bar4BendCost.CostID" />
+                    <input name="bar4BendCost" value=@Model.Bar4BendCost.Price class="form-control" />
+                    <label asp-for="Bar4BendCost" class="control-label">Edited: @Model.Bar4BendCost.LastChanged</label>
+                </th>
+                <th>
+                    <input type="hidden" name="cut4GlobalID" value="@Model.Bar4CutCost.CostID" />
+                    <input name="bar4CutCost" value=@Model.Bar4CutCost.Price class="form-control" />
+                    <label asp-for="Bar4CutCost" class="control-label">Edited: @Model.Bar4CutCost.LastChanged</label>
+                </th>
+			</tr>
+			<tr>
+				<th>
+					#5
+				</th>
+                <th>
+                    <input type="hidden" name="bar5GlobalID" value="@Model.Bar5GlobalCost.CostID" />
+                    <input name="bar5GlobalCost" value=@Model.Bar5GlobalCost.Price class="form-control" />
+                    <label asp-for="Bar5GlobalCost" class="control-label">Edited: @Model.Bar5GlobalCost.LastChanged</label>
+                </th>
+                <th>
+                    <input type="hidden" name="bend5GlobalID" value="@Model.Bar5BendCost.CostID" />
+                    <input name="bar5BendCost" value=@Model.Bar5BendCost.Price class="form-control" />
+                    <label asp-for="Bar5BendCost" class="control-label">Edited: @Model.Bar5BendCost.LastChanged</label>
+                </th>
+                <th>
+                    <input type="hidden" name="cut5GlobalID" value="@Model.Bar5CutCost.CostID" />
+                    <input name="bar5CutCost" value=@Model.Bar5CutCost.Price class="form-control" />
+                    <label asp-for="Bar5CutCost" class="control-label">Edited: @Model.Bar5CutCost.LastChanged</label>
+                </th>
+			</tr>
+			<tr>
+				<th>
+					#6
+				</th>
+                <th>
+                    <input type="hidden" name="bar6GlobalID" value="@Model.Bar6GlobalCost.CostID" />
+                    <input name="Bar6GlobalCost" value=@Model.Bar6GlobalCost.Price class="form-control" />
+                    <label asp-for="Bar6GlobalCost" class="control-label">Edited: @Model.Bar6GlobalCost.LastChanged</label>
+                </th>
+                <th>
+                    <input type="hidden" name="bend6GlobalID" value="@Model.Bar6BendCost.CostID" />
+                    <input name="bar6BendCost" value=@Model.Bar6BendCost.Price class="form-control" />
+                    <label asp-for="Bar6BendCost" class="control-label">Edited: @Model.Bar6BendCost.LastChanged</label>
+                </th>
+                <th>
+                    <input type="hidden" name="cut6GlobalID" value="@Model.Bar6CutCost.CostID" />
+                    <input name="bar6CutCost" value=@Model.Bar6CutCost.Price class="form-control" />
+                    <label asp-for="Bar6CutCost" class="control-label">Edited: @Model.Bar6CutCost.LastChanged</label>
+                </th>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>
+					Setup Charge
+				</th>
+				<th>
+					Setup Minimum Cost
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+                <th>
+                    <input type="hidden" name="setupGlobalID" value="@Model.SetupCharge.CostID" />
+                    <input type="number" name="setupCharge" value=@Model.SetupCharge.Price class="form-control" />
+                    <label asp-for="SetupCharge" class="control-label">Edited: @Model.SetupCharge.LastChanged</label>
+                </th>
+                <th>
+                    <input type="hidden" name="minOrderGlobalID" value="@Model.MinimumOrderCost.CostID" />
+                    <input name="minimumOrderCost" value=@Model.MinimumOrderCost.Price class="form-control" />
+                    <label asp-for="MinimumOrderCost" class="control-label">Edited: @Model.MinimumOrderCost.LastChanged</label>
+                </th>
+			</tr>
+		</tbody>
+	</table>
+
+    <input type="submit" class="btn btn-light text-center" asp-action="GlobalCosts"/>
+</form>

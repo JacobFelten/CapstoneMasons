@@ -24,5 +24,8 @@ namespace CapstoneMasons.ViewModels
         [Column(TypeName = "decimal(18,4)")]
         public decimal InGained { get; set; }
         public DateTime LastChanged { get; set; }
+
+        //Misc Data
+        public bool Usable { get; set; }
     }
 }

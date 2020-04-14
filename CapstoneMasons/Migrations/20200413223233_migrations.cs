@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CapstoneMasons.Migrations
 {
-    public partial class migration : Migration
+    public partial class migrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -214,7 +214,7 @@ namespace CapstoneMasons.Migrations
                     CostID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     LastChanged = table.Column<DateTime>(nullable: false),
                     QuoteID = table.Column<int>(nullable: true)
                 },

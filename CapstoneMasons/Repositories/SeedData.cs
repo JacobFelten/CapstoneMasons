@@ -41,6 +41,135 @@ namespace CapstoneMasons.Repositories
                     Name = KnownObjects.LargeMandrel.Name,
                     Radius = KnownObjects.LargeMandrel.Radius
                 });
+                
+                context.SaveChanges();
+            }
+
+
+            //Adds the cost seed data if none are found to exist
+            if (!context.Costs.Any())
+            { 
+                /*Bar 3 Costs SeedData */
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar3GlobalCost.Name,
+                    Price = 3.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+            });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar3BendCost.Name,
+                    Price = 1.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar3CutCost.Name,
+                    Price = 1.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+
+                /*Bar 4 Costs SeedData */
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar4GlobalCost.Name,
+                    Price = 4.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar4BendCost.Name,
+                    Price = 2.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar4CutCost.Name,
+                    Price = 2.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+
+                /*Bar 5 Costs SeedData */
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar5GlobalCost.Name,
+                    Price = 5.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar5BendCost.Name,
+                    Price = 3.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar5CutCost.Name,
+                    Price = 3.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+
+                /*Bar 6 Costs SeedData */
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar6GlobalCost.Name,
+                    Price = 6.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar6BendCost.Name,
+                    Price = 4.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.Bar6CutCost.Name,
+                    Price = 4.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+
+                /* Fees and Charges Seed Data */
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.SetupCharge.Name,
+                    Price = 15.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
+
+                context.Costs.Add(new Cost
+                {
+                    Name = KnownObjects.MinimumOrderCost.Name,
+                    Price = 200.00M,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                });
 
                 context.SaveChanges();
             }
