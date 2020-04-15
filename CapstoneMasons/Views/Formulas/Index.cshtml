@@ -4,7 +4,7 @@
     ViewData["Title"] = "Formulas";
 }
 
-<h1>Index</h1>
+<h1 class="text-center">Bend Formulas</h1>
 
 <form method="post" asp-action="SearchFormulas">
     <div class="row">
@@ -67,7 +67,7 @@
         </div>
     </div>
     <div class="text-center">
-        <button class="btn btn-light text-center" type="submit">Search</button>
+        <button class="btn btn-info text-center" type="submit">Search</button>
     </div>
 </form>
 
@@ -131,6 +131,6 @@
     </tbody>
 </table>
 
-<p>
-    <a class="btn btn-light text-center" asp-action="Create">Create New</a>
+<p class="text-center">
+    <a class="btn btn-primary text-center" asp-action="Create">Create New</a>
 </p>
