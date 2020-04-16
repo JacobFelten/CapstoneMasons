@@ -11,6 +11,12 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+            @if(Model.Usable == false)
+            {
+                <div class="alert alert-warning" role="alert">
+                    @Model.UsableMessage
+                </div>
+            }
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <span asp-validation-for="BarSize" class="text-danger"></span>
@@ -31,7 +37,7 @@
                 <span asp-validation-for="MandrelID" class="text-danger"></span>
                 <label asp-for="MandrelID" class="control-label">Mandrel Size:</label>
                 <select asp-for="MandrelID" class="form-control">
-                    @foreach(Mandrel m in Model.Mandrels)
+                    @foreach (Mandrel m in Model.Mandrels)
                     {
                         <option value="@m.MandrelID">@m.Name</option>
                     }

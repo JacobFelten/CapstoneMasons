@@ -61,12 +61,27 @@ namespace CapstoneMasons.Repositories
             if (oldC != null && newC != null)
             {
                 oldC.Price = newC.Price;
-                oldC.LastChanged = DateTime.Now;
+                oldC.LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
                 context.Costs.Update(oldC);
                 context.SaveChanges();
                 result = true;
             }
             return Task.FromResult<bool>(result);
+        }
+
+        public async Task<Cost> FindCostByNameAsync(string costName)
+        {
+            foreach (Cost c in await Costs)
+            {
+                if (c.Name == costName)
+                {
+                    return c;
+                }
+            }
+
+            return null;
+
         }
     }
 }

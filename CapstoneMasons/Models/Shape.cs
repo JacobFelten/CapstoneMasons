@@ -17,6 +17,6 @@ namespace CapstoneMasons.Models
             get { return legs; }
         }
         public int Qty { get; set; }
-        public int NumCompleted { get; set; }
+        public int NumCompleted { get; set; } //After Review
     }
 }

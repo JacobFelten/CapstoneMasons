@@ -72,6 +72,8 @@ namespace CapstoneMasons.Controllers
             rQ.QuoteID = q.QuoteID; //done
             rQ.Name = q.Name; //done
             rQ.OrderNum = q.OrderNum; //done
+            rQ.AddSetup = q.AddSetup;
+            rQ.Discount = q.Discount;
 
             //After filling the shapes with instructions the shapes are sorted by bar size
             //then by shape length so the instructions make sense.
@@ -85,14 +87,16 @@ namespace CapstoneMasons.Controllers
             rQ.BarsUsed = CalculateBarsUsed(rSList, q); //done
 
             rQ.TotalCost = CalculateTotalCost(rQ.BarsUsed); //done
-            rQ.SetUpCharge = CalculateSetUp(rQ.TotalCost, q); //Done
+            rQ.SetUpCharge = CalculateSetUp(q, rQ.BarsUsed); //Done
             rQ.TotalCost += rQ.SetUpCharge; //done
+            rQ.TotalCost += rQ.Discount; //done
 
             rQ.FinalRemnants = CalculateFinalRemnants(rSList); //done
 
             return View(rQ);
         }
 
+        #region So I don't have to keep scrolling past these
         // GET: Quotes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -178,6 +182,7 @@ namespace CapstoneMasons.Controllers
             var quotes = (IQueryable<Quote>)repo.GetAllQuotesAsync();
             return quotes.Any(e => e.QuoteID == id);
         }
+        #endregion
 
         #region Methods for ReviewQuote
 
@@ -490,23 +495,37 @@ namespace CapstoneMasons.Controllers
         }
 
         //Finds the setup charge stored in the quote's cost list
-        private decimal CalculateSetUp(decimal total, Quote q)
+        private decimal CalculateSetUp(Quote q, List<UsedBar> usedBars)
         {
             decimal setup = 0;
-            decimal setupMin = 0;
+            int totalCutsBends = 0;
 
             foreach (Cost c in q.Costs)
             {
                 if (c.Name == "Setup")
                     setup = c.Price;
-                else if (c.Name == "Setup Min")
-                    setupMin = c.Price;
             }
 
-            if (total < setupMin)
-                return setup;
+            foreach (UsedBar uB in usedBars)
+            {
+                totalCutsBends += uB.NumOfBends;
+                totalCutsBends += uB.NumOfCuts;
+            }
+
+            if (totalCutsBends < 100)
+            {
+                if (q.AddSetup != false)
+                    return setup;
+                else
+                    return 0;
+            }
             else
-                return 0;
+            {
+                if (q.AddSetup != true)
+                    return 0;
+                else
+                    return setup;
+            }
         }
 
         private List<UsedBar> CalculateBarsUsed(List<ReviewShape> rSList, Quote q)

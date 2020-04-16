@@ -18,5 +18,6 @@ namespace CapstoneMasons.Repositories
 
         public Task<bool> UpdateCostAsync(Cost oldC, Cost newC);
 
+        public Task<Cost> FindCostByNameAsync(string costName);
     }
 }

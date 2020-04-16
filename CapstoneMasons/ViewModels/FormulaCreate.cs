@@ -12,6 +12,7 @@ namespace CapstoneMasons.ViewModels
     {
         //Input Data
         public List<Mandrel> Mandrels { get; set; }
+        public int? FormulaID { get; set; }
 
         //Output Data
         public int BarSize { get; set; }
@@ -24,5 +25,9 @@ namespace CapstoneMasons.ViewModels
         [Column(TypeName = "decimal(18,4)")]
         public decimal InGained { get; set; }
         public DateTime LastChanged { get; set; }
+
+        //Misc Data
+        public bool Usable { get; set; }
+        public string UsableMessage { get; set; }
     }
 }
