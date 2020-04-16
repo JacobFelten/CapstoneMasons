@@ -68,6 +68,8 @@ namespace CapstoneMasons.Controllers
 
         public async Task<IActionResult> ReviewQuote(Quote q)
         {
+            q = await DummyQuote(); //THIS IS ONLY FOR TESTING
+
             ReviewQuote rQ = new ReviewQuote();
             rQ.QuoteID = q.QuoteID; //done
             rQ.Name = q.Name; //done
@@ -96,7 +98,7 @@ namespace CapstoneMasons.Controllers
             return View(rQ);
         }
 
-        #region So I don't have to keep scrolling past these
+        #region So Jacob doesn't have to keep scrolling past these
         // GET: Quotes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -689,5 +691,150 @@ namespace CapstoneMasons.Controllers
 
             return quote;
         }
+
+        #region Jacob's Dummy thicc data for testing ma view
+        private async Task<Quote> DummyQuote()
+        {
+            var mandrel1 = await repoF.GetMandrelByIdAsync(2);
+            var mandrel2 = await repoF.GetMandrelByIdAsync(3);
+            var leg1 = new Leg
+            {
+                LegID = 1,
+                Length = 36,
+                Degree = 90,
+                Mandrel = mandrel2
+            };
+            var leg2 = new Leg
+            {
+                LegID = 2,
+                Length = 36,
+                Degree = 0,
+                Mandrel = null
+            };
+            var leg3 = new Leg
+            {
+                LegID = 3,
+                Length = 12,
+                Degree = 90,
+                Mandrel = mandrel2
+            };
+            var leg4 = new Leg
+            {
+                LegID = 4,
+                Length = 12,
+                Degree = 0,
+                Mandrel = null
+            };
+            var leg5 = new Leg
+            {
+                LegID = 5,
+                Length = 30,
+                Degree = 90,
+                Mandrel = mandrel1
+            };
+            var leg6 = new Leg
+            {
+                LegID = 6,
+                Length = 18,
+                Degree = 90,
+                Mandrel = mandrel1
+            };
+            var leg7 = new Leg
+            {
+                LegID = 7,
+                Length = 30,
+                Degree = 0,
+                Mandrel = null
+            };
+            var shape2 = new Shape
+            {
+                ShapeID = 2,
+                BarSize = 5,
+                LegCount = 2,
+                Legs = { leg1, leg2 },
+                Qty = 30,
+                NumCompleted = 0
+            };
+            var shape3 = new Shape
+            {
+                ShapeID = 3,
+                BarSize = 5,
+                LegCount = 2,
+                Legs = { leg3, leg4 },
+                Qty = 60,
+                NumCompleted = 0
+            };
+            var shape4 = new Shape
+            {
+                ShapeID = 4,
+                BarSize = 4,
+                LegCount = 3,
+                Legs = { leg5, leg6, leg7 },
+                Qty = 40,
+                NumCompleted = 0
+            };
+            var cost1 = new Cost
+            {
+                CostID = 1,
+                Name = "4 Bar",
+                Price = 10,
+                LastChanged = new DateTime()
+            };
+            var cost2 = new Cost
+            {
+                CostID = 2,
+                Name = "4 Cut",
+                Price = 0.25m,
+                LastChanged = new DateTime()
+            };
+            var cost3 = new Cost
+            {
+                CostID = 3,
+                Name = "4 Bend",
+                Price = 0.25m,
+                LastChanged = new DateTime()
+            };
+            var cost4 = new Cost
+            {
+                CostID = 4,
+                Name = "5 Bar",
+                Price = 15,
+                LastChanged = new DateTime()
+            };
+            var cost5 = new Cost
+            {
+                CostID = 5,
+                Name = "5 Cut",
+                Price = 0.33m,
+                LastChanged = new DateTime()
+            };
+            var cost6 = new Cost
+            {
+                CostID = 6,
+                Name = "5 Bend",
+                Price = 0.33m,
+                LastChanged = new DateTime()
+            };
+            var cost7 = new Cost
+            {
+                CostID = 7,
+                Name = "Setup",
+                Price = 15,
+                LastChanged = new DateTime()
+            };
+            var quote2 = new Quote
+            {
+                QuoteID = 2,
+                Name = "Bob's Concrete",
+                OrderNum = "123456",
+                Shapes = { shape2, shape3, shape4 },
+                Costs = { cost1, cost2, cost3, cost4, cost5, cost6, cost7 },
+                DateQuoted = DateTime.Now,
+                PickedUp = false,
+                Open = false
+            };
+            return quote2;
+        }
+        #endregion
     }
 }
