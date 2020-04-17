@@ -4,19 +4,25 @@
     ViewData["Title"] = "ReviewQuote";
 }
 
+<style>
+    .line {
+        display: inline;
+    }
+</style>
+
 <h1>Review Quote</h1>
 
 <div>
     <h1 class="text-center">Total Cost: @Model.TotalCost.ToString("c")</h1>
     @foreach (UsedBar uB in Model.BarsUsed)
     {
-        <div class="text-center"><div class="font-weight-bold">#@uB.BarSize Bars Used: </div>@uB.NumOfBars (@uB.BarCost.ToString("c") ea.) + @uB.NumOfCuts Cuts (@uB.CutCost.ToString("c") ea.) + @uB.NumOfBends Bends (@uB.BendCost.ToString("c") ea.)</div>
+        <div class="text-center"><span class="font-weight-bold">#@uB.BarSize Bars Used: </span>@uB.NumOfBars (@uB.BarCost.ToString("c") ea.) + @uB.NumOfCuts Cuts (@uB.CutCost.ToString("c") ea.) + @uB.NumOfBends Bends (@uB.BendCost.ToString("c") ea.)</div>
     }
     <div class="text-center"><div class="font-weight-bold">Setup Charge: </div>@Model.SetUpCharge.ToString("c")</div>
     @foreach (RemnantList rL in Model.FinalRemnants)
     {
         <div class="text-center">
-            <div class="font-weight-bold">#@rL.BarSize Remnants: </div>
+            <span class="font-weight-bold">#@rL.BarSize Remnants: </span>
             @for (int i = 0; i < rL.Remnants.Count; i++)
             {
                 Remnant r = rL.Remnants[i];
@@ -25,11 +31,13 @@
                 {
                     comma = ",";
                 }
-                <div>(@r.Length" x @r.Qty)@comma</div>
+                <span>(@r.Length.ToString("G29")" x @r.Qty)@comma</span>
             }
         </div>
     }
 
+    <h1 class="text-center">___________________________________________________</h1>
+    <h1 class="text-center">___________________________________________________</h1>
     <h1 class="text-center">___________________________________________________</h1>
 
     <h1 class="text-center">Instructions</h1>
@@ -38,30 +46,33 @@
     @for (int i = 0; i < Model.Shapes.Count; i++)
     {
         ReviewShape rS = Model.Shapes[i];
-        <div class="text-center"><div class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</div>(x @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed <a>Edit</a><a>Delete</a></div>
-        <div class="text-center"><div class="font-weight-bold">Cut each piece at: </div>@rS.CutLength"</div>
+        <h1 class="text-center">___________________________________________________</h1>
+        <h2 class="text-center"><span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(x @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed <a asp-action="Index">Edit</a><a asp-action="Index">Delete</a></h2>
+        <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString("G29")"</div>
         @foreach (CutInstruction cI in rS.Instructions)
         {
-            <div class="text-center"><div class="font-weight-bold">Cut </div>(@cI.CutQty) <div class="font-weight-bold">per </div>(@cI.PerLength" @cI.PerType) <div class="font-weight-bold">for </div>(@cI.ForQty @cI.PerType s)</div>
+            <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString("G29")" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
         }
         @for (int j = 0; j < rS.Legs.Count; j++)
         {
             ReviewLeg rL = rS.Legs[j];
             int num = j + 1;
-            <div class="font-weight-bold">Leg @num: </div><div>@rL.Length"</div>
-            if (i < rS.Legs.Count - 1)
-            {
-                <div class="font-weight-bold">Bend @num: </div><div>@rL.Degree&#176;, @rL.Mandrel Mandrel</div>
-            }
+            <div>
+                <span class="font-weight-bold">Leg @num: </span><span>@rL.Length"</span>
+                @if (j < rS.Legs.Count - 1)
+                {
+                    <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                }
+            </div>
         }
         <div class="text-center">
-            <div class="font-weight-bold">Remnants: </div>
+            <span class="font-weight-bold">Remnants: </span>
             @for (int j = 0; j < rS.Remnants.Count; j++)
             {
                 Remnant r = rS.Remnants[j];
                 string comma = "";
                 string used = "Will Be";
-                if (i < rS.Remnants.Count - 1)
+                if (j < rS.Remnants.Count - 1)
                 {
                     comma = ",";
                 }
@@ -69,7 +80,7 @@
                 {
                     used = "Not";
                 }
-                <div>(@r.Length" x @r.Qty) @used Used Again @comma</div>
+                <span>(@r.Length.ToString("G29")" x @r.Qty) @used Used Again<span>@comma</span></span>
             }
         </div>
     }
