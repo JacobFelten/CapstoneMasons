@@ -246,17 +246,18 @@ namespace CapstoneMasons.Controllers
             rSList.Sort((a, b) => b.CutLength.CompareTo(a.CutLength));
             for (int i = 0; i < rSList.Count; i++)
             {
+                int shapesLeft = rSList[i].Qty;
+                List<CutInstruction> cIList = new List<CutInstruction>();
+                List<Remnant> rList = new List<Remnant>();
                 if (i == 0) //First Shape
                 {
                     //The first shape is the longest so it won't use remnants
                     rSList[i] = FillShapeNotUsingRemnants(rSList[i]);
+                    shapesLeft = 0;
                 }
                 else //Not first
                 {
                     List<Remnant> remnants = GetRemnants(rSList);
-                    List<CutInstruction> cIList = new List<CutInstruction>();
-                    List<Remnant> rList = new List<Remnant>();
-                    int shapesLeft = rSList[i].Qty;
                     bool useRemnants = false;
                     remnants.Sort((a, b) => a.Length.CompareTo(b.Length));
                     for (int rIndex = 0; rIndex < remnants.Count; rIndex++)
@@ -273,10 +274,11 @@ namespace CapstoneMasons.Controllers
                             int perBar = GetShapesPerBar(rSList[i].CutLength, remnants[rIndex].Length, out remnant);
                             int forQty = 0;
                             //This IF sees if the qty of shapes needed is more than there
-                            //are remnants of this size.
+                            //are remnants of this size OR if the qty of shapes needed can be
+                            //fulfilled with just one remnant.
                             //
                             //THE ELSE OF THIS IF STATEMENT STILL NEEDS TO BE CODED
-                            if ((shapesLeft > perBar * remnants[rIndex].Qty) || true)
+                            if (shapesLeft > perBar * remnants[rIndex].Qty || shapesLeft <= perBar)
                             {
                                 forQty = remnants[rIndex].Qty;
                                 if (perBar <= shapesLeft)
@@ -294,6 +296,7 @@ namespace CapstoneMasons.Controllers
                                         PerType = "Remnant",
                                         ForQty = forQty
                                     });
+                                    shapesLeft -= perBar * forQty;
                                 }
                                 decimal finalRemnant;
                                 int finalPerBar;
@@ -312,29 +315,18 @@ namespace CapstoneMasons.Controllers
                                         PerType = "Remnant",
                                         ForQty = 1
                                     });
+                                    shapesLeft -= finalPerBar;
                                 }
-
-                                ReviewShape tempRS = new ReviewShape
-                                {
-                                    Qty = rSList[i].Qty - (remnants[rIndex].Qty * perBar),
-                                    CutLength = rSList[i].CutLength
-                                };
-
-                                //This is for the remaining shapes that there weren't enough
-                                //remnants for.
-                                if (tempRS.Qty > 0)
-                                {
-                                    tempRS = FillShapeNotUsingRemnants(tempRS);
-
-                                    foreach (CutInstruction cI in tempRS.Instructions)
-                                        cIList.Add(cI);
-                                    foreach (Remnant r in tempRS.Remnants)
-                                        rList.Add(r);
-
-                                    rSList[i].NumOfBars = tempRS.NumOfBars;
-                                }
-                                rIndex = remnants.Count; //Force end the loop
                             }
+                            else
+                            {
+
+                            }
+
+                            if (shapesLeft == 0)
+                                rIndex = remnants.Count; //Force end the loop
+                            else if (shapesLeft < 0)
+                                throw new Exception();
                         }
                     }
                     if (!useRemnants)
@@ -343,6 +335,29 @@ namespace CapstoneMasons.Controllers
                     {
                         rSList[i].Instructions = cIList;
                         rSList[i].Remnants = rList;
+                    }
+                }
+
+                if (shapesLeft > 0)
+                {
+                    ReviewShape tempRS = new ReviewShape
+                    {
+                        Qty = shapesLeft,
+                        CutLength = rSList[i].CutLength
+                    };
+
+                    //This is for the remaining shapes that there weren't enough
+                    //remnants for.
+                    if (tempRS.Qty > 0)
+                    {
+                        tempRS = FillShapeNotUsingRemnants(tempRS);
+
+                        foreach (CutInstruction cI in tempRS.Instructions)
+                            cIList.Add(cI);
+                        foreach (Remnant r in tempRS.Remnants)
+                            rList.Add(r);
+
+                        rSList[i].NumOfBars = tempRS.NumOfBars;
                     }
                 }
             }
@@ -357,7 +372,8 @@ namespace CapstoneMasons.Controllers
             {
                 if (rS.Remnants != null)
                     foreach (Remnant r in rS.Remnants)
-                        result.Add(r);
+                        if (!r.UsedAgain)
+                            result.Add(r);
             }
             return result;
         }
