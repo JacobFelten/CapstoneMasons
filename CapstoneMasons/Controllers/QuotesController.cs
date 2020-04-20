@@ -68,7 +68,7 @@ namespace CapstoneMasons.Controllers
 
         public async Task<IActionResult> ReviewQuote(Quote q)
         {
-            q = await DummyQuote(); //THIS IS ONLY FOR TESTING
+            q = DummyQuote3(); //THIS IS ONLY FOR TESTING
 
             ReviewQuote rQ = new ReviewQuote();
             rQ.QuoteID = q.QuoteID; //done
@@ -276,7 +276,7 @@ namespace CapstoneMasons.Controllers
                             //are remnants of this size.
                             //
                             //THE ELSE OF THIS IF STATEMENT STILL NEEDS TO BE CODED
-                            if (shapesLeft > perBar * remnants[rIndex].Qty)
+                            if ((shapesLeft > perBar * remnants[rIndex].Qty) || true)
                             {
                                 forQty = remnants[rIndex].Qty;
                                 if (perBar <= shapesLeft)
@@ -322,14 +322,17 @@ namespace CapstoneMasons.Controllers
 
                                 //This is for the remaining shapes that there weren't enough
                                 //remnants for.
-                                tempRS = FillShapeNotUsingRemnants(tempRS);
+                                if (tempRS.Qty > 0)
+                                {
+                                    tempRS = FillShapeNotUsingRemnants(tempRS);
 
-                                foreach (CutInstruction cI in tempRS.Instructions)
-                                    cIList.Add(cI);
-                                foreach (Remnant r in tempRS.Remnants)
-                                    rList.Add(r);
+                                    foreach (CutInstruction cI in tempRS.Instructions)
+                                        cIList.Add(cI);
+                                    foreach (Remnant r in tempRS.Remnants)
+                                        rList.Add(r);
 
-                                rSList[i].NumOfBars = tempRS.NumOfBars;
+                                    rSList[i].NumOfBars = tempRS.NumOfBars;
+                                }
                                 rIndex = remnants.Count; //Force end the loop
                             }
                         }
