@@ -279,19 +279,22 @@ namespace CapstoneMasons.Controllers
                             if (shapesLeft > perBar * remnants[rIndex].Qty)
                             {
                                 forQty = remnants[rIndex].Qty;
-                                rList.Add(new Remnant
+                                if (perBar <= shapesLeft)
                                 {
-                                    Length = remnant,
-                                    Qty = remnants[rIndex].Qty,
-                                    UsedAgain = false
-                                });
-                                cIList.Add(new CutInstruction
-                                {
-                                    CutQty = perBar,
-                                    PerLength = remnants[rIndex].Length,
-                                    PerType = "Remnant",
-                                    ForQty = forQty
-                                });
+                                    rList.Add(new Remnant
+                                    {
+                                        Length = remnant,
+                                        Qty = remnants[rIndex].Qty,
+                                        UsedAgain = false
+                                    });
+                                    cIList.Add(new CutInstruction
+                                    {
+                                        CutQty = perBar,
+                                        PerLength = remnants[rIndex].Length,
+                                        PerType = "Remnant",
+                                        ForQty = forQty
+                                    });
+                                }
                                 decimal finalRemnant;
                                 int finalPerBar;
                                 if (GetShapesPerFinalBar(shapesLeft, rSList[i].CutLength, remnants[rIndex].Length, out finalRemnant, out finalPerBar))
@@ -362,19 +365,22 @@ namespace CapstoneMasons.Controllers
             List<CutInstruction> cIList = new List<CutInstruction>();
             decimal remnant;
             int perBar = GetShapesPerBar(rS.CutLength, 240, out remnant);
-            rList.Add(new Remnant
+            if (perBar <= rS.Qty)
             {
-                Length = remnant,
-                Qty = rS.Qty / perBar,
-                UsedAgain = false
-            });
-            cIList.Add(new CutInstruction
-            {
-                CutQty = perBar,
-                PerLength = 240,
-                PerType = "Bar",
-                ForQty = rS.Qty / perBar
-            });
+                rList.Add(new Remnant
+                {
+                    Length = remnant,
+                    Qty = rS.Qty / perBar,
+                    UsedAgain = false
+                });
+                cIList.Add(new CutInstruction
+                {
+                    CutQty = perBar,
+                    PerLength = 240,
+                    PerType = "Bar",
+                    ForQty = rS.Qty / perBar
+                });
+            }
             decimal finalRemnant;
             int finalPerBar;
             //The code before this IF calulates remnants and instructions from cutting from
@@ -834,6 +840,150 @@ namespace CapstoneMasons.Controllers
                 Open = false
             };
             return quote2;
+        }
+        
+        private Quote DummyQuote2()
+        {
+            var leg1 = new Leg
+            {
+                LegID = 1,
+                Length = 72
+            };
+            var shape1 = new Shape
+            {
+                ShapeID = 1,
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg1 },
+                Qty = 25,
+                NumCompleted = 0,
+            };
+            var cost1 = new Cost
+            {
+                CostID = 1,
+                Name = "6 Bar",
+                Price = 20,
+                LastChanged = new DateTime()
+            };
+            var cost2 = new Cost
+            {
+                CostID = 2,
+                Name = "6 Cut",
+                Price = 0.40m,
+                LastChanged = new DateTime()
+            };
+            var cost3 = new Cost
+            {
+                CostID = 3,
+                Name = "Setup",
+                Price = 15,
+                LastChanged = new DateTime()
+            };
+            var quote = new Quote
+            {
+                QuoteID = 1,
+                Name = "Billy's Concrete",
+                OrderNum = "654312",
+                Shapes = { shape1 },
+                Costs = { cost1, cost2, cost3 },
+                DateQuoted = DateTime.Now,
+                PickedUp = false,
+                Open = false
+            };
+            return quote;
+        }
+
+        private Quote DummyQuote3()
+        {
+            var leg1 = new Leg
+            {
+                LegID = 1,
+                Length = 120
+            };
+            var shape1 = new Shape
+            {
+                ShapeID = 1,
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg1 },
+                Qty = 1,
+                NumCompleted = 0,
+            };
+            var leg2 = new Leg
+            {
+                LegID = 2,
+                Length = 60
+            };
+            var shape2 = new Shape
+            {
+                ShapeID = 2,
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg2 },
+                Qty = 1,
+                NumCompleted = 0,
+            };
+            var leg3 = new Leg
+            {
+                LegID = 3,
+                Length = 24
+            };
+            var shape3 = new Shape
+            {
+                ShapeID = 3,
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg3 },
+                Qty = 1,
+                NumCompleted = 0,
+            };
+            var leg4 = new Leg
+            {
+                LegID = 4,
+                Length = 12
+            };
+            var shape4 = new Shape
+            {
+                ShapeID = 4,
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg4 },
+                Qty = 1,
+                NumCompleted = 0,
+            };
+            var cost1 = new Cost
+            {
+                CostID = 1,
+                Name = "6 Bar",
+                Price = 20,
+                LastChanged = new DateTime()
+            };
+            var cost2 = new Cost
+            {
+                CostID = 2,
+                Name = "6 Cut",
+                Price = 0.40m,
+                LastChanged = new DateTime()
+            };
+            var cost3 = new Cost
+            {
+                CostID = 3,
+                Name = "Setup",
+                Price = 15,
+                LastChanged = new DateTime()
+            };
+            var quote = new Quote
+            {
+                QuoteID = 1,
+                Name = "Jill's Concrete",
+                OrderNum = "987654",
+                Shapes = { shape1, shape2, shape3, shape4 },
+                Costs = { cost1, cost2, cost3 },
+                DateQuoted = DateTime.Now,
+                PickedUp = false,
+                Open = false
+            };
+            return quote;
         }
         #endregion
     }
