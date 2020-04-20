@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CapstoneMasons.Models.Quote>
+﻿@model IEnumerable<OpenQuote>
 
 @{
     ViewData["Title"] = "Index";
@@ -10,48 +10,24 @@
     <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderNum)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateQuoted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PickedUp)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Open)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (OpenQuote q in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderNum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateQuoted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PickedUp)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Open)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.QuoteID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.QuoteID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.QuoteID">Delete</a>
+                <div>
+                    <h3 class="text-center">@q.Name</h3>
+                    <h4 class="text-center">$@q.TotalCost</h4>
+                @for(int i = 0; i < q.Shapes.Count; i++)
+                {
+                    <div>
+                        <div class="float-left">@(i)st Shapes: @("#" + q.Shapes[i].BarSize) Bar, @q.Shapes[i].LegCount Legs</div>
+                        <div class="float-right">Completed: @(q.Shapes[i].NumCompleted + "/" + q.Shapes[i].Qty)</div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="@q.Shapes[i].NumCompleted" aria-valuemin="0" aria-valuemax="@q.Shapes[i].Qty">@(q.Shapes[i].NumCompleted / q.Shapes[i].Qty)%</div>
+                        </div>
+                    </div>
+                }
+                </div>
             </td>
         </tr>
 }
