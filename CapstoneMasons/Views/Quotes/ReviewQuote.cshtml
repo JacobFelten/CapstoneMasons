@@ -8,80 +8,162 @@
     .line {
         display: inline;
     }
+
+    .shape {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .leg {
+        margin-left: 10%;
+    }
+
+    .shape-header {
+        background-color: lightblue;
+    }
+    
+    .quote-header {
+        background-color: white;
+    }
+
+    .quote-body {
+        background-color: lightgray;
+    }
 </style>
 
 <h1>Review Quote</h1>
 
-<div>
-    <h1 class="text-center">Total Cost: @Model.TotalCost.ToString("c")</h1>
-    @foreach (UsedBar uB in Model.BarsUsed)
-    {
-        <div class="text-center"><span class="font-weight-bold">#@uB.BarSize Bars Used: </span>@uB.NumOfBars (@uB.BarCost.ToString("c") ea.) + @uB.NumOfCuts Cuts (@uB.CutCost.ToString("c") ea.) + @uB.NumOfBends Bends (@uB.BendCost.ToString("c") ea.)</div>
-    }
-    <div class="text-center"><div class="font-weight-bold">Setup Charge: </div>@Model.SetUpCharge.ToString("c")</div>
-    @foreach (RemnantList rL in Model.FinalRemnants)
-    {
-        <div class="text-center">
-            <span class="font-weight-bold">#@rL.BarSize Remnants: </span>
-            @for (int i = 0; i < rL.Remnants.Count; i++)
-            {
-                Remnant r = rL.Remnants[i];
-                string comma = "";
-                if (i < rL.Remnants.Count - 1)
-                {
-                    comma = ",";
-                }
-                <span>(@r.Length.ToString("G29")" x @r.Qty)@comma</span>
-            }
-        </div>
-    }
-
-    <h1 class="text-center">___________________________________________________</h1>
-    <h1 class="text-center">___________________________________________________</h1>
-    <h1 class="text-center">___________________________________________________</h1>
-
-    <h1 class="text-center">Instructions</h1>
-    <div class="text-center">Perform cuts in the following order.</div>
-
-    @for (int i = 0; i < Model.Shapes.Count; i++)
-    {
-        ReviewShape rS = Model.Shapes[i];
-        <h1 class="text-center">___________________________________________________</h1>
-        <h2 class="text-center"><span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(x @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed <a asp-action="Index">Edit</a><a asp-action="Index">Delete</a></h2>
-        <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString("G29")"</div>
-        @foreach (CutInstruction cI in rS.Instructions)
+<div class="card container">
+    <div class="card-header quote-header">
+        <form method="post">
+            <input type="hidden" value="@Model.QuoteID" name="quoteID" />
+            <div class="form-group">
+                <label>Quote Name:</label>
+                <input class="form-control" value="@Model.Name" name="name" />
+            </div>
+            <div class="form-group">
+                <label>Order Number:</label>
+                <input class="form-control" value="@Model.OrderNum" name="orderNumber" />
+            </div>
+            <div class="row">
+                <div class="col form-group">
+                    <label>Apply Discount ($ amount to be subtracted from Total Cost):</label>
+                    <input class="form-control" value="@Model.Discount" name="discount" />
+                </div>
+                <div class="col form-group">
+                    <p>Apply Setup Charge:</p>
+                    <div>
+                        <label for="automatic">Automatic</label>
+                        @if (Model.AddSetup == null)
+                        {
+                            <input type="radio" name="setup" value="null" id="automatic" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" name="setup" value="null" id="automatic" />
+                        }
+                    </div>
+                    <div>
+                        <label for="yes">Yes</label>
+                        @if (Model.AddSetup == true)
+                        {
+                            <input type="radio" name="setup" value="true" id="yes" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" name="setup" value="true" id="yes" />
+                        }
+                    </div>
+                    <div>
+                        <label for="no">No</label>
+                        @if (Model.AddSetup == false)
+                        {
+                            <input type="radio" name="setup" value="false" id="no" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" name="setup" value="false" id="no" />
+                        }
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Quote</button>
+        </form>
+    </div>
+    <div class="card-body quote-body">
+        <h1 class="text-center">Total Cost: @Model.TotalCost.ToString("c")</h1>
+        @if (Model.Discount != 0)
         {
-            <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString("G29")" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
+            <div class="text-center">Total Cost Before Discount: @((Model.TotalCost + Model.Discount).ToString("c"))</div>
         }
-        @for (int j = 0; j < rS.Legs.Count; j++)
+        @foreach (UsedBar uB in Model.BarsUsed)
         {
-            ReviewLeg rL = rS.Legs[j];
-            int num = j + 1;
-            <div>
-                <span class="font-weight-bold">Leg @num: </span><span>@rL.Length"</span>
-                @if (j < rS.Legs.Count - 1)
+            <div class="text-center"><span class="font-weight-bold">#@uB.BarSize Bars Used: </span>@uB.NumOfBars (@uB.BarCost.ToString("c") ea.) + @uB.NumOfCuts Cuts (@uB.CutCost.ToString("c") ea.) + @uB.NumOfBends Bends (@uB.BendCost.ToString("c") ea.)</div>
+        }
+        <div class="text-center"><div class="font-weight-bold">Setup Charge: </div>@Model.SetUpCharge.ToString("c")</div>
+        @foreach (RemnantList rL in Model.FinalRemnants)
+        {
+            <div class="text-center">
+                <span class="font-weight-bold">#@rL.BarSize Remnants: </span>
+                @for (int i = 0; i < rL.Remnants.Count; i++)
                 {
-                    <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                    Remnant r = rL.Remnants[i];
+                    string comma = "";
+                    if (i < rL.Remnants.Count - 1)
+                    {
+                        comma = ",";
+                    }
+                    <span>(@r.Length.ToString("G29")" x @r.Qty)@comma</span>
                 }
             </div>
         }
-        <div class="text-center">
-            <span class="font-weight-bold">Remnants: </span>
-            @for (int j = 0; j < rS.Remnants.Count; j++)
-            {
-                Remnant r = rS.Remnants[j];
-                string comma = "";
-                string used = "Will Be";
-                if (j < rS.Remnants.Count - 1)
+
+        <h1 class="text-center">Instructions</h1>
+        <div class="text-center">Perform cuts in the following order.</div>
+
+        @for (int i = 0; i < Model.Shapes.Count; i++)
+        {
+            ReviewShape rS = Model.Shapes[i];
+            <div class="card container shape">
+                <div class="card-header shape-header">
+                    <h2 class="text-center"><span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(x @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed <a asp-action="Index">Edit</a> | <a asp-action="Index">Delete</a></h2>
+                </div>
+                <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString("G29")"</div>
+                @foreach (CutInstruction cI in rS.Instructions)
                 {
-                    comma = ",";
+                    <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString("G29")" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
                 }
-                if (!r.UsedAgain)
+                @for (int j = 0; j < rS.Legs.Count; j++)
                 {
-                    used = "Not";
+                    ReviewLeg rL = rS.Legs[j];
+                    int num = j + 1;
+                    <div class="leg">
+                        <span class="font-weight-bold">Leg @num: </span><span>@rL.Length"</span>
+                        @if (j < rS.Legs.Count - 1)
+                        {
+                            <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                        }
+                    </div>
                 }
-                <span>(@r.Length.ToString("G29")" x @r.Qty) @used Used Again<span>@comma</span></span>
-            }
-        </div>
-    }
+                <div class="text-center">
+                    <span class="font-weight-bold">Remnants: </span>
+                    @for (int j = 0; j < rS.Remnants.Count; j++)
+                    {
+                        Remnant r = rS.Remnants[j];
+                        string comma = "";
+                        string used = "Will Be";
+                        if (j < rS.Remnants.Count - 1)
+                        {
+                            comma = ",";
+                        }
+                        if (!r.UsedAgain)
+                        {
+                            used = "Not";
+                        }
+                        <span>(@r.Length.ToString("G29")" x @r.Qty) @used Used Again<span>@comma</span></span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 </div>
