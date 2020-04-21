@@ -215,7 +215,7 @@ namespace CapstoneMasons.Controllers
                 rS.ShapeID = s.ShapeID;
                 rS.Qty = s.Qty;
                 rS.BarSize = s.BarSize;
-                rS.CutLength = await CalculateShapeLengthAsync(s);
+                rS.CutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
                 rS.Legs = await CreateLegsAsync(s);
                 rSList.Add(rS);
             }
@@ -276,10 +276,6 @@ namespace CapstoneMasons.Controllers
                     remnants.Sort((a, b) => a.Length.CompareTo(b.Length));
                     for (int rIndex = 0; rIndex < remnants.Count; rIndex++)
                     {
-                        if (i == 2 && rIndex == 1)
-                        {
-
-                        }
                         //While looping through all the remnants this checks if the remnant
                         //is long enough to make the shape from.
                         if (rSList[i].CutLength < remnants[rIndex].Length)
@@ -1108,28 +1104,24 @@ namespace CapstoneMasons.Controllers
             var mandrel2 = await repoF.GetMandrelByIdAsync(3);
             var leg1 = new Leg
             {
-                LegID = 1,
                 Length = 60,
                 Degree = 45,
                 Mandrel = mandrel1
             };
             var leg2 = new Leg
             {
-                LegID = 2,
                 Length = 25,
                 Degree = 90,
                 Mandrel = mandrel1
             };
             var leg3 = new Leg
             {
-                LegID = 3,
                 Length = 120,
                 Degree = 0,
                 Mandrel = null
             };
             var shape1 = new Shape
             {
-                ShapeID = 1,
                 BarSize = 3,
                 LegCount = 3,
                 Legs = { leg1, leg2, leg3 },
@@ -1138,14 +1130,12 @@ namespace CapstoneMasons.Controllers
             };
             var leg4 = new Leg
             {
-                LegID = 3,
                 Length = 24,
                 Degree = 0,
                 Mandrel = null
             };
             var shape2 = new Shape
             {
-                ShapeID = 2,
                 BarSize = 3,
                 LegCount = 3,
                 Legs = { leg4 },
@@ -1154,35 +1144,30 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                CostID = 1,
                 Name = "3 Bar",
                 Price = 5,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                CostID = 2,
                 Name = "3 Cut",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             var cost3 = new Cost
             {
-                CostID = 3,
                 Name = "3 Bend",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             var cost4 = new Cost
             {
-                CostID = 4,
                 Name = "Setup",
                 Price = 15,
                 LastChanged = new DateTime()
             };
             var quote = new Quote
             {
-                QuoteID = 1,
                 Name = "Jeff's Bucket 'O Bar",
                 OrderNum = "420-69",
                 Shapes = { shape1, shape2 },
