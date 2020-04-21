@@ -18,5 +18,6 @@ namespace CapstoneMasons.Models
         }
         public int Qty { get; set; }
         public int NumCompleted { get; set; } //After Review
+        public string Img { get; set; }
     }
 }

@@ -20,6 +20,9 @@ namespace CapstoneMasons.Repositories
         public Task<Quote> GetQuoteByIdAsync(int? id);
 
         public Task<bool> UpdateQuoteAsync(Quote oldQ, Quote newQ);
+
+        public Task UpdateQuoteSimpleAsync(Quote q, string prop, string value);
+
         public Task<bool> UpdateCostAsync(Cost oldC, Cost newC);
     }
 }
