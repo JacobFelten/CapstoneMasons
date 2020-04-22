@@ -94,6 +94,29 @@ namespace CapstoneMasons.Repositories
             }
             return Task.FromResult<bool>(result);
         }
+
+        public Task UpdateQuoteSimpleAsync(Quote q, string prop, string value)
+        {
+            switch (prop)
+            {
+                case nameof(Quote.Name):
+                    q.Name = value;
+                    break;
+                case nameof(Quote.OrderNum):
+                    q.OrderNum = value;
+                    break;
+                case nameof(Quote.PickedUp):
+                    q.PickedUp = bool.Parse(value);
+                    break;
+                case nameof(Quote.Open):
+                    q.Open = bool.Parse(value);
+                    break;
+                default:
+                    throw new Exception(message: "Not a valid prop");
+            }
+            return Task.CompletedTask;
+        }
+
         public Task<bool> UpdateCostAsync(Cost oldC, Cost newC)
         {
             bool result = false;

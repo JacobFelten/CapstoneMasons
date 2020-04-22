@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CapstoneMasons.Models;
@@ -103,6 +104,40 @@ namespace CapstoneMasons.Repositories
             }
             return Task.FromResult<bool>(result);
         }
+
+        public Task UpdateQuoteSimpleAsync(Quote q, string prop, string value)
+        {
+            switch (prop)
+            {
+                case nameof(Quote.Name):
+                    q.Name = value;
+                    break;
+                case nameof(Quote.OrderNum):
+                    q.OrderNum = value;
+                    break;
+                case nameof(Quote.Discount):
+                    q.Discount = decimal.Parse(value);
+                    break;
+                case nameof(Quote.AddSetup):
+                    if (value == "null")
+                        q.AddSetup = null;
+                    else
+                        q.AddSetup = bool.Parse(value);
+                    break;
+                case nameof(Quote.PickedUp):
+                    q.PickedUp = bool.Parse(value);
+                    break;
+                case nameof(Quote.Open):
+                    q.Open = bool.Parse(value);
+                    break;
+                default:
+                    throw new Exception(message: "Not a valid prop");
+            }
+            context.Quotes.Update(q);
+            context.SaveChanges();
+            return Task.CompletedTask;
+        }
+
         public Task<IQueryable<Cost>> BarCosts
         {
             get

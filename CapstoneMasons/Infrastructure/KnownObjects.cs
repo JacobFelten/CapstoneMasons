@@ -8,6 +8,8 @@ namespace CapstoneMasons.Infrastructure
 {
     public static class KnownObjects
     {
+        public static List<string> NumberPrefix = new List<string> { "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th", "13th" };
+
         public static List<int> ValidRebarSizes = new List<int> { 3, 4, 5, 6 };
 
         public static Mandrel NoneMandrel = new Mandrel

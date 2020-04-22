@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CapstoneMasons.Migrations
 {
-    public partial class migrations : Migration
+    public partial class migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -70,7 +70,10 @@ namespace CapstoneMasons.Migrations
                     OrderNum = table.Column<string>(nullable: true),
                     DateQuoted = table.Column<DateTime>(nullable: false),
                     PickedUp = table.Column<bool>(nullable: false),
-                    Open = table.Column<bool>(nullable: false)
+                    Open = table.Column<bool>(nullable: false),
+                    AddSetup = table.Column<bool>(nullable: true),
+                    Discount = table.Column<decimal>(nullable: false),
+                    UseFormulas = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
