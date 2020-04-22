@@ -1,4 +1,4 @@
-﻿@model IEnumerable<OpenQuote>
+﻿@model OpenQuote
 
 @{
     ViewData["Title"] = "Index";
@@ -11,22 +11,25 @@
 </p>
 <table class="table">
     <tbody>
-@foreach (OpenQuote q in Model) {
+@foreach (Quote q in Model.Quotes) {
         <tr>
             <td>
                 <div>
                     <h3 class="text-center">@q.Name</h3>
-                    <h4 class="text-center">$@q.TotalCost</h4>
-                @for(int i = 0; i < q.Shapes.Count; i++)
-                {
+                    <h4 class="text-center">$@Model.TotalCost</h4>
                     <div>
-                        <div class="float-left">@(i)st Shapes: @("#" + q.Shapes[i].BarSize) Bar, @q.Shapes[i].LegCount Legs</div>
-                        <div class="float-right">Completed: @(q.Shapes[i].NumCompleted + "/" + q.Shapes[i].Qty)</div>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="@q.Shapes[i].NumCompleted" aria-valuemin="0" aria-valuemax="@q.Shapes[i].Qty">@(q.Shapes[i].NumCompleted / q.Shapes[i].Qty)%</div>
-                        </div>
+                        @for (int i = 0; i < q.Shapes.Count; i++)
+                        {
+                            string percentage = (((decimal)q.Shapes[i].NumCompleted / (decimal)q.Shapes[i].Qty) * 100).ToString("n0");
+                            <div class="row">
+                                <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + q.Shapes[i].BarSize) Bar, @q.Shapes[i].LegCount Legs</div>
+                                <div class="text-right col">Completed: @(q.Shapes[i].NumCompleted + "/" + q.Shapes[i].Qty)</div>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@q.Shapes[i].NumCompleted" aria-valuemin="0" aria-valuemax="@q.Shapes[i].Qty">@percentage%</div>
+                            </div>
+                        }
                     </div>
-                }
                 </div>
             </td>
         </tr>
