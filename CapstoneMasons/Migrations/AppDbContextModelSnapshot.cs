@@ -169,6 +169,9 @@ namespace CapstoneMasons.Migrations
                     b.Property<int>("BarSize")
                         .HasColumnType("int");
 
+                    b.Property<string>("Img")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("LegCount")
                         .HasColumnType("int");
 
