@@ -25,7 +25,15 @@ namespace CapstoneMasons.Controllers
         // GET: Quotes
         public async Task<IActionResult> Index()
         {
-            return View(await repo.Quotes);
+            OpenQuote open = new OpenQuote();
+            Quote q = await DummyQuote();
+            if(open.Quotes.Count == 0)
+            {
+                open.Quotes.Add(q);
+            }
+            ReviewQuote rvQ = await FillReviewQuote(open.Quotes[0]);
+            open.TotalCost = rvQ.TotalCost;
+            return View(open);
         }
 
         // GET: Quotes/Details/5
@@ -810,6 +818,36 @@ namespace CapstoneMasons.Controllers
             return quote;
         }
 
+        private async Task<ReviewQuote> FillReviewQuote(Quote q) 
+        {
+            ReviewQuote rQ = new ReviewQuote();
+            rQ.QuoteID = q.QuoteID; //done
+            rQ.Name = q.Name; //done
+            rQ.OrderNum = q.OrderNum; //done
+            rQ.AddSetup = q.AddSetup;
+            rQ.Discount = q.Discount;
+
+            //After filling the shapes with instructions the shapes are sorted by bar size
+            //then by shape length so the instructions make sense.
+            rQ.Shapes = await CreateShapesAsync(q);
+            IOrderedEnumerable<ReviewShape> orderedEnumerable = rQ.Shapes.OrderBy(s => s.BarSize).ThenByDescending(s => s.CutLength);
+            List<ReviewShape> rSList = new List<ReviewShape>();
+            foreach (ReviewShape rS in orderedEnumerable)
+                rSList.Add(rS);
+            rQ.Shapes = rSList; // done
+
+            rQ.BarsUsed = CalculateBarsUsed(rSList, q); //done
+
+            rQ.TotalCost = CalculateTotalCost(rQ.BarsUsed); //done
+            rQ.SetUpCharge = CalculateSetUp(q, rQ.BarsUsed); //Done
+            rQ.TotalCost += rQ.SetUpCharge; //done
+            rQ.TotalCost -= rQ.Discount; //done
+
+            rQ.FinalRemnants = CalculateFinalRemnants(rSList); //done
+
+            return rQ;
+        }
+
         #region Jacob's Dummy thicc data for testing ma view
         private async Task<Quote> DummyQuote()
         {
@@ -871,7 +909,7 @@ namespace CapstoneMasons.Controllers
                 LegCount = 2,
                 Legs = { leg1, leg2 },
                 Qty = 30,
-                NumCompleted = 0
+                NumCompleted = 27
             };
             var shape3 = new Shape
             {
@@ -880,7 +918,7 @@ namespace CapstoneMasons.Controllers
                 LegCount = 2,
                 Legs = { leg3, leg4 },
                 Qty = 60,
-                NumCompleted = 0
+                NumCompleted = 5
             };
             var shape4 = new Shape
             {
@@ -889,7 +927,7 @@ namespace CapstoneMasons.Controllers
                 LegCount = 3,
                 Legs = { leg5, leg6, leg7 },
                 Qty = 40,
-                NumCompleted = 0
+                NumCompleted = 3
             };
             var cost1 = new Cost
             {
