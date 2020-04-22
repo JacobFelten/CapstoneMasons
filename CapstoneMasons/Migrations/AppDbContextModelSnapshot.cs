@@ -130,8 +130,14 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool?>("AddSetup")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("DateQuoted")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -143,6 +149,9 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PickedUp")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("UseFormulas")
                         .HasColumnType("bit");
 
                     b.HasKey("QuoteID");
