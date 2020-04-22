@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneMasons.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200416234208_migration")]
-    partial class migration
+    [Migration("20200422155931_migrations")]
+    partial class migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -170,6 +170,9 @@ namespace CapstoneMasons.Migrations
 
                     b.Property<int>("BarSize")
                         .HasColumnType("int");
+
+                    b.Property<string>("Img")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LegCount")
                         .HasColumnType("int");
