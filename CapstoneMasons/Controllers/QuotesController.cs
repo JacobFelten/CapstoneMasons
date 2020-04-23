@@ -27,10 +27,11 @@ namespace CapstoneMasons.Controllers
         {
             OpenQuote open = new OpenQuote();
             Quote q = await DummyQuote();
-            if(open.Quotes.Count == 0)
+            if((await repo.Quotes).Count == 0)
             {
-                open.Quotes.Add(q);
+                await repo.AddQuoteAsync(q);
             }
+            open.Quotes = await repo.Quotes;
             ReviewQuote rvQ = await FillReviewQuote(open.Quotes[0]);
             open.TotalCost = rvQ.TotalCost;
             return View(open);
@@ -855,56 +856,48 @@ namespace CapstoneMasons.Controllers
             var mandrel2 = await repoF.GetMandrelByIdAsync(3);
             var leg1 = new Leg
             {
-                LegID = 1,
                 Length = 36,
                 Degree = 90,
                 Mandrel = mandrel2
             };
             var leg2 = new Leg
             {
-                LegID = 2,
                 Length = 36,
                 Degree = 0,
                 Mandrel = null
             };
             var leg3 = new Leg
             {
-                LegID = 3,
                 Length = 12,
                 Degree = 90,
                 Mandrel = mandrel2
             };
             var leg4 = new Leg
             {
-                LegID = 4,
                 Length = 12,
                 Degree = 0,
                 Mandrel = null
             };
             var leg5 = new Leg
             {
-                LegID = 5,
                 Length = 30,
                 Degree = 90,
                 Mandrel = mandrel1
             };
             var leg6 = new Leg
             {
-                LegID = 6,
                 Length = 18,
                 Degree = 90,
                 Mandrel = mandrel1
             };
             var leg7 = new Leg
             {
-                LegID = 7,
                 Length = 30,
                 Degree = 0,
                 Mandrel = null
             };
             var shape2 = new Shape
             {
-                ShapeID = 2,
                 BarSize = 5,
                 LegCount = 2,
                 Legs = { leg1, leg2 },
@@ -913,7 +906,6 @@ namespace CapstoneMasons.Controllers
             };
             var shape3 = new Shape
             {
-                ShapeID = 3,
                 BarSize = 5,
                 LegCount = 2,
                 Legs = { leg3, leg4 },
@@ -922,7 +914,6 @@ namespace CapstoneMasons.Controllers
             };
             var shape4 = new Shape
             {
-                ShapeID = 4,
                 BarSize = 4,
                 LegCount = 3,
                 Legs = { leg5, leg6, leg7 },
@@ -931,56 +922,48 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                CostID = 1,
                 Name = "4 Bar",
                 Price = 10,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                CostID = 2,
                 Name = "4 Cut",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             var cost3 = new Cost
             {
-                CostID = 3,
                 Name = "4 Bend",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             var cost4 = new Cost
             {
-                CostID = 4,
                 Name = "5 Bar",
                 Price = 15,
                 LastChanged = new DateTime()
             };
             var cost5 = new Cost
             {
-                CostID = 5,
                 Name = "5 Cut",
                 Price = 0.33m,
                 LastChanged = new DateTime()
             };
             var cost6 = new Cost
             {
-                CostID = 6,
                 Name = "5 Bend",
                 Price = 0.33m,
                 LastChanged = new DateTime()
             };
             var cost7 = new Cost
             {
-                CostID = 7,
                 Name = "Setup",
                 Price = 15,
                 LastChanged = new DateTime()
             };
             var quote2 = new Quote
             {
-                QuoteID = 2,
                 Name = "Bob's Concrete",
                 OrderNum = "123456",
                 Shapes = { shape2, shape3, shape4 },
