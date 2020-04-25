@@ -4,14 +4,15 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create Quote</h1>
 
-<h4>Quote</h4>
+<h4>Create Shapes</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -37,6 +38,50 @@
                     <input class="form-check-input" asp-for="Open" /> @Html.DisplayNameFor(model => model.Open)
                 </label>
             </div>
+
+            <div class="panel-group" id="checkout-accordion">
+                <div class="panel panel-default checkout-panel" id="panel-billing">
+                    <div class="panel-heading checkout-heading" id="panel-billing-heading" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-billing">
+                        <h4 class="panel-title checkout-acc-title">
+                            <a>Shape</a>
+                        </h4>
+                    </div>
+                    <div id="collapse-billing" class="panel-collapse details collapse in">
+                        <div class="panel-body checkout-inside">
+                            Content First
+                            <button id="toggle-delivery" type="button" class="btn-checkout" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-delivery">Deliver to This Address</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default checkout-panel" id="panel-shipping">
+                    <div class="panel-heading checkout-heading" id="panel-shipping-heading" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-delivery">
+                        <h4 class="panel-title checkout-acc-title">
+                            <a>Delivery Options</a>
+                        </h4>
+                    </div>
+                    <div id="collapse-delivery" class="panel-collapse details collapse">
+                        <div class="panel-body checkout-inside">
+                            Content Second
+                            <button id="toggle-payment" type="button" class="btn-checkout" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-payment">Select Delivery Option</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default checkout-panel" id="panel-payment">
+                    <div class="panel-heading checkout-heading" id="panel-payment-heading" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-payment">
+                        <h4 class="panel-title checkout-acc-title">
+                            <a>Payment</a>
+                        </h4>
+                    </div>
+                    <div id="collapse-payment" class="panel-collapse details collapse">
+                        <div class="panel-body checkout-inside">
+                            Content Third
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -50,4 +95,20 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        //Remove href from shipping and payment from start
+        //$("#panel-shipping-heading").removeAttr("href").css('color', 'gray')
+        //$("#panel-payment-heading").removeAttr("href").css('color', 'gray')
+
+        //after delivery is shown, add href
+        $('#collapse-delivery').on('show.bs.collapse', function () {
+            $("#panel-shipping-heading").css('color', 'black')
+        })
+
+        //after payment is shown, add href
+        $('#collapse-payment').on('show.bs.collapse', function () {
+            $("#panel-payment-heading").css('color', 'black')//.attr("href", "#collapse-payment")
+        })
+    </script>
 }
