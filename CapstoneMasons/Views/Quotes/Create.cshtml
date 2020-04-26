@@ -1,4 +1,4 @@
-﻿@model CapstoneMasons.Models.Quote
+﻿@model CapstoneMasons.ViewModels.CreateQuote
 
 @{
     ViewData["Title"] = "Create";
@@ -22,21 +22,6 @@
                 <label asp-for="OrderNum" class="control-label"></label>
                 <input asp-for="OrderNum" class="form-control" />
                 <span asp-validation-for="OrderNum" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateQuoted" class="control-label"></label>
-                <input asp-for="DateQuoted" class="form-control" />
-                <span asp-validation-for="DateQuoted" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="PickedUp" /> @Html.DisplayNameFor(model => model.PickedUp)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Open" /> @Html.DisplayNameFor(model => model.Open)
-                </label>
             </div>
 
             <div class="panel-group" id="checkout-accordion">
