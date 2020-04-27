@@ -37,6 +37,13 @@ namespace CapstoneMasons.Controllers
             return View(open);
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> Search()
+        //{
+
+        //    return View("Index",);
+        //}
+
         // GET: Quotes/Details/5
         public async Task<IActionResult> Details(int? id)
         {

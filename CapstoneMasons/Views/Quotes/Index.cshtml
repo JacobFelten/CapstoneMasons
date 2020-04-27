@@ -9,6 +9,21 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form>
+    <div class="float-left">
+        <input style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search"/>
+    </div>
+    <div class="float-right">
+        <a class="btn btn-info" style="width: 150px; height: 35px;">Search</a>
+    </div>
+    <div class="float-right" style="padding-right: 4px;">
+        <select style="width: 100px; height: 35px;">
+            <option>Newest</option>
+            <option>Oldest</option>
+        </select>
+    </div>
+    
+</form>
 <table class="table">
     <tbody>
 @foreach (Quote q in Model.Quotes) {
