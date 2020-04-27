@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
 using CapstoneMasons.ViewModels;
+using CapstoneMasons.Logic_Models;
 
 namespace CapstoneMasons.Controllers
 {
@@ -104,12 +105,7 @@ namespace CapstoneMasons.Controllers
 
         public async Task<IActionResult> ReviewQuote(Quote q)
         {
-            if ((await repo.Quotes).Count == 0)//THIS IS ONLY FOR TESTING
-            {
-                await repo.AddQuoteAsync(q);
-            }
-            q = await repo.GetQuoteByIdAsync(5);//THIS IS ONLY FOR TESTING
-            
+            q = await DummyQuote();
 
             ReviewQuote rQ = new ReviewQuote();
             rQ.QuoteID = q.QuoteID; //done
@@ -251,7 +247,16 @@ namespace CapstoneMasons.Controllers
                 rS.ShapeID = s.ShapeID;
                 rS.Qty = s.Qty;
                 rS.BarSize = s.BarSize;
-                rS.CutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                if (q.UseFormulas)
+                {
+                    rS.CutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    rS.CutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
                 rS.Legs = await CreateLegsAsync(s);
                 rSList.Add(rS);
             }
@@ -1015,7 +1020,9 @@ namespace CapstoneMasons.Controllers
                 Costs = { cost1, cost2, cost3, cost4, cost5, cost6, cost7 },
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
-                Open = false
+                Open = false,
+                UseFormulas = false
+                
             };
             return quote2;
         }
