@@ -57,7 +57,27 @@ namespace CapstoneMasons.Controllers
         [HttpGet]
         public IActionResult Create(CreateQuote q)
         {
-            return View(q);
+            List<ReviewShape> Shapes = new List<ReviewShape>();
+            List<ReviewLeg> Legs = new List<ReviewLeg>();
+            foreach(var leg in q.LegsInShapes)
+            {
+                Legs.Add(new ReviewLeg(){});
+            }
+
+            for (var i = 0; i < q.ShapesCount; i++)
+            {
+                Shapes.Add(new ReviewShape()
+                {
+                    Legs = Legs
+                });
+            }
+            ReviewQuote reviewQuote = new ReviewQuote()
+            {
+                Name = q.Name,
+                OrderNum = q.OrderNum,
+                Shapes = Shapes
+            };
+            return View(reviewQuote);
         }
 
         [HttpPost]
@@ -79,7 +99,7 @@ namespace CapstoneMasons.Controllers
             {
                 return Redirect(Url.Action(nameof(Create),q));
             }
-            return Redirect(Url.Action("IndexPopUP", "Home",q));
+            return Redirect(Url.Action("IndexPopUp", "Home",q));
         }
 
         public async Task<IActionResult> ReviewQuote(Quote q)

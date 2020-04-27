@@ -25,7 +25,7 @@ namespace CapstoneMasons.Controllers
             return View();
         }
 
-        public IActionResult IndexPopUP(CreateQuote quote)
+        public IActionResult IndexPopUp(CreateQuote quote)
         {
            ViewBag.ShowPopUp = true;
            return View("Index",quote);
