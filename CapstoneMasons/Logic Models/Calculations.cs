@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CapstoneMasons.Models;
+using CapstoneMasons.Infrastructure;
 
 namespace CapstoneMasons.Logic_Models
 {
@@ -85,6 +86,8 @@ namespace CapstoneMasons.Logic_Models
             {
                 total_shape_length += (((Pi / 180) * crude_legs[angle].Mandrel.Radius) + ((Pi / 180) * K_Factor * Thickness)) * (crude_legs[angle].Degree);
             }
+
+            total_shape_length = Math.Round(total_shape_length * KnownObjects.RoundToNth, MidpointRounding.ToEven) / KnownObjects.RoundToNth;
 
             return total_shape_length; //returns the summation of all the parts of the shape
         }
