@@ -10,11 +10,15 @@ $('#collapse-payment').on('show.bs.collapse', function () {
 })
 
 function validateShapes(shape, legs) {
+    var RebarNum = document.getElementById("RebarNum").innerHTML.options;
     
     document.getElementById("panel-shape" + shape).classList.remove("bg-danger");
     //document.getElementById(`shape${shape}`).classList.add("bg-warning")
     document.getElementById("panel-shape"+shape).classList.add("bg-success");
-    if (legs <= 0) {
+    if (legs <= 0 || RebarNum.selectedIndex) {
         document.getElementById("panel-shape" + shape).classList.add("bg-danger");
     }
+}
+function vaidateRebar(RebarNumb) {
+
 }

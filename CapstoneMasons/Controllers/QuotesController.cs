@@ -55,30 +55,44 @@ namespace CapstoneMasons.Controllers
         }
 
         // GET: Quotes/Create
-        [HttpGet]
         public IActionResult Create(CreateQuote q)
         {
-            List<ReviewShape> Shapes = new List<ReviewShape>();
-            List<ReviewLeg> Legs = new List<ReviewLeg>();
-            foreach(var leg in q.LegsInShapes)
-            {
-                Legs.Add(new ReviewLeg(){});
-            }
+            //refactors CreateQuote to Quote
 
-            for (var i = 0; i < q.ShapesCount; i++)
-            {
-                Shapes.Add(new ReviewShape()
-                {
-                    Legs = Legs
-                });
-            }
-            ReviewQuote reviewQuote = new ReviewQuote()
+            Quote quote = new Quote()
             {
                 Name = q.Name,
-                OrderNum = q.OrderNum,
-                Shapes = Shapes
+                OrderNum = q.OrderNum
             };
-            return View(reviewQuote);
+            for (var i = 0; i < q.ShapesCount; i++)
+            {
+                quote.Shapes.Add(new Shape());
+                List<Leg> Legs = new List<Leg>();
+
+                for (var j = 0; j < q.LegsInShapes[i]; j++)
+                {
+                    quote.Shapes[i].Legs.Add(new Leg() { });
+                }
+            }
+            return View(quote);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Create(Quote q)
+        {
+            if (ModelState.IsValid)
+            {//Refactors  to Quote
+                q.UseFormulas = false;
+                repo.AddQuoteAsync(q);
+                //var quotes = await repo.Quotes;
+                //int quoteId = quotes.Last().QuoteID + 1;
+                //q.QuoteID = quoteId;
+                //quotes.Add(q);
+                //added to repo but not to the database
+
+
+                return Redirect(Url.Action(nameof(ReviewQuote), q));
+            }
+            return View("Create", q);
         }
 
         [HttpPost]
