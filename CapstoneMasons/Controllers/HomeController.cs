@@ -28,6 +28,11 @@ namespace CapstoneMasons.Controllers
             return View();
         }
 
+        public IActionResult NotFinished()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
