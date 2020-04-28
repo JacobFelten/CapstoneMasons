@@ -56,24 +56,73 @@ namespace CapstoneMasons.Controllers
         }
 
         // GET: Quotes/Create
-        public IActionResult Create()
+        public IActionResult Create(CreateQuote q)
         {
-            return View();
+            //refactors CreateQuote to Quote
+
+            Quote quote = new Quote()
+            {
+                Name = q.Name,
+                OrderNum = q.OrderNum
+            };
+            for (var i = 0; i < q.ShapesCount; i++)
+            {
+                quote.Shapes.Add(new Shape());
+                List<Leg> Legs = new List<Leg>();
+
+                for (var j = 0; j < q.LegsInShapes[i]; j++)
+                {
+                    quote.Shapes[i].Legs.Add(new Leg() { });
+                }
+            }
+            return View(quote);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Create(Quote q)
+        {
+            if (ModelState.IsValid)
+            {//Refactors  to Quote
+                q.UseFormulas = false;
+                for (var i = 0; i < q.Shapes.Count; i++)
+                {
+                    for (var j = 0; j < q.Shapes[i].Legs.Count; j++)
+                    {
+                        q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
+                    }
+                }
+                await repo.AddQuoteAsync(q);
+                //var quotes = await repo.Quotes;
+                //int quoteId = quotes.Last().QuoteID + 1;
+                //q.QuoteID = quoteId;
+                //quotes.Add(q);
+                //added to repo but not to the database
+
+
+                return await ReviewQuote(q.QuoteID);
+            }
+            return View("Create", q);
         }
 
-        // POST: Quotes/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        public IActionResult GoToReviewQuote(CreateQuote q)
+        {            
+            //var errors = ModelState.Values.SelectMany(v => v.Errors); testing
+            if (ModelState.IsValid)
+            {
+                return Redirect(Url.Action(nameof(ReviewQuote), q));
+            }
+            return Redirect(Url.Action(nameof(Create), q));
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("QuoteID,Name,OrderNum,DateQuoted,PickedUp,Open")] Quote quote)
+        public IActionResult CreatePost(CreateQuote q)
         {
             if (ModelState.IsValid)
             {
-                await repo.AddQuoteAsync(quote);
-                return RedirectToAction(nameof(Index));
+                return Redirect(Url.Action(nameof(Create),q));
             }
-            return View(quote);
+            return Redirect(Url.Action("IndexPopUp", "Home",q));
         }
 
         public async Task<IActionResult> ReviewQuote(int quoteID)
@@ -82,7 +131,7 @@ namespace CapstoneMasons.Controllers
 
             ReviewQuote rQ = await FillReviewQuote(q);
 
-            return View(rQ);
+            return View("ReviewQuote", rQ);
         }
 
         [HttpPost]

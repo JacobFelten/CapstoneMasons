@@ -1,4 +1,6 @@
-﻿@{
+﻿@model CreateQuote
+
+@{
     ViewData["Title"] = "Home Page";
 }
 <style>
@@ -15,18 +17,28 @@
         /* .... */
     }
 </style>
-    <div class="text-center">
-        <h1 class="display-4" hidden>Masons' Order and Formula Tracker</h1>
-        <p hidden>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<script>
+</script>
 
-        <div class="section-1-container section-container">
-            <div class="container">
-                <div class="row">
-                    <div class="col section-1 section-description">
-                        <h1>Masons' Order and Formula Tracker</h1>
-                        <div class="divider-1"><span></span></div>
-                        <p>Under Construction</p>
-                    </div>
+<div class="text-center">
+    <div id="ShowPopUp" hidden>@ViewBag.ShowPopUp</div>
+    <h1 class="display-4" hidden>Masons' Order and Formula Tracker</h1>
+    <div class="section-1-container section-container">
+        <div class="container">
+            <div class="row">
+                <div class="col section-1 section-description">
+                    <h1>Masons' Order and Formula Tracker</h1>
+                    <div class="divider-1"><span></span></div>
+                    <p>Under Construction</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 offset-1 col-lg-8 offset-lg-2 div-wrapper d-flex justify-content-center align-items-center">
+                    <a class="btn btn-primary" asp-controller="Quotes" asp-action="Create" data-toggle="modal" data-target="#createQuote">
+                        <div class="div-to-align text-white font-weight-bold" style="padding: 35px 55px 40px 55px">
+                            <h5>New Quote</h5>
+                        </div>
+                    </a>
                 </div>
                 <div class="row">
                     <div class="col-12 offset-1 col-lg-8 offset-lg-2 div-wrapper d-flex justify-content-center align-items-center">
@@ -53,3 +65,8 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Shared/_PartialPopUp.cshtml", Model)
+
