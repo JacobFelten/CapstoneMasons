@@ -88,7 +88,7 @@
                                     {
                                 <div class="row">
                                     <div class="col form-group">
-                                        <label>@(KnownObjects.NumberPrefix[i]) Leg Lenght: </label>
+                                        <label>@(KnownObjects.NumberPrefix[i]) Leg Length: </label>
                                         <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" />
                                     </div>
                                     <div class="col form-group">
@@ -96,7 +96,7 @@
                                         <input type="number" min="1" value="0" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree" />
                                     </div>
                                     <div class="col-2 form-group">
-                                        <label for="exampleFormControlSelect2">Rebar #: </label>
+                                        <label for="exampleFormControlSelect2">Mandrel: </label>
                                         <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
                                                 onchange="vaidateLeg(this.options[this.selectedIndex].text)">
                                             <option>None</option>

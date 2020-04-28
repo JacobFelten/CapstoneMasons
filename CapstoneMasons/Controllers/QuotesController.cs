@@ -83,7 +83,14 @@ namespace CapstoneMasons.Controllers
             if (ModelState.IsValid)
             {//Refactors  to Quote
                 q.UseFormulas = false;
-                repo.AddQuoteAsync(q);
+                for (var i = 0; i < q.Shapes.Count; i++)
+                {
+                    for (var j = 0; j < q.Shapes[i].Legs.Count; j++)
+                    {
+                        q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
+                    }
+                }
+                await repo.AddQuoteAsync(q);
                 //var quotes = await repo.Quotes;
                 //int quoteId = quotes.Last().QuoteID + 1;
                 //q.QuoteID = quoteId;
@@ -91,7 +98,7 @@ namespace CapstoneMasons.Controllers
                 //added to repo but not to the database
 
 
-                return Redirect(Url.Action(nameof(ReviewQuote), q));
+                return await ReviewQuote(q.QuoteID);
             }
             return View("Create", q);
         }
@@ -124,7 +131,7 @@ namespace CapstoneMasons.Controllers
 
             ReviewQuote rQ = await FillReviewQuote(q);
 
-            return View(rQ);
+            return View("ReviewQuote", rQ);
         }
 
         [HttpPost]
