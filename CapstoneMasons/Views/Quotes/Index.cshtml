@@ -6,32 +6,41 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<form>
-    <div class="float-left">
-        <input style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search"/>
-    </div>
-    <div class="float-right">
-        <a class="btn btn-info" style="width: 150px; height: 35px;">Search</a>
-    </div>
-    <div class="float-right" style="padding-right: 4px;">
-        <select style="width: 100px; height: 35px;">
-            <option>Newest</option>
-            <option>Oldest</option>
-        </select>
-    </div>
     
-</form>
+<div>
+    <h2>Open Quotes</h2>
+</div>
+<div>
+    <div class="float-right">
+        <button class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" asp-action="Create">Create New</button>
+    </div>
+    <form asp-action="Search" method="post">
+        <div class="float-left">
+            <input asp-for="SearchBar" style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search" />
+        </div>
+        <div class="float-right" style="padding-right: 5px;">
+            <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px;" type="submit">Search</button>
+        </div>
+        <div class="float-right" style="padding-right: 5px;">
+            <select asp-for="NewOrOld" style="width: 100px; height: 35px;">
+                <option value="Newest">Newest</option>
+                <option value="Oldest">Oldest</option>
+                <option value="AtoZ">Alphabetical</option>
+            </select>
+        </div>
+    </form>
+</div>
 <table class="table">
     <tbody>
 @foreach (Quote q in Model.Quotes) {
-        <tr>
+        <tr style="border-bottom: thin; ">
             <td>
                 <div>
-                    <h3 class="text-center">@q.Name</h3>
-                    <h4 class="text-center">$@Model.TotalCost</h4>
+                    <div class="text-center">
+                            <h3>@q.Name</h3>
+                            <h4>$@Model.TotalCost</h4>
+                            <p style="font-size: 19px;">@q.DateQuoted</p>
+                    </div>
                     <div class="row">
                         <div class="col-8">
                             @for (int i = 0; i < q.Shapes.Count; i++)
@@ -73,6 +82,6 @@
                 </div>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

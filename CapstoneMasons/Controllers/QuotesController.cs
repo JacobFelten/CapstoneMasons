@@ -27,22 +27,58 @@ namespace CapstoneMasons.Controllers
         {
             OpenQuote open = new OpenQuote();
             Quote q = await DummyQuote();
-            if((await repo.Quotes).Count == 0)
+            if ((await repo.Quotes).Count == 0)
             {
                 await repo.AddQuoteAsync(q);
             }
-            open.Quotes = await repo.Quotes;
+            foreach(Quote quo in await repo.Quotes)
+            {
+                if (quo.Open == true)
+                    open.Quotes.Add(quo);
+            }
             ReviewQuote rvQ = await FillReviewQuote(open.Quotes[0]);
             open.TotalCost = rvQ.TotalCost;
             return View(open);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Search()
-        //{
-
-        //    return View("Index",);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> Search(OpenQuote open)
+        {
+            foreach (Quote quo in await repo.Quotes)
+            {
+                if (quo.Open == true)
+                    open.Quotes.Add(quo);
+            }
+            if (open.NewOrOld != null)
+            {
+                switch (open.NewOrOld)
+                {
+                    case "Newest":
+                        open.Quotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
+                        break;
+                    case "Oldest":
+                        open.Quotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
+                        break;
+                    case "AtoZ":
+                        open.Quotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                }
+            }
+            if(open.SearchBar != null)
+            {
+                foreach(Quote q in open.Quotes)
+                {
+                    string smagastooble = q.Name;
+                    smagastooble.ToLower().Trim().Replace("'", "");
+                    if(!q.Name.Contains(open.SearchBar))
+                    {
+                        open.Quotes.Remove(q);
+                    }
+                }
+            }
+            
+            return View("Index",open);
+        }
 
         // GET: Quotes/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -977,7 +1013,7 @@ namespace CapstoneMasons.Controllers
                 Costs = { cost1, cost2, cost3, cost4, cost5, cost6, cost7 },
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
-                Open = false
+                Open = true
             };
             return quote2;
         }
@@ -986,12 +1022,10 @@ namespace CapstoneMasons.Controllers
         {
             var leg1 = new Leg
             {
-                LegID = 1,
                 Length = 72
             };
             var shape1 = new Shape
             {
-                ShapeID = 1,
                 BarSize = 6,
                 LegCount = 1,
                 Legs = { leg1 },
@@ -1000,35 +1034,31 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                CostID = 1,
                 Name = "6 Bar",
                 Price = 20,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                CostID = 2,
                 Name = "6 Cut",
                 Price = 0.40m,
                 LastChanged = new DateTime()
             };
             var cost3 = new Cost
             {
-                CostID = 3,
                 Name = "Setup",
                 Price = 15,
                 LastChanged = new DateTime()
             };
             var quote = new Quote
             {
-                QuoteID = 1,
                 Name = "Billy's Concrete",
                 OrderNum = "654312",
                 Shapes = { shape1 },
                 Costs = { cost1, cost2, cost3 },
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
-                Open = false
+                Open = true
             };
             return quote;
         }
@@ -1037,12 +1067,10 @@ namespace CapstoneMasons.Controllers
         {
             var leg1 = new Leg
             {
-                LegID = 1,
                 Length = 120
             };
             var shape1 = new Shape
             {
-                ShapeID = 1,
                 BarSize = 6,
                 LegCount = 1,
                 Legs = { leg1 },
@@ -1051,12 +1079,10 @@ namespace CapstoneMasons.Controllers
             };
             var leg2 = new Leg
             {
-                LegID = 2,
                 Length = 60
             };
             var shape2 = new Shape
             {
-                ShapeID = 2,
                 BarSize = 6,
                 LegCount = 1,
                 Legs = { leg2 },
@@ -1065,12 +1091,10 @@ namespace CapstoneMasons.Controllers
             };
             var leg3 = new Leg
             {
-                LegID = 3,
                 Length = 24
             };
             var shape3 = new Shape
             {
-                ShapeID = 3,
                 BarSize = 6,
                 LegCount = 1,
                 Legs = { leg3 },
@@ -1079,12 +1103,10 @@ namespace CapstoneMasons.Controllers
             };
             var leg4 = new Leg
             {
-                LegID = 4,
                 Length = 12
             };
             var shape4 = new Shape
             {
-                ShapeID = 4,
                 BarSize = 6,
                 LegCount = 1,
                 Legs = { leg4 },
@@ -1093,35 +1115,31 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                CostID = 1,
                 Name = "6 Bar",
                 Price = 20,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                CostID = 2,
                 Name = "6 Cut",
                 Price = 0.40m,
                 LastChanged = new DateTime()
             };
             var cost3 = new Cost
             {
-                CostID = 3,
                 Name = "Setup",
                 Price = 15,
                 LastChanged = new DateTime()
             };
             var quote = new Quote
             {
-                QuoteID = 1,
                 Name = "Jill's Concrete",
                 OrderNum = "987654",
                 Shapes = { shape1, shape2, shape3, shape4 },
                 Costs = { cost1, cost2, cost3 },
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
-                Open = false
+                Open = true
             };
             return quote;
         }
@@ -1202,7 +1220,7 @@ namespace CapstoneMasons.Controllers
                 Costs = { cost1, cost2, cost3, cost4 },
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
-                Open = false
+                Open = true
             };
             return quote;
         }

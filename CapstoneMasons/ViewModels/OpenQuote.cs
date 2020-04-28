@@ -10,5 +10,7 @@ namespace CapstoneMasons.ViewModels
     {
         public List<Quote> Quotes { get; set; }
         public decimal TotalCost { get; set; }
+        public string NewOrOld { get; set; }
+        public string SearchBar { get; set; }
     }
 }
