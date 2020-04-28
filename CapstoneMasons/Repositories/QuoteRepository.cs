@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using CapstoneMasons.Infrastructure;
 using CapstoneMasons.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -143,7 +144,7 @@ namespace CapstoneMasons.Repositories
             get
             {
                 return Task.FromResult<IQueryable<Cost>>(context.Costs.AsQueryable<Cost>()
-                    .Where(c => c.Name.Contains("Cost")));
+                    .Where(c => c.Name.Contains(KnownObjects.GlobalKeyWord)));
             }
         }
         public Task<bool> UpdateCostAsync(Cost oldC, Cost newC)
