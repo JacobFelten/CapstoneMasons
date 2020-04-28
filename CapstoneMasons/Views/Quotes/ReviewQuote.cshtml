@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "ReviewQuote";
+
+    string tostring = "0.";
+    for (int i = 0; i < KnownObjects.Precision; i++)
+    {
+        tostring += "#";
+    }
 }
 
 <style>
@@ -113,7 +119,7 @@
                     {
                         comma = ",";
                     }
-                    <span>(@r.Length.ToString("G29")" x @r.Qty)@comma</span>
+                    <span>(@r.Length.ToString(tostring)" x @r.Qty)@comma</span>
                 }
             </div>
         }
@@ -128,17 +134,17 @@
                 <div class="card-header shape-header">
                     <h2 class="text-center"><span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(x @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed <a asp-action="Index">Edit</a> | <a asp-action="Index">Delete</a></h2>
                 </div>
-                <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString("G29")"</div>
+                <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString(tostring)"</div>
                 @foreach (CutInstruction cI in rS.Instructions)
                 {
-                    <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString("G29")" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
+                    <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString(tostring)" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
                 }
                 @for (int j = 0; j < rS.Legs.Count; j++)
                 {
                     ReviewLeg rL = rS.Legs[j];
                     int num = j + 1;
                     <div class="leg">
-                        <span class="font-weight-bold">Leg @num: </span><span>@rL.Length"</span>
+                        <span class="font-weight-bold">Leg @num: </span><span>@rL.Length.ToString(tostring)"</span>
                         @if (j < rS.Legs.Count - 1)
                         {
                             <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
@@ -160,7 +166,7 @@
                         {
                             used = "Not";
                         }
-                        <span>(@r.Length.ToString("G29")" x @r.Qty) @used Used Again<span>@comma</span></span>
+                        <span>(@r.Length.ToString(tostring)" x @r.Qty) @used Used Again<span>@comma</span></span>
                     }
                 </div>
             </div>

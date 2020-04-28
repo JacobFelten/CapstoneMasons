@@ -9,6 +9,7 @@ using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
 using CapstoneMasons.ViewModels;
 using CapstoneMasons.Logic_Models;
+using CapstoneMasons.Infrastructure;
 
 namespace CapstoneMasons.Controllers
 {
@@ -117,47 +118,24 @@ namespace CapstoneMasons.Controllers
             return Redirect(Url.Action("IndexPopUp", "Home",q));
         }
 
-        public async Task<IActionResult> ReviewQuote(Quote q)
+        public async Task<IActionResult> ReviewQuote(int quoteID)
         {
-            q = await DummyQuote();
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
-            ReviewQuote rQ = new ReviewQuote();
-            rQ.QuoteID = q.QuoteID; //done
-            rQ.Name = q.Name; //done
-            rQ.OrderNum = q.OrderNum; //done
-            rQ.AddSetup = q.AddSetup;
-            rQ.Discount = q.Discount;
-
-            //After filling the shapes with instructions the shapes are sorted by bar size
-            //then by shape length so the instructions make sense.
-            rQ.Shapes = await CreateShapesAsync(q);
-            IOrderedEnumerable<ReviewShape> orderedEnumerable = rQ.Shapes.OrderBy(s => s.BarSize).ThenByDescending(s => s.CutLength);
-            List<ReviewShape> rSList = new List<ReviewShape>();
-            foreach (ReviewShape rS in orderedEnumerable)
-                rSList.Add(rS);
-            rQ.Shapes = rSList; // done
-
-            rQ.BarsUsed = CalculateBarsUsed(rSList, q); //done
-
-            rQ.TotalCost = CalculateTotalCost(rQ.BarsUsed); //done
-            rQ.SetUpCharge = CalculateSetUp(q, rQ.BarsUsed); //Done
-            rQ.TotalCost += rQ.SetUpCharge; //done
-            rQ.TotalCost -= rQ.Discount; //done
-
-            rQ.FinalRemnants = CalculateFinalRemnants(rSList); //done
+            ReviewQuote rQ = await FillReviewQuote(q);
 
             return View(rQ);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, int discount, string setup)
+        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", name);
             await repo.UpdateQuoteSimpleAsync(q, "OrderNum", orderNumber);
             await repo.UpdateQuoteSimpleAsync(q, "Discount", discount.ToString());
             await repo.UpdateQuoteSimpleAsync(q, "AddSetup", setup);
-            return await ReviewQuote(q);
+            return View(await FillReviewQuote(q));
         }
 
         #region So Jacob doesn't have to keep scrolling past these
@@ -249,6 +227,36 @@ namespace CapstoneMasons.Controllers
         #endregion
 
         #region Methods for ReviewQuote
+
+        private async Task<ReviewQuote> FillReviewQuote(Quote q)
+        {
+            ReviewQuote rQ = new ReviewQuote();
+            rQ.QuoteID = q.QuoteID; //done
+            rQ.Name = q.Name; //done
+            rQ.OrderNum = q.OrderNum; //done
+            rQ.AddSetup = q.AddSetup;
+            rQ.Discount = q.Discount;
+
+            //After filling the shapes with instructions the shapes are sorted by bar size
+            //then by shape length so the instructions make sense.
+            rQ.Shapes = await CreateShapesAsync(q);
+            IOrderedEnumerable<ReviewShape> orderedEnumerable = rQ.Shapes.OrderBy(s => s.BarSize).ThenByDescending(s => s.CutLength);
+            List<ReviewShape> rSList = new List<ReviewShape>();
+            foreach (ReviewShape rS in orderedEnumerable)
+                rSList.Add(rS);
+            rQ.Shapes = rSList; // done
+
+            rQ.BarsUsed = CalculateBarsUsed(rSList, q); //done
+
+            rQ.TotalCost = CalculateTotalCost(rQ.BarsUsed); //done
+            rQ.SetUpCharge = CalculateSetUp(q, rQ.BarsUsed); //Done
+            rQ.TotalCost += rQ.SetUpCharge; //done
+            rQ.TotalCost -= rQ.Discount; //done
+
+            rQ.FinalRemnants = CalculateFinalRemnants(rSList); //done
+
+            return rQ;
+        }
 
         //Creates a ReviewShape for every shape in the quote. This method adds the simple
         //data before calling FillShapes which calculates remnants.
@@ -360,7 +368,7 @@ namespace CapstoneMasons.Controllers
                                     {
                                         CutQty = perBar,
                                         PerLength = remnants[rIndex].Length,
-                                        PerType = "Remnant",
+                                        PerType = KnownObjects.Remnant,
                                         ForQty = forQty
                                     });
                                     shapesLeft -= perBar * forQty;
@@ -380,7 +388,7 @@ namespace CapstoneMasons.Controllers
                                     {
                                         CutQty = finalPerBar,
                                         PerLength = remnants[rIndex].Length,
-                                        PerType = "Remnant",
+                                        PerType = KnownObjects.Remnant,
                                         ForQty = 1
                                     });
                                     shapesLeft -= finalPerBar;
@@ -402,7 +410,7 @@ namespace CapstoneMasons.Controllers
                                     {
                                         CutQty = perBar,
                                         PerLength = remnants[rIndex].Length,
-                                        PerType = "Remnant",
+                                        PerType = KnownObjects.Remnant,
                                         ForQty = forQty
                                     });
                                     shapesLeft -= perBar * forQty;
@@ -422,7 +430,7 @@ namespace CapstoneMasons.Controllers
                                     {
                                         CutQty = finalPerBar,
                                         PerLength = remnants[rIndex].Length,
-                                        PerType = "Remnant",
+                                        PerType = KnownObjects.Remnant,
                                         ForQty = 1
                                     });
                                     shapesLeft -= finalPerBar;
@@ -496,7 +504,7 @@ namespace CapstoneMasons.Controllers
             List<Remnant> rList = new List<Remnant>();
             List<CutInstruction> cIList = new List<CutInstruction>();
             decimal remnant;
-            int perBar = GetShapesPerBar(rS.CutLength, 240, out remnant);
+            int perBar = GetShapesPerBar(rS.CutLength, KnownObjects.FullBarLength, out remnant);
             if (perBar <= rS.Qty)
             {
                 rList.Add(new Remnant
@@ -508,8 +516,8 @@ namespace CapstoneMasons.Controllers
                 cIList.Add(new CutInstruction
                 {
                     CutQty = perBar,
-                    PerLength = 240,
-                    PerType = "Bar",
+                    PerLength = KnownObjects.FullBarLength,
+                    PerType = KnownObjects.FullBar,
                     ForQty = rS.Qty / perBar
                 });
             }
@@ -521,7 +529,7 @@ namespace CapstoneMasons.Controllers
             //the quote. An example would be someone needs 7 bars that are 72" long. The seventh
             //shape cut would leave a different sized remnant because you get 3 shapes per bar,
             //and 3 doesn't evenly divide into 7.
-            if (GetShapesPerFinalBar(rS.Qty, rS.CutLength, 240, out finalRemnant, out finalPerBar))
+            if (GetShapesPerFinalBar(rS.Qty, rS.CutLength, KnownObjects.FullBarLength, out finalRemnant, out finalPerBar))
             {
                 rList.Add(new Remnant
                 {
@@ -532,8 +540,8 @@ namespace CapstoneMasons.Controllers
                 cIList.Add(new CutInstruction
                 {
                     CutQty = finalPerBar,
-                    PerLength = 240,
-                    PerType = "Bar",
+                    PerLength = KnownObjects.FullBarLength,
+                    PerType = KnownObjects.FullBar,
                     ForQty = 1
                 });
             }
@@ -677,7 +685,7 @@ namespace CapstoneMasons.Controllers
 
             foreach (Cost c in q.Costs)
             {
-                if (c.Name == "Setup")
+                if (c.Name == KnownObjects.SetupCost)
                     setup = c.Price;
             }
 
@@ -746,11 +754,11 @@ namespace CapstoneMasons.Controllers
 
             foreach (Cost c in q.Costs)
             {
-                if (c.Name == result.BarSize + " Bar")
+                if (c.Name == result.BarSize + KnownObjects.BarCost)
                     result.BarCost = c.Price;
-                else if (c.Name == result.BarSize + " Cut")
+                else if (c.Name == result.BarSize + KnownObjects.CutCost)
                     result.CutCost = c.Price;
-                else if (c.Name == result.BarSize + " Bend")
+                else if (c.Name == result.BarSize + KnownObjects.BendCost)
                     result.BendCost = c.Price;
             }
 
@@ -839,7 +847,7 @@ namespace CapstoneMasons.Controllers
                 {
                     sumLegs += leg.Length;
                 }
-                if (sumLegs != 240)
+                if (sumLegs != KnownObjects.FullBarLength)
                 {
                     var cutCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Cut");
                     if (!quote.Costs.Contains(cutCost))
@@ -865,36 +873,6 @@ namespace CapstoneMasons.Controllers
             return quote;
         }
 
-        private async Task<ReviewQuote> FillReviewQuote(Quote q) 
-        {
-            ReviewQuote rQ = new ReviewQuote();
-            rQ.QuoteID = q.QuoteID; //done
-            rQ.Name = q.Name; //done
-            rQ.OrderNum = q.OrderNum; //done
-            rQ.AddSetup = q.AddSetup;
-            rQ.Discount = q.Discount;
-
-            //After filling the shapes with instructions the shapes are sorted by bar size
-            //then by shape length so the instructions make sense.
-            rQ.Shapes = await CreateShapesAsync(q);
-            IOrderedEnumerable<ReviewShape> orderedEnumerable = rQ.Shapes.OrderBy(s => s.BarSize).ThenByDescending(s => s.CutLength);
-            List<ReviewShape> rSList = new List<ReviewShape>();
-            foreach (ReviewShape rS in orderedEnumerable)
-                rSList.Add(rS);
-            rQ.Shapes = rSList; // done
-
-            rQ.BarsUsed = CalculateBarsUsed(rSList, q); //done
-
-            rQ.TotalCost = CalculateTotalCost(rQ.BarsUsed); //done
-            rQ.SetUpCharge = CalculateSetUp(q, rQ.BarsUsed); //Done
-            rQ.TotalCost += rQ.SetUpCharge; //done
-            rQ.TotalCost -= rQ.Discount; //done
-
-            rQ.FinalRemnants = CalculateFinalRemnants(rSList); //done
-
-            return rQ;
-        }
-
         #region Jacob's Dummy thicc data for testing ma view
         private async Task<Quote> DummyQuote()
         {
@@ -902,56 +880,48 @@ namespace CapstoneMasons.Controllers
             var mandrel2 = await repoF.GetMandrelByIdAsync(3);
             var leg1 = new Leg
             {
-                LegID = 1,
                 Length = 36,
                 Degree = 90,
                 Mandrel = mandrel2
             };
             var leg2 = new Leg
             {
-                LegID = 2,
                 Length = 36,
                 Degree = 0,
                 Mandrel = null
             };
             var leg3 = new Leg
             {
-                LegID = 3,
                 Length = 12,
                 Degree = 90,
                 Mandrel = mandrel2
             };
             var leg4 = new Leg
             {
-                LegID = 4,
                 Length = 12,
                 Degree = 0,
                 Mandrel = null
             };
             var leg5 = new Leg
             {
-                LegID = 5,
                 Length = 30,
                 Degree = 90,
                 Mandrel = mandrel1
             };
             var leg6 = new Leg
             {
-                LegID = 6,
                 Length = 18,
                 Degree = 90,
                 Mandrel = mandrel1
             };
             var leg7 = new Leg
             {
-                LegID = 7,
                 Length = 30,
                 Degree = 0,
                 Mandrel = null
             };
             var shape2 = new Shape
             {
-                ShapeID = 2,
                 BarSize = 5,
                 LegCount = 2,
                 Legs = { leg1, leg2 },
@@ -960,7 +930,6 @@ namespace CapstoneMasons.Controllers
             };
             var shape3 = new Shape
             {
-                ShapeID = 3,
                 BarSize = 5,
                 LegCount = 2,
                 Legs = { leg3, leg4 },
@@ -969,7 +938,6 @@ namespace CapstoneMasons.Controllers
             };
             var shape4 = new Shape
             {
-                ShapeID = 4,
                 BarSize = 4,
                 LegCount = 3,
                 Legs = { leg5, leg6, leg7 },
@@ -978,56 +946,48 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                CostID = 1,
-                Name = "4 Bar",
+                Name = "4Bar",
                 Price = 10,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                CostID = 2,
-                Name = "4 Cut",
+                Name = "4Cut",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             var cost3 = new Cost
             {
-                CostID = 3,
-                Name = "4 Bend",
+                Name = "4Bend",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             var cost4 = new Cost
             {
-                CostID = 4,
-                Name = "5 Bar",
+                Name = "5Bar",
                 Price = 15,
                 LastChanged = new DateTime()
             };
             var cost5 = new Cost
             {
-                CostID = 5,
-                Name = "5 Cut",
+                Name = "5Cut",
                 Price = 0.33m,
                 LastChanged = new DateTime()
             };
             var cost6 = new Cost
             {
-                CostID = 6,
-                Name = "5 Bend",
+                Name = "5Bend",
                 Price = 0.33m,
                 LastChanged = new DateTime()
             };
             var cost7 = new Cost
             {
-                CostID = 7,
                 Name = "Setup",
                 Price = 15,
                 LastChanged = new DateTime()
             };
             var quote2 = new Quote
             {
-                QuoteID = 2,
                 Name = "Bob's Concrete",
                 OrderNum = "123456",
                 Shapes = { shape2, shape3, shape4 },
@@ -1035,8 +995,7 @@ namespace CapstoneMasons.Controllers
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
                 Open = false,
-                UseFormulas = false
-                
+                UseFormulas = false               
             };
             return quote2;
         }
@@ -1060,14 +1019,14 @@ namespace CapstoneMasons.Controllers
             var cost1 = new Cost
             {
                 CostID = 1,
-                Name = "6 Bar",
+                Name = "6Bar",
                 Price = 20,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
                 CostID = 2,
-                Name = "6 Cut",
+                Name = "6Cut",
                 Price = 0.40m,
                 LastChanged = new DateTime()
             };
@@ -1153,14 +1112,14 @@ namespace CapstoneMasons.Controllers
             var cost1 = new Cost
             {
                 CostID = 1,
-                Name = "6 Bar",
+                Name = "6Bar",
                 Price = 20,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
                 CostID = 2,
-                Name = "6 Cut",
+                Name = "6Cut",
                 Price = 0.40m,
                 LastChanged = new DateTime()
             };
@@ -1231,19 +1190,19 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                Name = "3 Bar",
+                Name = "3Bar",
                 Price = 5,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                Name = "3 Cut",
+                Name = "3Cut",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             var cost3 = new Cost
             {
-                Name = "3 Bend",
+                Name = "3Bend",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
@@ -1306,13 +1265,13 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                Name = "6 Bar",
+                Name = "6Bar",
                 Price = 20,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                Name = "6 Cut",
+                Name = "6Cut",
                 Price = 0.40m,
                 LastChanged = new DateTime()
             };
@@ -1331,6 +1290,76 @@ namespace CapstoneMasons.Controllers
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
                 Open = false
+            };
+            return quote;
+        }
+
+        private Quote DummyQuote6()
+        {
+            var leg1 = new Leg
+            {
+                Length = 84
+            };
+            var shape1 = new Shape
+            {
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg1 },
+                Qty = 5,
+                NumCompleted = 0,
+            };
+            var leg2 = new Leg
+            {
+                Length = 25
+            };
+            var shape2 = new Shape
+            {
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg2 },
+                Qty = 6,
+                NumCompleted = 0,
+            };
+            var leg3 = new Leg
+            {
+                Length = 72
+            };
+            var shape3 = new Shape
+            {
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg3 },
+                Qty = 2,
+                NumCompleted = 0,
+            };
+            var cost1 = new Cost
+            {
+                Name = "6Bar",
+                Price = 20,
+                LastChanged = new DateTime()
+            };
+            var cost2 = new Cost
+            {
+                Name = "6Cut",
+                Price = 0.40m,
+                LastChanged = new DateTime()
+            };
+            var cost3 = new Cost
+            {
+                Name = "Setup",
+                Price = 15,
+                LastChanged = new DateTime()
+            };
+            var quote = new Quote
+            {
+                Name = "Billy's Concrete",
+                OrderNum = "654312",
+                Shapes = { shape1, shape3, shape2 },
+                Costs = { cost1, cost2, cost3 },
+                DateQuoted = DateTime.Now,
+                PickedUp = false,
+                Open = false,
+                UseFormulas = true
             };
             return quote;
         }
