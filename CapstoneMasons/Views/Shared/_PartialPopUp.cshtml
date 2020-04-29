@@ -20,7 +20,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/js/mdb.min.js"></script>
-
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 <!--pop up new quote-->
 <div class="modal fade" id="createQuote" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -45,7 +45,7 @@
                     </div>
                     <span asp-validation-for="OrderNum" class="text-danger"></span>
                     <div class="md-form mb-5">
-                        <i class="fas fa-user prefix grey-text"></i>
+                        <i class="fas fa-hashtag prefix grey-text"></i>
                         <input asp-for="OrderNum" type="text" id="OrderNum" class="form-control validate">
                         <label asp-for="OrderNum" data-error="invalid" data-success="valid" for="form34">Order Number</label>
                     </div>
