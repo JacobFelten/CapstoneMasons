@@ -52,66 +52,67 @@ namespace CapstoneMasons.Infrastructure
         public static string BendCost = "Bend";
         public static string SetupCost = "Setup";
 
+        public static string GlobalKeyWord = "Cost";
 
         public static Cost Bar3GlobalCost = new Cost
         {
-            Name = "Bar3GlobalCost"
+            Name = "Bar3Global" + GlobalKeyWord
         };
         public static Cost Bar3BendCost = new Cost
         {
-            Name = "Bar3BendCost"
+            Name = "Bar3Bend" + GlobalKeyWord
         };
         public static Cost Bar3CutCost = new Cost
         {
-            Name = "Bar3CutCost"
+            Name = "Bar3Cut" + GlobalKeyWord
         };
 
 
         public static Cost Bar4GlobalCost = new Cost
         {
-            Name = "Bar4GlobalCost"
+            Name = "Bar4Global" + GlobalKeyWord
         };
         public static Cost Bar4BendCost = new Cost
         {
-            Name = "Bar4BendCost"
+            Name = "Bar4Bend" + GlobalKeyWord
         };
         public static Cost Bar4CutCost = new Cost
         {
-            Name = "Bar4CutCost"
+            Name = "Bar4Cut" + GlobalKeyWord
         };
 
 
         public static Cost Bar5GlobalCost = new Cost
         {
-            Name = "Bar5GlobalCost"
+            Name = "Bar5Global" + GlobalKeyWord
         };
         public static Cost Bar5BendCost = new Cost
         {
-            Name = "Bar5BendCost"
+            Name = "Bar5Bend" + GlobalKeyWord
         };
         public static Cost Bar5CutCost = new Cost
         {
-            Name = "Bar5CutCost"
+            Name = "Bar5Cut" + GlobalKeyWord
         };
 
 
         public static Cost Bar6GlobalCost = new Cost
         {
-            Name = "Bar6GlobalCost"
+            Name = "Bar6Global" + GlobalKeyWord
         };
         public static Cost Bar6BendCost = new Cost
         {
-            Name = "Bar6BendCost"
+            Name = "Bar6Bend" + GlobalKeyWord
         };
         public static Cost Bar6CutCost = new Cost
         {
-            Name = "Bar6CutCost"
+            Name = "Bar6Cut" + GlobalKeyWord
         };
 
 
         public static Cost SetupCharge = new Cost
         {
-            Name = "SetupCharge"
+            Name = "SetupCharge" + GlobalKeyWord
         };
         public static Cost MinimumOrderCost = new Cost
         {
