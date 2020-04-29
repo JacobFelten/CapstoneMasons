@@ -8,8 +8,9 @@ namespace CapstoneMasons.ViewModels
 {
     public class OpenQuote
     {
-        private List<Quote> quotes = new List<Quote>();
-        public List<Quote> Quotes { get { return quotes; } }
+        public List<Quote> Quotes { get; set; }
         public decimal TotalCost { get; set; }
+        public string NewOrOld { get; set; }
+        public string SearchBar { get; set; }
     }
 }
