@@ -26,15 +26,10 @@ namespace CapstoneMasons.Controllers
         public async Task<IActionResult> Index()
         {
             OpenQuote open = new OpenQuote();
-            Quote q = await DummyQuote();
-            if ((await repo.Quotes).Count == 0)
+            foreach(Quote q in await repo.Quotes)
             {
-                await repo.AddQuoteAsync(q);
-            }
-            foreach(Quote quo in await repo.Quotes)
-            {
-                if (quo.Open == true)
-                    open.Quotes.Add(quo);
+                if (q.Open == true)
+                    open.Quotes.Add(q);
             }
             ReviewQuote rvQ = await FillReviewQuote(open.Quotes[0]);
             open.TotalCost = rvQ.TotalCost;
