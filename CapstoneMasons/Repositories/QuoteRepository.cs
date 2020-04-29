@@ -133,6 +133,9 @@ namespace CapstoneMasons.Repositories
                     else
                         q.AddSetup = bool.Parse(value);
                     break;
+                case nameof(Quote.UseFormulas):
+                    q.UseFormulas = bool.Parse(value);
+                    break;
                 case nameof(Quote.PickedUp):
                     q.PickedUp = bool.Parse(value);
                     break;

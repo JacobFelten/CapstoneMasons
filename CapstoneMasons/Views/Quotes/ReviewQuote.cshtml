@@ -93,8 +93,37 @@
                     </div>
                 </div>
             </div>
+            <div class="text-center">
+                <div class="form-check">
+                    <div class="row">
+                        <div class="col text-right">
+                            <label class="form-check-label" for="exampleCheck1">Calculate with user entered formulas: </label>
+                        </div>
+                        <div class="col text-left">
+                            @if (Model.UseFormulas)
+                            {
+                                <input type="checkbox" class="form-check-input" name="useFormulas" value="true" checked>
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="form-check-input" name="useFormulas" value="true">
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary">Save Quote</button>
         </form>
+        @if (Model.NeededFormulas != null && Model.NeededFormulas.Count > 0)
+        {
+            <div class="text-center">
+                <h4>The following formulas are needed if the order is to be calculated with user entered formulas:</h4>
+                @foreach (Formula f in Model.NeededFormulas)
+                {
+                    <div class="text-center">Bar Size: @f.BarSize, Degree: @f.Degree&#176;, Mandrel: @f.Mandrel.Name</div>
+                }
+            </div>
+        }
     </div>
     <div class="card-body quote-body">
         <h1 class="text-center">Total Cost: @Model.TotalCost.ToString("c")</h1>

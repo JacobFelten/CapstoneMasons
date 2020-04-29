@@ -10,6 +10,7 @@ using CapstoneMasons.Repositories;
 using CapstoneMasons.ViewModels;
 using CapstoneMasons.Logic_Models;
 using CapstoneMasons.Infrastructure;
+using Microsoft.AspNetCore.Connections.Features;
 
 namespace CapstoneMasons.Controllers
 {
@@ -144,14 +145,29 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup)
+        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup, string useFormulas)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", name);
             await repo.UpdateQuoteSimpleAsync(q, "OrderNum", orderNumber);
             await repo.UpdateQuoteSimpleAsync(q, "Discount", discount.ToString());
             await repo.UpdateQuoteSimpleAsync(q, "AddSetup", setup);
-            return View("ReviewQuote", await FillReviewQuote(q));
+            if (useFormulas == null)
+                useFormulas = "false";
+            var neededFormulas = new List<Formula>();
+            if (bool.Parse(useFormulas))
+            {
+                neededFormulas = (List<Formula>)await CanUseFormulas(q);
+                if (neededFormulas.Count == 0)
+                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
+            }
+            else
+            {
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
+            }
+            var rQ = await FillReviewQuote(q);
+            rQ.NeededFormulas = neededFormulas;
+            return View("ReviewQuote", rQ);
         }
 
         #region So Jacob doesn't have to keep scrolling past these
@@ -249,6 +265,7 @@ namespace CapstoneMasons.Controllers
             rQ.OrderNum = q.OrderNum; //done
             rQ.AddSetup = q.AddSetup;
             rQ.Discount = q.Discount;
+            rQ.UseFormulas = q.UseFormulas;
 
             //After filling the shapes with instructions the shapes are sorted by bar size
             //then by shape length so the instructions make sense.
@@ -838,6 +855,36 @@ namespace CapstoneMasons.Controllers
                 return View(costsQuote.ToList());
             }
             return View(costsQuote.ToList());
+        }
+
+        private async Task<List<Formula>> CanUseFormulas(Quote q)
+        {
+            var result = new List<Formula>();
+            foreach (Shape s in q.Shapes)
+            {
+                foreach (Leg l in s.Legs)
+                {
+                    if (l != s.Legs.Last())
+                    {
+                        if (await GetFormulaByLegAsync(l, s.BarSize) == null)
+                        {
+                            var formula = new Formula
+                            {
+                                BarSize = s.BarSize,
+                                Degree = l.Degree,
+                                Mandrel = l.Mandrel
+                            };
+                            bool add = true;
+                            foreach (Formula f in result)
+                                if (formula.BarSize == f.BarSize && formula.Degree == f.Degree && formula.Mandrel == f.Mandrel)
+                                    add = false;
+                            if (add)
+                                result.Add(formula);
+                        }
+                    }
+                }
+            }
+            return result;
         }
 
         //[HttpPost]
