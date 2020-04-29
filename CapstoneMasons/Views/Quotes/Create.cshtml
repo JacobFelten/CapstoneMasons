@@ -69,7 +69,7 @@
                                 <div class="bg-secondary panel-body checkout-inside" style="padding-left: 10px; padding-right: 10px; padding-bottom: 10px;">
                                     <div class="text-center font-weight-bold">The Shape will turn Green when Valid</div>
                                     <div class="row justify-content-md-center">
-                                        <div class="col-2 form-group">
+                                        <div class="col-md-4 col-lg-3 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Rebar #: </label>
                                             <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
                                                      onchange="vaidateRebar(this.options[this.selectedIndex].text)">
@@ -79,33 +79,36 @@
                                                 <option>6</option>
                                             </select>
                                         </div>
-                                        <div class="col-2 form-group">
+                                        <div class="col-md-3 col-lg-2 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Quantity</label>
                                             <input class="form-control" asp-for="Shapes[i].Qty"/>
                                         </div>
                                     </div>
                                     @for (int leg = 0; leg < Model.Shapes[i].Legs.Count; leg++)
                                     {
-                                <div class="row">
-                                    <div class="col form-group">
-                                        <label>@(KnownObjects.NumberPrefix[i]) Leg Length: </label>
-                                        <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" />
-                                    </div>
-                                    <div class="col form-group">
-                                        <label>@(KnownObjects.NumberPrefix[i]) Leg Bend (Degrees): </label>
-                                        <input type="number" min="1" value="0" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree" />
-                                    </div>
-                                    <div class="col-2 form-group">
-                                        <label for="exampleFormControlSelect2">Mandrel: </label>
-                                        <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
-                                                onchange="vaidateLeg(this.options[this.selectedIndex].text)">
-                                            <option>None</option>
-                                            <option>Small</option>
-                                            <option>Medium</option>
-                                            <option>Large</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                        <div class="row">
+                                            <div class="col-4 form-group">
+                                                <label>@(KnownObjects.NumberPrefix[leg]) Leg Length: </label>
+                                                <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" />
+                                            </div>
+                                            @if (leg != Model.Shapes[i].Legs.Count - 1)
+                                            {
+                                                <div class="col-5 form-group">
+                                                    <label>@(KnownObjects.NumberPrefix[leg]) Leg Bend (Degrees): </label>
+                                                    <input type="number" min="1" value="0" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree" />
+                                                </div>
+                                                <div class="col-3 form-group">
+                                                    <label for="exampleFormControlSelect2">Mandrel: </label>
+                                                    <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
+                                                            onchange="vaidateLeg(this.options[this.selectedIndex].text)">
+                                                        <option>None</option>
+                                                        <option>Small</option>
+                                                        <option>Medium</option>
+                                                        <option>Large</option>
+                                                    </select>
+                                                </div>
+                                            }
+                                        </div>
                                     }
 
                                     <button id="toggle-delivery" type="button" class="btn-checkout" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-shape@((i+2).ToString())">Next Shape</button>
@@ -117,7 +120,7 @@
                 </div>
             </div>
 
-            <div class="panel-group" id="checkout-accordion">
+            <div class="panel-group" id="checkout-accordion" hidden>
 
                 <div class="panel panel-default checkout-panel" id="panel-shipping">
                     <div class="panel-heading checkout-heading" id="panel-shipping-heading" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-delivery">
