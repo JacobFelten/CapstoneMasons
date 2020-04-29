@@ -72,7 +72,7 @@
                             <div class="col-md-3 mb-3">
 
                                 <div class="md-form">
-                                    <input value="" id="bar3costID" hidden/>
+                                    <input value="" id="bar3costID" hidden />
                                     <input placeholder="$@("")" min="0" type="number" step="any" id="bar3cost" class="form-control form-control validate">
                                     <label for="bar3cost" data-error="invalid" data-success="valid" class="active font-weight-bolder">#3 Bar</label>
                                 </div>
@@ -83,6 +83,7 @@
                             <div class="col-md-3 mb-3">
 
                                 <div class="md-form">
+                                    <input value="" id="bar4costID" hidden />
                                     <input placeholder="$@("")" min="0" type="number" step="any" id="bar4cost" class="form-control form-control validate">
                                     <label for="bar4cost" data-error="invalid" data-success="valid" class="active font-weight-bolder">#4 Bar</label>
                                 </div>
@@ -93,6 +94,7 @@
                             <div class="col-md-3 mb-3">
 
                                 <div class="md-form">
+                                    <input value="" id="bar5costID" hidden />
                                     <input placeholder="$@("")" type="number" min="0" step="any" id="bar5cost" class="form-control validate">
                                     <label for="bar5cost" data-error="invalid" data-success="valid" class="active font-weight-bolder">#5 Bar</label>
                                 </div>
@@ -102,6 +104,7 @@
                             <div class="col-md-3 mb-3">
 
                                 <div class="md-form">
+                                    <input value="" id="bar6costID" hidden />
                                     <input placeholder="$@("")" type="number" min="0" step="any" id="bar6cost" class="form-control validate">
                                     <label for="bar6cost" data-error="invalid" data-success="valid" class="active font-weight-bolder">#6 Bar</label>
                                 </div>
@@ -112,7 +115,7 @@
 
                             <!-- Grid column -->
                             <div class="col-md-3 mb-3">
-
+                                <input value="" id="bar3bendID" hidden />
                                 <input placeholder="$@("")" type="number" min="0" step="any" id="bar3bend" class="form-control form-control validate">
                                 <label for="bar3bend" data-error="invalid" data-success="valid" class="active">#3 Bend</label>
 
@@ -120,7 +123,7 @@
                             <!-- Grid column -->
                             <!-- Grid column -->
                             <div class="col-md-3 mb-3">
-
+                                <input value="" id="bar4bendID" hidden />
                                 <input placeholder="$@("")" type="number" min="0" step="any" id="bar4bend" class="form-control form-control">
                                 <label for="bar4bend" data-error="invalid" data-success="valid" class="active">#4 Bend</label>
 
@@ -128,14 +131,14 @@
                             <!-- Grid column -->
                             <!-- Grid column -->
                             <div class="col-md-3 mb-3">
-
+                                <input value="" id="bar5bendID" hidden />
                                 <input placeholder="$@("")" type="number" min="0" step="any" id="bar5bend" class="form-control">
                                 <label for="bar5bend" data-error="invalid" data-success="valid" class="active">#5 Bend</label>
 
                             </div>
                             <!-- Grid column -->
                             <div class="col-md-3 mb-3">
-
+                                <input value="" id="bar6bendID" hidden />
                                 <input placeholder="$@("")" type="number" min="0" step="any" id="bar6bend" class="form-control">
                                 <label for="bar6bend" data-error="invalid" data-success="valid" class="active">#6 Bend</label>
 
@@ -145,7 +148,7 @@
 
                             <!-- Grid column -->
                             <div class="col-md-3 mb-3">
-
+                                <input value="" id="bar3cutID" hidden />
                                 <input placeholder="$@("")" type="number" min="0" step="any" id="bar3cut" class="form-control form-control">
                                 <label for="bar3cut" data-error="invalid" data-success="valid" class="active">#3 Cut</label>
 
@@ -153,6 +156,7 @@
                             <!-- Grid column -->
                             <!-- Grid column -->
                             <div class="col-md-3 mb-3">
+                                <input value="" id="bar4cutID" hidden />
                                 <input placeholder="$@("")" type="number" min="0" step="any" id="bar4cut" class="form-control form-control">
                                 <label for="bar4cut" data-error="invalid" data-success="valid" class="active">#4 Cut</label>
 
@@ -160,21 +164,24 @@
                             <!-- Grid column -->
                             <!-- Grid column -->
                             <div class="col-md-3 mb-3">
-
+                                <input value="" id="bar5cutID" hidden />
                                 <input placeholder="$@("")" type="number" min="0" step="any" id="bar5cut" class="form-control validate">
                                 <label for="bar5cut" data-error="invalid" data-success="valid" class="active">#5 Cut</label>
 
                             </div>
                             <!-- Grid column -->
                             <div class="col-md-3 mb-3">
-
+                                <input value="" id="bar6cutID" hidden />
                                 <input placeholder="$@("")" type="number" min="0" step="any" id="bar6cut" class="form-control validate">
                                 <label data-error="invalid" data-success="valid" for="bar6cut">#6 Cut</label>
 
                             </div>
                         </div>
                     </div>
-
+                    <input value="" id="setupGlobalID" hidden />
+                    <input value="" id="setupCharge" hidden />
+                    <input value="" id="minOrderGlobalID" hidden />
+                    <input value="" id="minimumOrderCost" hidden />
                     <!-- Use Functions this took 2 hours to do-->
                     <span asp-validation-for="UseFormulas" class="text-danger"></span>
                     <fieldset class="form-check">
