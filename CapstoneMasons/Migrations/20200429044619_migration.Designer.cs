@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneMasons.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200422155931_migrations")]
-    partial class migrations
+    [Migration("20200429044619_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

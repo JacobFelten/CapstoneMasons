@@ -25,5 +25,7 @@ namespace CapstoneMasons.Repositories
         public Task<bool> AddMandrelAsync(Mandrel m);
 
         public Task<Mandrel> GetMandrelByIdAsync(int? id);
+
+        public Task<Mandrel> GetMandrelByNameAsync(string name);
     }
 }

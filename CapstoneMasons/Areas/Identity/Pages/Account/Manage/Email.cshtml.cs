@@ -6,10 +6,11 @@ using System.Text.Encodings.Web;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using CapstoneMasons.Email;
 
 namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
 {
@@ -98,11 +99,14 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
                     pageHandler: null,
                     values: new { userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                //await _emailSender.SendEmailAsync(
+                    //Input.NewEmail,
+                    //"Confirm your email",   //previous way
+                    //$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                string content = "Changing Email<br/>" +
+                                                $"Please <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>click here</a> to confirm your new email ({Input.NewEmail}) email.";
 
+                _emailSender.SendEmail(new Message(new string[] { Input.NewEmail }, "Changing Email: Mason's Order and Formula Tracker", content));
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
             }
@@ -134,10 +138,11 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            //_emailSender.SendEmail(
+            //    email,
+            //    "Confirm your email",
+            //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            //new Message(new string[] { Input.NewEmail }, "Changing Email: Mason's Order and Formula Tracker", content);
 
             StatusMessage = "Verification email sent. Please check your email.";
             return RedirectToPage();

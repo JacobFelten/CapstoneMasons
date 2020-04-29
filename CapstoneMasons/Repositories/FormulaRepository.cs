@@ -117,5 +117,20 @@ namespace CapstoneMasons.Repositories
             }
 
         }
+        public async Task<Mandrel> GetMandrelByNameAsync(string name)
+        {
+            if (name != null)
+            {
+                foreach (Mandrel m in await Mandrels)
+                    if (m.Name == name)
+                        return m;
+                return null;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
     }
 }
