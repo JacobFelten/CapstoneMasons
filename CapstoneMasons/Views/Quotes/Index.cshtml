@@ -1,42 +1,86 @@
-﻿@model OpenQuote
+﻿@model List<OpenQuote>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-
-
-
 <h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+  
+<div>
+    <h2>Open Quotes</h2>
+</div>
+<div>
+    <div class="float-right">
+        <button class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" asp-action="Create">Create New</button>
+    </div>
+    <form asp-action="Search" method="post">
+        <div class="float-left">
+            <input name="SearchBar" style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search" />
+        </div>
+        <div class="float-right" style="padding-right: 5px;">
+            <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px;" type="submit">Search</button>
+        </div>
+        <div class="float-right" style="padding-right: 5px;">
+            <select name="NewOrOld" style="width: 100px; height: 35px;">
+                <option value="Newest">Newest</option>
+                <option value="Oldest">Oldest</option>
+                <option value="AtoZ">Alphabetical</option>
+            </select>
+        </div>
+    </form>
+</div>
 <table class="table">
     <tbody>
-        @foreach (Quote q in Model.Quotes)
-        {
-            <tr>
-                <td>
-                    <div>
-                        <h3 class="text-center">@q.Name</h3>
-                        <h4 class="text-center">$@Model.TotalCost</h4>
-                        <div>
-                            @for (int i = 0; i < q.Shapes.Count; i++)
+    @foreach (OpenQuote oq in Model) {
+        <tr>
+            <td>
+                <div>
+                    <div class="text-center">
+                            <h3>@oq.Quote.Name</h3>
+                            <h4>$@oq.TotalCost</h4>
+                            <p style="font-size: 19px;">@oq.Quote.DateQuoted</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            @for (int i = 0; i < oq.Quote.Shapes.Count; i++)
                             {
-                                string percentage = (((decimal)q.Shapes[i].NumCompleted / (decimal)q.Shapes[i].Qty) * 100).ToString("n0");
+                                string percentage = (((decimal)oq.Quote.Shapes[i].NumCompleted / (decimal)oq.Quote.Shapes[i].Qty) * 100).ToString("n0");
                                 <div class="row">
-                                    <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + q.Shapes[i].BarSize) Bar, @q.Shapes[i].LegCount Legs</div>
-                                    <div class="text-right col">Completed: @(q.Shapes[i].NumCompleted + "/" + q.Shapes[i].Qty)</div>
+                                    <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + oq.Quote.Shapes[i].BarSize) Bar, @oq.Quote.Shapes[i].LegCount Legs</div>
+                                    <div class="text-right col">Completed: @(oq.Quote.Shapes[i].NumCompleted + "/" + oq.Quote.Shapes[i].Qty)</div>
                                 </div>
                                 <div class="progress">
-                                    <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@q.Shapes[i].NumCompleted" aria-valuemin="0" aria-valuemax="@q.Shapes[i].Qty">@percentage%</div>
+                                    <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@oq.Quote.Shapes[i].NumCompleted" aria-valuemin="0" aria-valuemax="@oq.Quote.Shapes[i].Qty">@percentage%</div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-4">
+                            <div class="row">
+                                <div class="col-12 text-center" style="padding-top: 20px">
+                                    <a class="btn btn-primary text-center" style="width: 150px;" asp-action="Details" asp-route-id=@oq.Quote.QuoteID>Details</a>
+                                </div>
+                            </div>
+                            @if (oq.Quote.PickedUp == true)
+                            {
+                                <div class="row">
+                                    <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
+                                        The Customer has picked up their rebar.
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
+                                        The Customer has not picked up their rebar yet.
+                                    </div>
                                 </div>
                             }
                         </div>
                     </div>
-                </td>
-            </tr>
-        }
+                </div>
+            </td>
+        </tr>
+    }
     </tbody>
 </table>
