@@ -28,54 +28,71 @@ namespace CapstoneMasons.Controllers
         // GET: Quotes
         public async Task<IActionResult> Index()
         {
-            OpenQuote open = new OpenQuote();
+            List<OpenQuote> openQuotes = new List<OpenQuote>();
             foreach(Quote q in await repo.Quotes)
             {
                 if (q.Open == true)
-                    open.Quotes.Add(q);
+                {
+                    OpenQuote open = new OpenQuote();
+                    open.Quote = q;
+                    ReviewQuote rvQ = await FillReviewQuote(open.Quote);
+                    open.TotalCost = rvQ.TotalCost;
+                    openQuotes.Add(open);
+                }
             }
-            ReviewQuote rvQ = await FillReviewQuote(open.Quotes[0]);
-            open.TotalCost = rvQ.TotalCost;
-            return View(open);
+            return View(openQuotes);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Search(OpenQuote open)
+        public async Task<IActionResult> Search(string SearchBar, string NewOrOld)
         {
-            foreach (Quote quo in await repo.Quotes)
+            List<OpenQuote> openQuotes = new List<OpenQuote>();
+            foreach(Quote q in await repo.Quotes)
             {
-                if (quo.Open == true)
-                    open.Quotes.Add(quo);
+                if (q.Open == true)
+                {
+                    OpenQuote open = new OpenQuote();
+                    open.Quote = q;
+                    ReviewQuote rvQ = await FillReviewQuote(open.Quote);
+                    open.TotalCost = rvQ.TotalCost;
+                    openQuotes.Add(open);
+                }
             }
-            if (open.NewOrOld != null)
+            if (NewOrOld != null)
             {
-                switch (open.NewOrOld)
+                switch (NewOrOld)
                 {
                     case "Newest":
-                        open.Quotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
+                        openQuotes.Sort((a, b) => a.Quote.DateQuoted.CompareTo(b.Quote.DateQuoted));
                         break;
                     case "Oldest":
-                        open.Quotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
+                        openQuotes.Sort((a, b) => b.Quote.DateQuoted.CompareTo(a.Quote.DateQuoted));
                         break;
                     case "AtoZ":
-                        open.Quotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        openQuotes.Sort((a, b) => a.Quote.Name.CompareTo(b.Quote.Name));
                         break;
                 }
             }
-            if(open.SearchBar != null)
+            if(SearchBar != null)
             {
-                foreach(Quote q in open.Quotes)
+                List<int> quoteIndex = new List<int>();
+                for(int i = 0; i < openQuotes.Count; i++)
                 {
-                    string smagastooble = q.Name;
-                    smagastooble.ToLower().Trim().Replace("'", "");
-                    if(!q.Name.Contains(open.SearchBar))
+                    string smagastooble = openQuotes[i].Quote.Name;
+                    smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
+                    if(!smagastooble.Contains(SearchBar.ToLower().Trim().Replace("'", "")))
                     {
-                        open.Quotes.Remove(q);
+                        quoteIndex.Add(i);
                     }
+                }
+                quoteIndex.Sort((a, b) => b.CompareTo(a));
+                foreach(int i in quoteIndex)
+                {
+                    openQuotes.RemoveAt(i);
                 }
             }
             
-            return View("Index",open);
+            return View("Index", openQuotes);
         }
 
         // GET: Quotes/Details/5
