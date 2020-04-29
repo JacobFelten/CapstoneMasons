@@ -142,7 +142,7 @@ namespace CapstoneMasons.Controllers
                 q.UseFormulas = false;
                 for (var i = 0; i < q.Shapes.Count; i++)
                 {
-                    for (var j = 0; j < q.Shapes[i].Legs.Count; j++)
+                    for (var j = 0; j < q.Shapes[i].Legs.Count-1; j++)
                     {
                         q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
                     }
