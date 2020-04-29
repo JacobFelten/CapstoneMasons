@@ -84,9 +84,16 @@ namespace CapstoneMasons.Repositories
 
         }
 
-        public Task<bool> UpdateQuoteAsync(Quote oldQ, Quote newQ)
+        public async Task<bool> UpdateQuoteAsync(Quote newQ)
         {
             bool result = false;
+            Quote oldQ = await GetQuoteByIdAsync(newQ.QuoteID);
+            var newCosts = new List<Cost>();
+            foreach (Cost c in newQ.Costs)
+                newCosts.Add(c);
+            var newShapes = new List<Shape>();
+            foreach (Shape s in newQ.Shapes)
+                newShapes.Add(s);
             if (oldQ != null && newQ != null)
             {
                 oldQ.OrderNum = newQ.OrderNum;
@@ -95,15 +102,16 @@ namespace CapstoneMasons.Repositories
                 oldQ.PickedUp = newQ.PickedUp;
                 oldQ.Open = newQ.Open;
                 oldQ.Costs.Clear();
-                foreach (Cost c in newQ.Costs)
+                foreach (Cost c in newCosts)
                     oldQ.Costs.Add(c);
-                foreach (Shape s in newQ.Shapes)
+                oldQ.Shapes.Clear();
+                foreach (Shape s in newShapes)
                     oldQ.Shapes.Add(s);
                 context.Quotes.Update(oldQ);
                 context.SaveChanges();
                 result = true;
             }
-            return Task.FromResult<bool>(result);
+            return result;
         }
 
         public Task UpdateQuoteSimpleAsync(Quote q, string prop, string value)

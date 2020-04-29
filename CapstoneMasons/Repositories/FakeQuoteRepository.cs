@@ -75,9 +75,10 @@ namespace CapstoneMasons.Repositories
 
         }
 
-        public Task<bool> UpdateQuoteAsync(Quote oldQ, Quote newQ)
+        public async Task<bool> UpdateQuoteAsync(Quote newQ)
         {
             bool result = false;
+            Quote oldQ = await GetQuoteByIdAsync(newQ.QuoteID);
             if (oldQ != null && newQ != null)
             {
                 oldQ.OrderNum = newQ.OrderNum;
@@ -92,7 +93,7 @@ namespace CapstoneMasons.Repositories
                     oldQ.Shapes.Add(s);
                 result = true;
             }
-            return Task.FromResult<bool>(result);
+            return result;
         }
 
         public Task UpdateQuoteSimpleAsync(Quote q, string prop, string value)

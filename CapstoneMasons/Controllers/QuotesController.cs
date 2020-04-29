@@ -97,8 +97,8 @@ namespace CapstoneMasons.Controllers
                 //quotes.Add(q);
                 //added to repo but not to the database
 
-
-                return await ReviewQuote(q.QuoteID);
+                return RedirectToAction("ReviewQuote", new { quoteID = q.QuoteID });
+                //return await ReviewQuote(q.QuoteID);
             }
             return View("Create", q);
         }
@@ -129,6 +129,15 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            q.DateQuoted = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
+
+            q = await UpdatePrices(q);
+
+            q.Open = true;
+
+            await repo.UpdateQuoteAsync(q);
+
             ReviewQuote rQ = await FillReviewQuote(q);
 
             return View("ReviewQuote", rQ);
@@ -142,7 +151,7 @@ namespace CapstoneMasons.Controllers
             await repo.UpdateQuoteSimpleAsync(q, "OrderNum", orderNumber);
             await repo.UpdateQuoteSimpleAsync(q, "Discount", discount.ToString());
             await repo.UpdateQuoteSimpleAsync(q, "AddSetup", setup);
-            return View(await FillReviewQuote(q));
+            return View("ReviewQuote", await FillReviewQuote(q));
         }
 
         #region So Jacob doesn't have to keep scrolling past these
@@ -174,18 +183,15 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            Quote oldQuote = null;
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    oldQuote = await repo.GetQuoteByIdAsync(newQuote.QuoteID);
-                    await repo.UpdateQuoteAsync(oldQuote, newQuote);
+                    await repo.UpdateQuoteAsync(newQuote);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QuoteExists(oldQuote.QuoteID))
+                    if (!QuoteExists(newQuote.QuoteID))
                     {
                         return NotFound();
                     }
@@ -196,7 +202,7 @@ namespace CapstoneMasons.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(oldQuote);
+            return View(newQuote);
         }
 
         // GET: Quotes/Delete/5
@@ -836,48 +842,92 @@ namespace CapstoneMasons.Controllers
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<Quote> UpdatePrices(Quote quote)
+        private async Task<Quote> UpdatePrices(Quote quote)
         {
             quote.Costs.Clear();
             var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
-            var sumLegs = 0m;
-            var total = 0m;
+            //var sumLegs = 0m;
+            //var total = 0m;
 
             foreach (Shape shape in quote.Shapes)
             {
-                var barCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Bar");
+                Cost bar = null;
+                Cost cut = null;
+                Cost bend = null;
+                switch(shape.BarSize)
+                {
+                    case 3:
+                        bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3GlobalCost.Name);
+                        cut = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3CutCost.Name);
+                        bend = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3BendCost.Name);
+                        break;
+                    case 4:
+                        bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar4GlobalCost.Name);
+                        cut = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar4CutCost.Name);
+                        bend = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar4BendCost.Name);
+                        break;
+                    case 5:
+                        bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar5GlobalCost.Name);
+                        cut = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar5CutCost.Name);
+                        bend = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar5BendCost.Name);
+                        break;
+                    case 6:
+                        bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar6GlobalCost.Name);
+                        cut = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar6CutCost.Name);
+                        bend = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar6BendCost.Name);
+                        break;
+                }
+                var barCost = new Cost
+                {
+                    Name = shape.BarSize.ToString() + KnownObjects.BarCost,
+                    Price = costsQuote.FirstOrDefault(c => c.Name == bar.Name).Price,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                };
                 if (!quote.Costs.Contains(barCost))//if it doesnt contain add cost
                     quote.Costs.Add(barCost);//Adding Cost per Bar
-                total += barCost.Price * shape.Qty;
 
-                foreach (Leg leg in shape.Legs)
+                var cutCost = new Cost
                 {
-                    sumLegs += leg.Length;
-                }
-                if (sumLegs != KnownObjects.FullBarLength)
-                {
-                    var cutCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Cut");
-                    if (!quote.Costs.Contains(cutCost))
-                        quote.Costs.Add(cutCost);//Adding Cost per cut
-                    //total += costsQuote.Costs.Find(c => c.Name == shape.BarSize.ToString() + "Cut").Price*quote.; //add cut prices later?
-                }
+                    Name = shape.BarSize.ToString() + KnownObjects.CutCost,
+                    Price = costsQuote.FirstOrDefault(c => c.Name == cut.Name).Price,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                };
+                if (!CostExists(quote.Costs, cutCost.Name))
+                    quote.Costs.Add(cutCost);//Adding Cost per cut
+                //total += costsQuote.Costs.Find(c => c.Name == shape.BarSize.ToString() + "Cut").Price*quote.; //add cut prices later?
 
-                for (int i = 0; i < shape.LegCount - 1; i++)
+                var bendCost = new Cost
                 {
-                    var bendCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Bend");
-                    if (!quote.Costs.Contains(bendCost))
-                        quote.Costs.Add(bendCost);//Adding Cost per bend
-                    total += bendCost.Price;
-                }
-
+                    Name = shape.BarSize.ToString() + KnownObjects.BendCost,
+                    Price = costsQuote.FirstOrDefault(c => c.Name == bend.Name).Price,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                };
+                if (!CostExists(quote.Costs, bendCost.Name))
+                    quote.Costs.Add(bendCost);//Adding Cost per bend
+                //total += bendCost.Price;
             }
-            if (total < costsQuote.FirstOrDefault(c => c.Name == "Setup Min").Price)
+
+            var setupCost = new Cost
             {
-                quote.Costs.Add(costsQuote.FirstOrDefault(c => c.Name == "Setup"));//BarSize3Cut
-                total += costsQuote.FirstOrDefault(c => c.Name == "Setup").Price;
-            }
+                Name = KnownObjects.SetupCost,
+                Price = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.SetupCharge.Name).Price,
+                LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+            };
+            quote.Costs.Add(setupCost);
 
             return quote;
+        }
+
+        private bool CostExists(List<Cost> costs, string name)
+        {
+            foreach (Cost c in costs)
+                if (c.Name == name)
+                    return true;
+            return false;
         }
 
         #region Jacob's Dummy thicc data for testing ma view
