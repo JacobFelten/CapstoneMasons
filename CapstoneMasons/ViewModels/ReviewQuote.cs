@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CapstoneMasons.Models;
 
 namespace CapstoneMasons.ViewModels
 {
@@ -11,6 +12,8 @@ namespace CapstoneMasons.ViewModels
         public string Name { get; set; }
         public string OrderNum { get; set; }
         public bool? AddSetup { get; set; }
+        public bool UseFormulas { get; set; }
+        public List<Formula> NeededFormulas { get; set; }
         public decimal Discount { get; set; }
         public decimal TotalCost { get; set; }
         public List<UsedBar> BarsUsed { get; set; }

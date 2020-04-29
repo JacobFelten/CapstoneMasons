@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "ReviewQuote";
+
+    string tostring = "0.";
+    for (int i = 0; i < KnownObjects.Precision; i++)
+    {
+        tostring += "#";
+    }
 }
 
 <style>
@@ -87,8 +93,37 @@
                     </div>
                 </div>
             </div>
+            <div class="text-center">
+                <div class="form-check">
+                    <div class="row">
+                        <div class="col text-right">
+                            <label class="form-check-label" for="exampleCheck1">Calculate with user entered formulas: </label>
+                        </div>
+                        <div class="col text-left">
+                            @if (Model.UseFormulas)
+                            {
+                                <input type="checkbox" class="form-check-input" name="useFormulas" value="true" checked>
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="form-check-input" name="useFormulas" value="true">
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary">Save Quote</button>
         </form>
+        @if (Model.NeededFormulas != null && Model.NeededFormulas.Count > 0)
+        {
+            <div class="text-center">
+                <h4>The following formulas are needed if the order is to be calculated with user entered formulas:</h4>
+                @foreach (Formula f in Model.NeededFormulas)
+                {
+                    <div class="text-center">Bar Size: @f.BarSize, Degree: @f.Degree&#176;, Mandrel: @f.Mandrel.Name</div>
+                }
+            </div>
+        }
     </div>
     <div class="card-body quote-body">
         <h1 class="text-center">Total Cost: @Model.TotalCost.ToString("c")</h1>
@@ -113,7 +148,7 @@
                     {
                         comma = ",";
                     }
-                    <span>(@r.Length.ToString("G29")" x @r.Qty)@comma</span>
+                    <span>(@r.Length.ToString(tostring)" x @r.Qty)@comma</span>
                 }
             </div>
         }
@@ -126,19 +161,19 @@
             ReviewShape rS = Model.Shapes[i];
             <div class="card container shape">
                 <div class="card-header shape-header">
-                    <h2 class="text-center"><span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(x @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed <a asp-action="Index">Edit</a> | <a asp-action="Index">Delete</a></h2>
+                    <h2 class="text-center"><span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(x @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed <a asp-controller="Home" asp-action="NotFinished">Edit</a> | <a asp-controller="Home" asp-action="NotFinished">Delete</a></h2>
                 </div>
-                <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString("G29")"</div>
+                <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString(tostring)"</div>
                 @foreach (CutInstruction cI in rS.Instructions)
                 {
-                    <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString("G29")" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
+                    <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString(tostring)" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
                 }
                 @for (int j = 0; j < rS.Legs.Count; j++)
                 {
                     ReviewLeg rL = rS.Legs[j];
                     int num = j + 1;
                     <div class="leg">
-                        <span class="font-weight-bold">Leg @num: </span><span>@rL.Length"</span>
+                        <span class="font-weight-bold">Leg @num: </span><span>@rL.Length.ToString(tostring)"</span>
                         @if (j < rS.Legs.Count - 1)
                         {
                             <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
@@ -160,7 +195,7 @@
                         {
                             used = "Not";
                         }
-                        <span>(@r.Length.ToString("G29")" x @r.Qty) @used Used Again<span>@comma</span></span>
+                        <span>(@r.Length.ToString(tostring)" x @r.Qty) @used Used Again<span>@comma</span></span>
                     }
                 </div>
             </div>

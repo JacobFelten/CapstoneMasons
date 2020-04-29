@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
 using CapstoneMasons.ViewModels;
+using CapstoneMasons.Logic_Models;
+using CapstoneMasons.Infrastructure;
+using Microsoft.AspNetCore.Connections.Features;
 
 namespace CapstoneMasons.Controllers
 {
@@ -93,72 +96,117 @@ namespace CapstoneMasons.Controllers
         }
 
         // GET: Quotes/Create
-        public IActionResult Create()
+        public IActionResult Create(CreateQuote q)
         {
-            return View();
-        }
+            //refactors CreateQuote to Quote
 
-        // POST: Quotes/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("QuoteID,Name,OrderNum,DateQuoted,PickedUp,Open")] Quote quote)
-        {
-            if (ModelState.IsValid)
+            Quote quote = new Quote()
             {
-                await repo.AddQuoteAsync(quote);
-                return RedirectToAction(nameof(Index));
+                Name = q.Name,
+                OrderNum = q.OrderNum
+            };
+            for (var i = 0; i < q.ShapesCount; i++)
+            {
+                quote.Shapes.Add(new Shape());
+                List<Leg> Legs = new List<Leg>();
+
+                for (var j = 0; j < q.LegsInShapes[i]; j++)
+                {
+                    quote.Shapes[i].Legs.Add(new Leg() { });
+                }
             }
             return View(quote);
         }
-
-        public async Task<IActionResult> ReviewQuote(Quote q)
+        [HttpPost]
+        public async Task<IActionResult> Create(Quote q)
         {
-            if ((await repo.Quotes).Count == 0)//THIS IS ONLY FOR TESTING
-            {
+            if (ModelState.IsValid)
+            {//Refactors  to Quote
+                q.UseFormulas = false;
+                for (var i = 0; i < q.Shapes.Count; i++)
+                {
+                    for (var j = 0; j < q.Shapes[i].Legs.Count; j++)
+                    {
+                        q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
+                    }
+                }
                 await repo.AddQuoteAsync(q);
+                //var quotes = await repo.Quotes;
+                //int quoteId = quotes.Last().QuoteID + 1;
+                //q.QuoteID = quoteId;
+                //quotes.Add(q);
+                //added to repo but not to the database
+
+                return RedirectToAction("ReviewQuote", new { quoteID = q.QuoteID });
+                //return await ReviewQuote(q.QuoteID);
             }
-            q = await repo.GetQuoteByIdAsync(5);//THIS IS ONLY FOR TESTING
-            
-
-            ReviewQuote rQ = new ReviewQuote();
-            rQ.QuoteID = q.QuoteID; //done
-            rQ.Name = q.Name; //done
-            rQ.OrderNum = q.OrderNum; //done
-            rQ.AddSetup = q.AddSetup;
-            rQ.Discount = q.Discount;
-
-            //After filling the shapes with instructions the shapes are sorted by bar size
-            //then by shape length so the instructions make sense.
-            rQ.Shapes = await CreateShapesAsync(q);
-            IOrderedEnumerable<ReviewShape> orderedEnumerable = rQ.Shapes.OrderBy(s => s.BarSize).ThenByDescending(s => s.CutLength);
-            List<ReviewShape> rSList = new List<ReviewShape>();
-            foreach (ReviewShape rS in orderedEnumerable)
-                rSList.Add(rS);
-            rQ.Shapes = rSList; // done
-
-            rQ.BarsUsed = CalculateBarsUsed(rSList, q); //done
-
-            rQ.TotalCost = CalculateTotalCost(rQ.BarsUsed); //done
-            rQ.SetUpCharge = CalculateSetUp(q, rQ.BarsUsed); //Done
-            rQ.TotalCost += rQ.SetUpCharge; //done
-            rQ.TotalCost -= rQ.Discount; //done
-
-            rQ.FinalRemnants = CalculateFinalRemnants(rSList); //done
-
-            return View(rQ);
+            return View("Create", q);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, int discount, string setup)
+        public IActionResult GoToReviewQuote(CreateQuote q)
+        {            
+            //var errors = ModelState.Values.SelectMany(v => v.Errors); testing
+            if (ModelState.IsValid)
+            {
+                return Redirect(Url.Action(nameof(ReviewQuote), q));
+            }
+            return Redirect(Url.Action(nameof(Create), q));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreatePost(CreateQuote q)
+        {
+            if (ModelState.IsValid)
+            {
+                return Redirect(Url.Action(nameof(Create),q));
+            }
+            return Redirect(Url.Action("IndexPopUp", "Home",q));
+        }
+
+        public async Task<IActionResult> ReviewQuote(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+
+            q.DateQuoted = TimeZoneInfo.ConvertTime(DateTime.Now,
+                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
+
+            q = await UpdatePrices(q);
+
+            q.Open = true;
+
+            await repo.UpdateQuoteAsync(q);
+
+            ReviewQuote rQ = await FillReviewQuote(q);
+
+            return View("ReviewQuote", rQ);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup, string useFormulas)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", name);
             await repo.UpdateQuoteSimpleAsync(q, "OrderNum", orderNumber);
             await repo.UpdateQuoteSimpleAsync(q, "Discount", discount.ToString());
             await repo.UpdateQuoteSimpleAsync(q, "AddSetup", setup);
-            return await ReviewQuote(q);
+            if (useFormulas == null)
+                useFormulas = "false";
+            var neededFormulas = new List<Formula>();
+            if (bool.Parse(useFormulas))
+            {
+                neededFormulas = (List<Formula>)await CanUseFormulas(q);
+                if (neededFormulas.Count == 0)
+                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
+            }
+            else
+            {
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
+            }
+            var rQ = await FillReviewQuote(q);
+            rQ.NeededFormulas = neededFormulas;
+            return View("ReviewQuote", rQ);
         }
 
         #region So Jacob doesn't have to keep scrolling past these
@@ -190,18 +238,15 @@ namespace CapstoneMasons.Controllers
                 return NotFound();
             }
 
-            Quote oldQuote = null;
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    oldQuote = await repo.GetQuoteByIdAsync(newQuote.QuoteID);
-                    await repo.UpdateQuoteAsync(oldQuote, newQuote);
+                    await repo.UpdateQuoteAsync(newQuote);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QuoteExists(oldQuote.QuoteID))
+                    if (!QuoteExists(newQuote.QuoteID))
                     {
                         return NotFound();
                     }
@@ -212,7 +257,7 @@ namespace CapstoneMasons.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(oldQuote);
+            return View(newQuote);
         }
 
         // GET: Quotes/Delete/5
@@ -251,6 +296,37 @@ namespace CapstoneMasons.Controllers
 
         #region Methods for ReviewQuote
 
+        private async Task<ReviewQuote> FillReviewQuote(Quote q)
+        {
+            ReviewQuote rQ = new ReviewQuote();
+            rQ.QuoteID = q.QuoteID; //done
+            rQ.Name = q.Name; //done
+            rQ.OrderNum = q.OrderNum; //done
+            rQ.AddSetup = q.AddSetup;
+            rQ.Discount = q.Discount;
+            rQ.UseFormulas = q.UseFormulas;
+
+            //After filling the shapes with instructions the shapes are sorted by bar size
+            //then by shape length so the instructions make sense.
+            rQ.Shapes = await CreateShapesAsync(q);
+            IOrderedEnumerable<ReviewShape> orderedEnumerable = rQ.Shapes.OrderBy(s => s.BarSize).ThenByDescending(s => s.CutLength);
+            List<ReviewShape> rSList = new List<ReviewShape>();
+            foreach (ReviewShape rS in orderedEnumerable)
+                rSList.Add(rS);
+            rQ.Shapes = rSList; // done
+
+            rQ.BarsUsed = CalculateBarsUsed(rSList, q); //done
+
+            rQ.TotalCost = CalculateTotalCost(rQ.BarsUsed); //done
+            rQ.SetUpCharge = CalculateSetUp(q, rQ.BarsUsed); //Done
+            rQ.TotalCost += rQ.SetUpCharge; //done
+            rQ.TotalCost -= rQ.Discount; //done
+
+            rQ.FinalRemnants = CalculateFinalRemnants(rSList); //done
+
+            return rQ;
+        }
+
         //Creates a ReviewShape for every shape in the quote. This method adds the simple
         //data before calling FillShapes which calculates remnants.
         private async Task<List<ReviewShape>> CreateShapesAsync(Quote q)
@@ -262,7 +338,16 @@ namespace CapstoneMasons.Controllers
                 rS.ShapeID = s.ShapeID;
                 rS.Qty = s.Qty;
                 rS.BarSize = s.BarSize;
-                rS.CutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                if (q.UseFormulas)
+                {
+                    rS.CutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    rS.CutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
                 rS.Legs = await CreateLegsAsync(s);
                 rSList.Add(rS);
             }
@@ -352,7 +437,7 @@ namespace CapstoneMasons.Controllers
                                     {
                                         CutQty = perBar,
                                         PerLength = remnants[rIndex].Length,
-                                        PerType = "Remnant",
+                                        PerType = KnownObjects.Remnant,
                                         ForQty = forQty
                                     });
                                     shapesLeft -= perBar * forQty;
@@ -372,7 +457,7 @@ namespace CapstoneMasons.Controllers
                                     {
                                         CutQty = finalPerBar,
                                         PerLength = remnants[rIndex].Length,
-                                        PerType = "Remnant",
+                                        PerType = KnownObjects.Remnant,
                                         ForQty = 1
                                     });
                                     shapesLeft -= finalPerBar;
@@ -394,7 +479,7 @@ namespace CapstoneMasons.Controllers
                                     {
                                         CutQty = perBar,
                                         PerLength = remnants[rIndex].Length,
-                                        PerType = "Remnant",
+                                        PerType = KnownObjects.Remnant,
                                         ForQty = forQty
                                     });
                                     shapesLeft -= perBar * forQty;
@@ -414,7 +499,7 @@ namespace CapstoneMasons.Controllers
                                     {
                                         CutQty = finalPerBar,
                                         PerLength = remnants[rIndex].Length,
-                                        PerType = "Remnant",
+                                        PerType = KnownObjects.Remnant,
                                         ForQty = 1
                                     });
                                     shapesLeft -= finalPerBar;
@@ -488,7 +573,7 @@ namespace CapstoneMasons.Controllers
             List<Remnant> rList = new List<Remnant>();
             List<CutInstruction> cIList = new List<CutInstruction>();
             decimal remnant;
-            int perBar = GetShapesPerBar(rS.CutLength, 240, out remnant);
+            int perBar = GetShapesPerBar(rS.CutLength, KnownObjects.FullBarLength, out remnant);
             if (perBar <= rS.Qty)
             {
                 rList.Add(new Remnant
@@ -500,8 +585,8 @@ namespace CapstoneMasons.Controllers
                 cIList.Add(new CutInstruction
                 {
                     CutQty = perBar,
-                    PerLength = 240,
-                    PerType = "Bar",
+                    PerLength = KnownObjects.FullBarLength,
+                    PerType = KnownObjects.FullBar,
                     ForQty = rS.Qty / perBar
                 });
             }
@@ -513,7 +598,7 @@ namespace CapstoneMasons.Controllers
             //the quote. An example would be someone needs 7 bars that are 72" long. The seventh
             //shape cut would leave a different sized remnant because you get 3 shapes per bar,
             //and 3 doesn't evenly divide into 7.
-            if (GetShapesPerFinalBar(rS.Qty, rS.CutLength, 240, out finalRemnant, out finalPerBar))
+            if (GetShapesPerFinalBar(rS.Qty, rS.CutLength, KnownObjects.FullBarLength, out finalRemnant, out finalPerBar))
             {
                 rList.Add(new Remnant
                 {
@@ -524,8 +609,8 @@ namespace CapstoneMasons.Controllers
                 cIList.Add(new CutInstruction
                 {
                     CutQty = finalPerBar,
-                    PerLength = 240,
-                    PerType = "Bar",
+                    PerLength = KnownObjects.FullBarLength,
+                    PerType = KnownObjects.FullBar,
                     ForQty = 1
                 });
             }
@@ -669,7 +754,7 @@ namespace CapstoneMasons.Controllers
 
             foreach (Cost c in q.Costs)
             {
-                if (c.Name == "Setup")
+                if (c.Name == KnownObjects.SetupCost)
                     setup = c.Price;
             }
 
@@ -738,11 +823,11 @@ namespace CapstoneMasons.Controllers
 
             foreach (Cost c in q.Costs)
             {
-                if (c.Name == result.BarSize + " Bar")
+                if (c.Name == result.BarSize + KnownObjects.BarCost)
                     result.BarCost = c.Price;
-                else if (c.Name == result.BarSize + " Cut")
+                else if (c.Name == result.BarSize + KnownObjects.CutCost)
                     result.CutCost = c.Price;
-                else if (c.Name == result.BarSize + " Bend")
+                else if (c.Name == result.BarSize + KnownObjects.BendCost)
                     result.BendCost = c.Price;
             }
 
@@ -811,80 +896,124 @@ namespace CapstoneMasons.Controllers
             return View(costsQuote.ToList());
         }
 
+        private async Task<List<Formula>> CanUseFormulas(Quote q)
+        {
+            var result = new List<Formula>();
+            foreach (Shape s in q.Shapes)
+            {
+                foreach (Leg l in s.Legs)
+                {
+                    if (l != s.Legs.Last())
+                    {
+                        if (await GetFormulaByLegAsync(l, s.BarSize) == null)
+                        {
+                            var formula = new Formula
+                            {
+                                BarSize = s.BarSize,
+                                Degree = l.Degree,
+                                Mandrel = l.Mandrel
+                            };
+                            bool add = true;
+                            foreach (Formula f in result)
+                                if (formula.BarSize == f.BarSize && formula.Degree == f.Degree && formula.Mandrel == f.Mandrel)
+                                    add = false;
+                            if (add)
+                                result.Add(formula);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<Quote> UpdatePrices(Quote quote)
+        private async Task<Quote> UpdatePrices(Quote quote)
         {
             quote.Costs.Clear();
             var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
-            var sumLegs = 0m;
-            var total = 0m;
+            //var sumLegs = 0m;
+            //var total = 0m;
 
             foreach (Shape shape in quote.Shapes)
             {
-                var barCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Bar");
+                Cost bar = null;
+                Cost cut = null;
+                Cost bend = null;
+                switch(shape.BarSize)
+                {
+                    case 3:
+                        bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3GlobalCost.Name);
+                        cut = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3CutCost.Name);
+                        bend = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3BendCost.Name);
+                        break;
+                    case 4:
+                        bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar4GlobalCost.Name);
+                        cut = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar4CutCost.Name);
+                        bend = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar4BendCost.Name);
+                        break;
+                    case 5:
+                        bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar5GlobalCost.Name);
+                        cut = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar5CutCost.Name);
+                        bend = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar5BendCost.Name);
+                        break;
+                    case 6:
+                        bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar6GlobalCost.Name);
+                        cut = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar6CutCost.Name);
+                        bend = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar6BendCost.Name);
+                        break;
+                }
+                var barCost = new Cost
+                {
+                    Name = shape.BarSize.ToString() + KnownObjects.BarCost,
+                    Price = costsQuote.FirstOrDefault(c => c.Name == bar.Name).Price,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                };
                 if (!quote.Costs.Contains(barCost))//if it doesnt contain add cost
                     quote.Costs.Add(barCost);//Adding Cost per Bar
-                total += barCost.Price * shape.Qty;
 
-                foreach (Leg leg in shape.Legs)
+                var cutCost = new Cost
                 {
-                    sumLegs += leg.Length;
-                }
-                if (sumLegs != 240)
-                {
-                    var cutCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Cut");
-                    if (!quote.Costs.Contains(cutCost))
-                        quote.Costs.Add(cutCost);//Adding Cost per cut
-                    //total += costsQuote.Costs.Find(c => c.Name == shape.BarSize.ToString() + "Cut").Price*quote.; //add cut prices later?
-                }
+                    Name = shape.BarSize.ToString() + KnownObjects.CutCost,
+                    Price = costsQuote.FirstOrDefault(c => c.Name == cut.Name).Price,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                };
+                if (!CostExists(quote.Costs, cutCost.Name))
+                    quote.Costs.Add(cutCost);//Adding Cost per cut
+                //total += costsQuote.Costs.Find(c => c.Name == shape.BarSize.ToString() + "Cut").Price*quote.; //add cut prices later?
 
-                for (int i = 0; i < shape.LegCount - 1; i++)
+                var bendCost = new Cost
                 {
-                    var bendCost = costsQuote.FirstOrDefault(c => c.Name == shape.BarSize.ToString() + " Bend");
-                    if (!quote.Costs.Contains(bendCost))
-                        quote.Costs.Add(bendCost);//Adding Cost per bend
-                    total += bendCost.Price;
-                }
-
+                    Name = shape.BarSize.ToString() + KnownObjects.BendCost,
+                    Price = costsQuote.FirstOrDefault(c => c.Name == bend.Name).Price,
+                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+                };
+                if (!CostExists(quote.Costs, bendCost.Name))
+                    quote.Costs.Add(bendCost);//Adding Cost per bend
+                //total += bendCost.Price;
             }
-            if (total < costsQuote.FirstOrDefault(c => c.Name == "Setup Min").Price)
+
+            var setupCost = new Cost
             {
-                quote.Costs.Add(costsQuote.FirstOrDefault(c => c.Name == "Setup"));//BarSize3Cut
-                total += costsQuote.FirstOrDefault(c => c.Name == "Setup").Price;
-            }
+                Name = KnownObjects.SetupCost,
+                Price = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.SetupCharge.Name).Price,
+                LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
+            };
+            quote.Costs.Add(setupCost);
 
             return quote;
         }
 
-        private async Task<ReviewQuote> FillReviewQuote(Quote q) 
+        private bool CostExists(List<Cost> costs, string name)
         {
-            ReviewQuote rQ = new ReviewQuote();
-            rQ.QuoteID = q.QuoteID; //done
-            rQ.Name = q.Name; //done
-            rQ.OrderNum = q.OrderNum; //done
-            rQ.AddSetup = q.AddSetup;
-            rQ.Discount = q.Discount;
-
-            //After filling the shapes with instructions the shapes are sorted by bar size
-            //then by shape length so the instructions make sense.
-            rQ.Shapes = await CreateShapesAsync(q);
-            IOrderedEnumerable<ReviewShape> orderedEnumerable = rQ.Shapes.OrderBy(s => s.BarSize).ThenByDescending(s => s.CutLength);
-            List<ReviewShape> rSList = new List<ReviewShape>();
-            foreach (ReviewShape rS in orderedEnumerable)
-                rSList.Add(rS);
-            rQ.Shapes = rSList; // done
-
-            rQ.BarsUsed = CalculateBarsUsed(rSList, q); //done
-
-            rQ.TotalCost = CalculateTotalCost(rQ.BarsUsed); //done
-            rQ.SetUpCharge = CalculateSetUp(q, rQ.BarsUsed); //Done
-            rQ.TotalCost += rQ.SetUpCharge; //done
-            rQ.TotalCost -= rQ.Discount; //done
-
-            rQ.FinalRemnants = CalculateFinalRemnants(rSList); //done
-
-            return rQ;
+            foreach (Cost c in costs)
+                if (c.Name == name)
+                    return true;
+            return false;
         }
 
         #region Jacob's Dummy thicc data for testing ma view
@@ -978,6 +1107,7 @@ namespace CapstoneMasons.Controllers
             };
             var cost4 = new Cost
             {
+
                 Name = "5 Bar",
                 Price = 15,
                 LastChanged = new DateTime()
@@ -1008,7 +1138,8 @@ namespace CapstoneMasons.Controllers
                 Costs = { cost1, cost2, cost3, cost4, cost5, cost6, cost7 },
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
-                Open = true
+                Open = true,
+                UseFormulas = false               
             };
             return quote2;
         }
@@ -1185,19 +1316,19 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                Name = "3 Bar",
+                Name = "3Bar",
                 Price = 5,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                Name = "3 Cut",
+                Name = "3Cut",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             var cost3 = new Cost
             {
-                Name = "3 Bend",
+                Name = "3Bend",
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
@@ -1260,13 +1391,13 @@ namespace CapstoneMasons.Controllers
             };
             var cost1 = new Cost
             {
-                Name = "6 Bar",
+                Name = "6Bar",
                 Price = 20,
                 LastChanged = new DateTime()
             };
             var cost2 = new Cost
             {
-                Name = "6 Cut",
+                Name = "6Cut",
                 Price = 0.40m,
                 LastChanged = new DateTime()
             };
@@ -1285,6 +1416,76 @@ namespace CapstoneMasons.Controllers
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
                 Open = false
+            };
+            return quote;
+        }
+
+        private Quote DummyQuote6()
+        {
+            var leg1 = new Leg
+            {
+                Length = 84
+            };
+            var shape1 = new Shape
+            {
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg1 },
+                Qty = 5,
+                NumCompleted = 0,
+            };
+            var leg2 = new Leg
+            {
+                Length = 25
+            };
+            var shape2 = new Shape
+            {
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg2 },
+                Qty = 6,
+                NumCompleted = 0,
+            };
+            var leg3 = new Leg
+            {
+                Length = 72
+            };
+            var shape3 = new Shape
+            {
+                BarSize = 6,
+                LegCount = 1,
+                Legs = { leg3 },
+                Qty = 2,
+                NumCompleted = 0,
+            };
+            var cost1 = new Cost
+            {
+                Name = "6Bar",
+                Price = 20,
+                LastChanged = new DateTime()
+            };
+            var cost2 = new Cost
+            {
+                Name = "6Cut",
+                Price = 0.40m,
+                LastChanged = new DateTime()
+            };
+            var cost3 = new Cost
+            {
+                Name = "Setup",
+                Price = 15,
+                LastChanged = new DateTime()
+            };
+            var quote = new Quote
+            {
+                Name = "Billy's Concrete",
+                OrderNum = "654312",
+                Shapes = { shape1, shape3, shape2 },
+                Costs = { cost1, cost2, cost3 },
+                DateQuoted = DateTime.Now,
+                PickedUp = false,
+                Open = false,
+                UseFormulas = true
             };
             return quote;
         }

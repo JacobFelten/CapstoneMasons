@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CapstoneMasons.Models;
+using CapstoneMasons.ViewModels;
 
 namespace CapstoneMasons.Controllers
 {
@@ -20,10 +21,22 @@ namespace CapstoneMasons.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.ShowPopUp = false;
             return View();
         }
 
+        public IActionResult IndexPopUp(CreateQuote quote)
+        {
+           ViewBag.ShowPopUp = true;
+           return View("Index",quote);
+        }
+
         public IActionResult Credits()
+        {
+            return View();
+        }
+
+        public IActionResult NotFinished()
         {
             return View();
         }
