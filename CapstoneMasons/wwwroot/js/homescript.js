@@ -23,6 +23,74 @@ function getLegsintoShapes() {
     }
     return shapes;
 }
+$(window).on('shown.bs.modal', function () {
+    $.ajax({
+        type: "GET",
+        url: pricesUrl,
+        //contentType: "application/json"
+        dataType: "text",
+        success: function (response) {
+            //alert(response);
+            response = JSON.parse(response);
+            document.getElementById("bar3costID").value = response.bar3GlobalCost.costID;
+            document.getElementById("bar3cost").value = response.bar3GlobalCost.price;
+        },
+        error: function () {
+            alert("Error Getting Prices");
+        }
+    });
+
+    var bar3cost = 0;
+});
+
+function PostPrices() {
+    var prices = {
+        bar3GlobalID: document.getElementById("bar3costID").value,
+        bar3GlobalCost: document.getElementById("bar3cost").value,
+        //bend3GlobalID: 1,
+        //bar3BendCost: 1,
+        //cut3GlobalID: 1,
+        //bar3CutCost: 1,
+        //bar4GlobalID: document.getElementById("bar4costID").value,
+        //bar4GlobalCost: document.getElementById("bar4cost").value,
+        //bend4GlobalID: 1,
+        //bar4BendCost: 1,
+        //cut4GlobalID: 1,
+        //bar4CutCost: 1,
+        //bar5GlobalID: 1,
+        //bar5GlobalCost: 1,
+        //bend5GlobalID: 1,
+        //bar5BendCost: 1,
+        //cut5GlobalID: 1,
+        //bar5CutCost: 1,
+        //bar6GlobalID: 1,
+        //bar6GlobalCost: 1,
+        //bend6GlobalID: 1,
+        //bar6BendCost: 1,
+        //cut6GlobalID: 1,
+        //bar6CutCost: 1,
+        //setupGlobalID: 1,
+        //setupCharge: 1,
+        //minOrderGlobalID: 1,
+        //minimumOrderCost: 1
+    };
+    var data = JSON.stringify(prices);
+    $.ajax({
+        type: "POST",
+        data: prices,
+        url: pricesUrl,
+        //contentType: "application/json"
+        dataType: "text",
+        success: function (response) {
+            alert(response);
+        },
+        error: function () {
+
+        }
+    });
+
+    return false;
+}
 
 $('#CreateQuote').submit(function (e) {
     //e.preventDefault(); // avoid to execute the actual submit of the form.
