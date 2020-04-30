@@ -1,53 +1,169 @@
-﻿@model CapstoneMasons.Models.Quote
+﻿@model Quote
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Quote";
 }
 
-<h1>Create</h1>
+<style>
+    .line {
+        display: inline;
+    }
 
-<h4>Quote</h4>
+    .shape {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .leg {
+        margin-left: 10%;
+    }
+
+    .shape-header {
+        background-color: lightblue;
+    }
+
+    .quote-header {
+        background-color: white;
+    }
+
+    .quote-body {
+        background-color: lightgray;
+    }
+</style>
+
+
+<h1>Create Quote - Continued</h1>
+
+<h4>Edit Shapes</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="card container">
+        <form asp-action="Create" asp-controller="Quotes" method="post">
+            <div class="card-header quote-header">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label>Quote Name:</label>
+                    <input class="form-control" value="@Model.Name" name="name" />
+                </div>
+                <div class="form-group">
+                    <label>Order Number:</label>
+                    <input class="form-control" value="@Model.OrderNum" name="OrderNum" />
+                </div>
+
+
+            </div>
+            <div class="card-body quote-body">
+                <div class="panel-group" id="checkout-accordion">
+                    @for (int i = 0; i < Model.Shapes.Count; i++)
+                    {
+                        <div class="bg-danger panel panel-default checkout-panel" id="panel-shape@((i+1).ToString())" style="margin-bottom: 15px;"
+                             onchange="validateShapes(@(i+1),@Model.Shapes[i].Legs.Count)" onclick="validateShapes(@(i+1),@Model.Shapes[i].Legs.Count)">
+                            <div class="panel-heading checkout-heading" id="panel-billing-heading" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())">
+                                <h4 class="text-center panel-title checkout-acc-title">
+                                    <a>@(KnownObjects.NumberPrefix[i]) Shape</a>
+                                    <i class="far fa-window-close pull-right" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: Tomato;"></i>
+                                </h4>
+                            </div>
+                            <div id="collapse-shape@((i+1).ToString())" class="container panel-collapse details collapse in" style="padding-bottom: 20px;">
+                                <div class="bg-secondary panel-body checkout-inside" style="padding-left: 10px; padding-right: 10px; padding-bottom: 10px;">
+                                    <div class="text-center font-weight-bold">The Shape will turn Green when Valid</div>
+                                    <div class="row justify-content-md-center">
+                                        <div class="col-md-4 col-lg-3 col-sm form-group">
+                                            <label for="exampleFormControlSelect2">Rebar #: </label>
+                                            <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
+                                                     onchange="vaidateRebar(this.options[this.selectedIndex].text)">
+                                                <option>3</option>
+                                                <option>4</option>
+                                                <option>5</option>
+                                                <option>6</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 col-lg-2 col-sm form-group">
+                                            <label for="exampleFormControlSelect2">Quantity</label>
+                                            <input class="form-control" asp-for="Shapes[i].Qty"/>
+                                        </div>
+                                    </div>
+                                    @for (int leg = 0; leg < Model.Shapes[i].Legs.Count; leg++)
+                                    {
+                                        <div class="row">
+                                            <div class="col-4 form-group">
+                                                <label>@(KnownObjects.NumberPrefix[leg]) Leg Length: </label>
+                                                <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" />
+                                            </div>
+                                            @if (leg != Model.Shapes[i].Legs.Count - 1)
+                                            {
+                                                <div class="col-5 form-group">
+                                                    <label>@(KnownObjects.NumberPrefix[leg]) Leg Bend (Degrees): </label>
+                                                    <input type="number" min="1" value="0" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree" />
+                                                </div>
+                                                <div class="col-3 form-group">
+                                                    <label for="exampleFormControlSelect2">Mandrel: </label>
+                                                    <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
+                                                            onchange="vaidateLeg(this.options[this.selectedIndex].text)">
+                                                        <option>None</option>
+                                                        <option>Small</option>
+                                                        <option>Medium</option>
+                                                        <option>Large</option>
+                                                    </select>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+
+                                    <button hidden id="toggle-delivery" type="button" class="btn-checkout" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-shape@((i+2).ToString())">Next Shape</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <div class="panel-group" id="checkout-accordion" hidden>
+
+                <div class="panel panel-default checkout-panel" id="panel-shipping">
+                    <div class="panel-heading checkout-heading" id="panel-shipping-heading" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-delivery">
+                        <h4 class="panel-title checkout-acc-title">
+                            <a>Delivery Options</a>
+                        </h4>
+                    </div>
+                    <div id="collapse-delivery" class="panel-collapse details collapse">
+                        <div class="panel-body checkout-inside">
+                            Content Second
+                            <button id="toggle-payment" type="button" class="btn-checkout" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-payment">Select Delivery Option</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default checkout-panel" id="panel-payment">
+                    <div class="panel-heading checkout-heading" id="panel-payment-heading" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-payment">
+                        <h4 class="panel-title checkout-acc-title">
+                            <a>Payment</a>
+                        </h4>
+                    </div>
+                    <div id="collapse-payment" class="panel-collapse details collapse">
+                        <div class="panel-body checkout-inside">
+                            Content Third
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderNum" class="control-label"></label>
-                <input asp-for="OrderNum" class="form-control" />
-                <span asp-validation-for="OrderNum" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateQuoted" class="control-label"></label>
-                <input asp-for="DateQuoted" class="form-control" />
-                <span asp-validation-for="DateQuoted" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="PickedUp" /> @Html.DisplayNameFor(model => model.PickedUp)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Open" /> @Html.DisplayNameFor(model => model.Open)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <button type="submit" class="btn btn-primary">Review Quote</button>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript" src="~/js/createQuote.js"></script>
+    <link rel="stylesheet" href="~/css/fontawesome.css">
 }

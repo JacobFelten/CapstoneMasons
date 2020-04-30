@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CapstoneMasons.Models;
+using CapstoneMasons.ViewModels;
 
 namespace CapstoneMasons.Controllers
 {
@@ -20,7 +21,14 @@ namespace CapstoneMasons.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.ShowPopUp = false;
             return View();
+        }
+
+        public IActionResult IndexPopUp(CreateQuote quote)
+        {
+           ViewBag.ShowPopUp = true;
+           return View("Index",quote);
         }
 
         public IActionResult Credits()
@@ -28,9 +36,23 @@ namespace CapstoneMasons.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult NotFinished()
         {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error(int? statusCode = null)
+        {
+            if (statusCode.HasValue)
+            {
+                if (statusCode == 404 || statusCode == 500)
+                {
+                    //var viewName = statusCode.ToString();
+                    return View("404");
+                }
+            }
+
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
