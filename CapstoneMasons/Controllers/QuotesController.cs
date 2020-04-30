@@ -1293,5 +1293,12 @@ namespace CapstoneMasons.Controllers
             return quote;
         }
         #endregion
+
+
+
+        public IActionResult Canvas()
+        {
+            return View();
+        }
     }
 }
