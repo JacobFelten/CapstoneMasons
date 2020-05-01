@@ -15,7 +15,7 @@ function addFields(shapes) {
         document.getElementById("shapes").innerHTML = shapesInput;
 }
 
-function getLegsintoShapes() {
+function getLegsintoShapes() {//gets legs from shape numbers
     var shapes = [];
     var ShapesCount = parseInt(document.getElementById("ShapesCount").value);
     for (i = 0; i < ShapesCount; i++) {
@@ -24,64 +24,10 @@ function getLegsintoShapes() {
     return shapes;
 }
 $(window).on('shown.bs.modal', function () {
-    $.ajax({
-        type: "GET",
-        url: pricesUrl,
-        //contentType: "application/json"
-        dataType: "text",
-        success: function (response) {
-            //alert(response);
-            response = JSON.parse(response);
-            document.getElementById("bar3costID").value = response.bar3GlobalCost.costID;
-            document.getElementById("bar3cost").value = response.bar3GlobalCost.price;
-            document.getElementById("bar4costID").value = response.bar4GlobalCost.costID;
-            document.getElementById("bar4cost").value = response.bar4GlobalCost.price;
-            document.getElementById("bar5costID").value = response.bar5GlobalCost.costID;
-            document.getElementById("bar5cost").value = response.bar5GlobalCost.price;
-            document.getElementById("bar6costID").value = response.bar6GlobalCost.costID;
-            document.getElementById("bar6cost").value = response.bar6GlobalCost.price;
-
-            document.getElementById("bar3bendID").value = response.bar3BendCost.costID;
-            document.getElementById("bar3bend").value = response.bar3BendCost.price;
-            document.getElementById("bar4bendID").value = response.bar4BendCost.costID;
-            document.getElementById("bar4bend").value = response.bar4BendCost.price;
-            document.getElementById("bar5bendID").value = response.bar5BendCost.costID;
-            document.getElementById("bar5bend").value = response.bar5BendCost.price;
-            document.getElementById("bar6bendID").value = response.bar6BendCost.costID;
-            document.getElementById("bar6bend").value = response.bar6BendCost.price;
-
-            document.getElementById("bar3bendID").value = response.bar3BendCost.costID;
-            document.getElementById("bar3bend").value = response.bar3BendCost.price;
-            document.getElementById("bar4bendID").value = response.bar4BendCost.costID;
-            document.getElementById("bar4bend").value = response.bar4BendCost.price;
-            document.getElementById("bar5bendID").value = response.bar5BendCost.costID;
-            document.getElementById("bar5bend").value = response.bar5BendCost.price;
-            document.getElementById("bar6bendID").value = response.bar6BendCost.costID;
-            document.getElementById("bar6bend").value = response.bar6BendCost.price;
-
-            document.getElementById("bar3cutID").value = response.bar3CutCost.costID;
-            document.getElementById("bar3cut").value = response.bar3CutCost.price;
-            document.getElementById("bar4cutID").value = response.bar4CutCost.costID;
-            document.getElementById("bar4cut").value = response.bar4CutCost.price;
-            document.getElementById("bar5cutID").value = response.bar5CutCost.costID;
-            document.getElementById("bar5cut").value = response.bar5CutCost.price;
-            document.getElementById("bar6cutID").value = response.bar6CutCost.costID;
-            document.getElementById("bar6cut").value = response.bar6CutCost.price;
-
-            document.getElementById("setupGlobalID").value = response.bar6CutCost.costID;
-            document.getElementById("setupCharge").value = response.bar6CutCost.price;
-            document.getElementById("minOrderGlobalID").value = response.minimumOrderCost.costID;
-            document.getElementById("minimumOrderCost").value = response.minimumOrderCost.price;
-        },
-        error: function () {
-            alert("Error Getting Prices");
-        }
-    });
-
-    var bar3cost = 0;
+    getLegPrices();
 });
 
-function PostPrices() {
+function PostPrices() {//sends price in popup to pst method
     var prices = {
         bar3GlobalID: document.getElementById("bar3costID").value,
         bar3GlobalCost: document.getElementById("bar3cost").value,
@@ -156,6 +102,63 @@ $('#CreateQuote').submit(function (e) {
 $(window).on('load', function () {
     if ($('#ShowPopUp').html() == 'True') {
         $('#createQuote').modal('show');
+        getLegPrices();
     }
 });
 
+function getLegPrices() {
+    $.ajax({
+        type: "GET",
+        url: pricesUrl,
+        //contentType: "application/json"
+        dataType: "text",
+        success: function (response) {
+            //alert(response);
+            response = JSON.parse(response);
+            document.getElementById("bar3costID").value = response.bar3GlobalCost.costID;
+            document.getElementById("bar3cost").value = response.bar3GlobalCost.price;
+            document.getElementById("bar4costID").value = response.bar4GlobalCost.costID;
+            document.getElementById("bar4cost").value = response.bar4GlobalCost.price;
+            document.getElementById("bar5costID").value = response.bar5GlobalCost.costID;
+            document.getElementById("bar5cost").value = response.bar5GlobalCost.price;
+            document.getElementById("bar6costID").value = response.bar6GlobalCost.costID;
+            document.getElementById("bar6cost").value = response.bar6GlobalCost.price;
+
+            document.getElementById("bar3bendID").value = response.bar3BendCost.costID;
+            document.getElementById("bar3bend").value = response.bar3BendCost.price;
+            document.getElementById("bar4bendID").value = response.bar4BendCost.costID;
+            document.getElementById("bar4bend").value = response.bar4BendCost.price;
+            document.getElementById("bar5bendID").value = response.bar5BendCost.costID;
+            document.getElementById("bar5bend").value = response.bar5BendCost.price;
+            document.getElementById("bar6bendID").value = response.bar6BendCost.costID;
+            document.getElementById("bar6bend").value = response.bar6BendCost.price;
+
+            document.getElementById("bar3bendID").value = response.bar3BendCost.costID;
+            document.getElementById("bar3bend").value = response.bar3BendCost.price;
+            document.getElementById("bar4bendID").value = response.bar4BendCost.costID;
+            document.getElementById("bar4bend").value = response.bar4BendCost.price;
+            document.getElementById("bar5bendID").value = response.bar5BendCost.costID;
+            document.getElementById("bar5bend").value = response.bar5BendCost.price;
+            document.getElementById("bar6bendID").value = response.bar6BendCost.costID;
+            document.getElementById("bar6bend").value = response.bar6BendCost.price;
+
+            document.getElementById("bar3cutID").value = response.bar3CutCost.costID;
+            document.getElementById("bar3cut").value = response.bar3CutCost.price;
+            document.getElementById("bar4cutID").value = response.bar4CutCost.costID;
+            document.getElementById("bar4cut").value = response.bar4CutCost.price;
+            document.getElementById("bar5cutID").value = response.bar5CutCost.costID;
+            document.getElementById("bar5cut").value = response.bar5CutCost.price;
+            document.getElementById("bar6cutID").value = response.bar6CutCost.costID;
+            document.getElementById("bar6cut").value = response.bar6CutCost.price;
+
+            document.getElementById("setupGlobalID").value = response.bar6CutCost.costID;
+            document.getElementById("setupCharge").value = response.bar6CutCost.price;
+            document.getElementById("minOrderGlobalID").value = response.minimumOrderCost.costID;
+            document.getElementById("minimumOrderCost").value = response.minimumOrderCost.price;
+        },
+        error: function () {
+            alert("Error Getting Prices");
+        }
+
+    });
+}
