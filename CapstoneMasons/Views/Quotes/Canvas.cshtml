@@ -22,12 +22,269 @@
 if (canvas.getContext) 
  {
 
+ 
+ //global variables for canvas
   var thicc = 25;
-  var scalar = 15;
-  x_shift = 80;
-  y_shift = -250;
+  var scalar = 1;
+  x_shift = 0;
+  y_shift = 0;
   f_size = "12px Arial";
   var angle_shift = -9;
+
+
+  //variables for quote
+  var num_shapes = 1;
+  var num_legs = 6;
+
+  //variables for shape
+  var curr_unit_val = 0;
+  var neg_pos = 1;
+  var curr_x = 0;
+  var curr_y = 0;
+  var prev_x = 0;
+  var prev_y = 0;
+
+  var x0;
+  var y0;
+
+  //Variables for Shape creation
+  var leg1_length = 25;
+  var leg1_degree = 135;
+  var leg1_direction = "left";
+  var x1;
+  var y1;
+
+  var leg2_length = 50;
+  var leg2_degree = 90;
+  var leg2_direction = "left";
+  var x2;
+  var y2;
+
+  var leg3_length = 30;
+  var leg3_degree = 60;
+  var leg3_direction = "left";
+  var x3;
+  var y3;
+
+  var leg4_length = 15;
+  var leg4_degree = 90;
+  var leg4_direction = "right";
+  var x4;
+  var y4;
+
+  var leg5_length = 25;
+  var leg5_degree = 90;
+  var leg5_direction = "right";
+  var x5;
+  var y5;
+
+  var leg6_length = 30;
+
+
+  for (var i = 0 ; i < num_shapes ; i++) //for 1 shape
+  {
+	var context = canvas.getContext('2d');
+
+	curr_x = (canvas.width)/2; //sets inital x point
+	curr_y = (canvas.height)/2; //sets initial y point
+	curr_unit_val = 0;  //set unit circle value
+	for(var j = 0 ; j < num_legs ; j++)
+	{
+		if ( j == 0)
+		{
+
+			x0 = curr_x + x_shift;  //save the new x coord
+			y0 = curr_y + y_shift;  //save the new y coord
+
+			//draw first line of shape
+			context.beginPath(); 
+
+			//(x0,y0)
+			context.moveTo(x0, y0);
+
+
+
+
+			console.log("starting line 1 from x value:")
+			console.log(x0);
+			console.log("starting line 1 from y value:")
+			console.log(y0);
+
+
+			//prev_x = curr_x;			//store the previous x coord
+			//prev_y = curr_y;			//store the previous y coord
+			x1 = x0 + leg1_length * scalar;		//save the new x coord
+			y1 = y0;					//save the new y coord
+
+
+			//(x1,y1)
+			context.lineTo(x1, y1);
+
+			context.stroke(); //draw the actual line
+
+
+			//now draw text on top of the line itself
+
+			
+		}
+		else if (j == 1)
+		{
+			if(leg1_direction == "right")
+			{
+				neg_pos = 1;
+			}
+			else
+			{
+				neg_pos = -1;
+			}
+
+			context.beginPath(); 
+			context.moveTo(x1, y1);
+
+
+			//(x2,y2) 
+			x2 = (x1 + scalar * Math.cos( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg1_degree) ) )*leg2_length );
+			y2 = (y1 + scalar * Math.sin( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg1_degree) ) )*leg2_length );
+
+			context.lineTo(x2, y2);
+
+			curr_unit_val = curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg1_degree);
+			//prev_x = curr_x;
+			//prev_y = curr_y;
+
+
+			context.stroke(); //draw the actual line
+
+			//draw dimensions on top of line
+		}
+		else if (j == 2)
+		{
+			if(leg2_direction == "right")
+			{
+				neg_pos = 1;
+			}
+			else
+			{
+				neg_pos = -1;
+			}
+
+			context.beginPath(); 
+			context.moveTo(x2, y2);
+
+
+			//(x3,y3)
+			x3 = (x2 + scalar * Math.cos( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg2_degree) ) )*leg3_length );
+			y3 = (y2 + scalar * Math.sin( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg2_degree) ) )*leg3_length );
+
+			context.lineTo(x3, y3);
+
+			curr_unit_val = curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg2_degree);
+			//prev_x = curr_x;
+			//prev_y = curr_y;
+
+
+
+			context.stroke(); //draw the actual line
+
+			//draw dimensions on top of line
+		}
+		else if (j == 3)
+		{
+			if(leg3_direction == "right")
+			{
+				neg_pos = 1;
+			}
+			else
+			{
+				neg_pos = -1;
+			}
+
+			context.beginPath(); 
+			context.moveTo(x3, y3);
+
+			//(x4,y4)
+			x4 = (x3 + scalar * Math.cos( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg3_degree) ) )*leg4_length );
+			y4 = (y3 + scalar * Math.sin( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg3_degree) ) )*leg4_length );
+
+
+			context.lineTo(x4, y4);
+
+			curr_unit_val = curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg3_degree);
+			//prev_x = curr_x;
+			//prev_y = curr_y;
+
+			context.stroke(); //draw the actual line
+
+			//draw dimensions on top of line
+		}
+		else if (j == 4)
+		{
+			if(leg4_direction == "right")
+			{
+				neg_pos = 1;
+			}
+			else
+			{
+				neg_pos = -1;
+			}
+
+			context.beginPath(); 
+			context.moveTo(x4, y4);
+
+			//(x5,y5)
+			x5 = (x4 + scalar * Math.cos( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg4_degree) ) )*leg5_length );
+			y5 = (y4 + scalar * Math.sin( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg4_degree) ) )*leg5_length );
+
+			context.lineTo(x5, y5);
+
+			curr_unit_val = curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg4_degree);
+			//prev_x = curr_x;
+			//prev_y = curr_y;
+
+
+			context.stroke(); //draw the actual line
+
+			//draw dimensions on top of line
+		}
+		else if (j == 5)
+		{
+			if(leg5_direction == "right")
+			{
+				neg_pos = 1;
+			}
+			else
+			{
+				neg_pos = -1;
+			}
+
+			context.beginPath(); 
+			context.moveTo(x5, y5);
+
+			//(x6,y6)
+			x6 = (x5 + scalar * Math.cos( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg5_degree) ) )*leg6_length );
+			y6 = (y5 + scalar * Math.sin( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg5_degree) ) )*leg6_length );
+
+			context.lineTo( x6, y6 );
+
+			curr_unit_val = curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg5_degree);
+
+
+			//prev_x = curr_x;
+			//prev_y = curr_y;
+			//curr_x = (curr_x + Math.cos( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg5_degree) ) )*leg6_length );
+			//curr_y = (curr_y + Math.sin( ((Math.PI)/180) * (curr_unit_val + (neg_pos)*(180) - (neg_pos)*(leg5_degree) ) )*leg6_length );
+
+			context.stroke(); //draw the actual line
+
+			//draw dimensions on top of line
+		}
+
+
+	}
+  }
+
+
+  /*
   // How to put degrees symbol: copy and paste °
   //can use canvas.width/2 and canvas.height/2 to figure out placements for shapes
 
@@ -39,7 +296,7 @@ if (canvas.getContext)
   // Reset the current path
   context.beginPath(); 
 
-  // Staring point 0
+  // Starting point 0
    context.moveTo(0 * scalar + x_shift,40 * scalar + y_shift);
 
   // Line 1 End point
@@ -94,7 +351,11 @@ if (canvas.getContext)
 
   context.stroke();
 
+ 
+
+   */
    }
+
 	</script>
 
 
