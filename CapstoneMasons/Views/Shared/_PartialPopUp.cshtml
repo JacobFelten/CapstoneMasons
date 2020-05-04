@@ -59,7 +59,7 @@
                     <span asp-validation-for="ShapesCount" class="text-danger"></span>
                     <div class="md-form mb-5">
                         <i class="fas fa-shapes prefix grey-text"></i>
-                        <input asp-for="ShapesCount" type="number" value="0" min="1" id="ShapesCount" class="form-control validate" 
+                        <input asp-for="ShapesCount" type="number" value="0" min="1" id="ShapesCount" class="form-control validate"
                                onchange="addFields(this.value)" oninput="addFields(this.value)">
                         <label asp-for="ShapesCount" data-error="invalid" data-success="valid" for="form32">Number of shapes</label>
                     </div>
@@ -71,7 +71,7 @@
                             <div class="panel-heading" id="bar-prices-heading" data-toggle="collapse" data-parent="#bar-prices-accordion" href="#collapse-bar-prices" role="button"
                                  aria-expanded="false" aria-controls="multiCollapseExample1">
                                 <h4 class="panel-title checkout-acc-title">
-                                    <a class="btn btn-block">Delivery Options</a>
+                                    <a class="btn btn-block btn-primary">Bar Costs</a>
                                 </h4>
                             </div>
                             <div id="collapse-bar-prices" class="collapse multi-collapse">
@@ -190,23 +190,161 @@
                             </div>
                         </div>
                     </div>
-                        <input value="" id="setupGlobalID" hidden />
-                        <input value="" id="setupCharge" hidden />
-                        <input value="" id="minOrderGlobalID" hidden />
-                        <input value="" id="minimumOrderCost" hidden />
-                        <!-- Use Functions this took 2 hours to do-->
-                        <span asp-validation-for="UseFormulas" class="text-danger"></span>
-                        <fieldset class="form-check col">
-                            <input asp-for="UseFormulas" class="form-check-input align-content-center" type="checkbox" id="checkbox1" checked="checked">
-                            <label asp-for="UseFormulas" class="form-check-label align-content-center0" for="checkbox1">Use Formulas</label>
-                        </fieldset>
-                        <div class="md-form" hidden>
-                            <i class="fas fa-pencil prefix grey-text"></i>
-                            <textarea type="text" id="form8" class="md-textarea form-control" rows="4"></textarea>
-                            <label data-error="wrong" data-success="right" for="form8">Comments</label>
-                        </div>
+                    <!-- Content -->
+                    <div>
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-md-11 col-xl-11">
 
+                                <!--Accordion wrapper-->
+                                <div class="accordion md-accordion accordion-5" id="accordionEx5" role="tablist"
+                                     aria-multiselectable="true">
+
+                                    <!-- Accordion card -->
+                                    <div class="card mb-4">
+
+                                        <!-- Card header -->
+                                        <div class="card-header p-0 z-depth-1" role="tab" id="heading32">
+                                            <a data-toggle="collapse" data-parent="#accordionEx5" href="#collapse32" aria-expanded="true"
+                                               aria-controls="collapse32">
+                                                <i class="fas fa-dollar-sign fa-2x p-3 mr-4 float-left black-text" aria-hidden="true"></i>
+                                                <h4 class="text-uppercase white-text mb-0 py-3 mt-1">
+                                                    Bar Costs
+                                                </h4>
+                                            </a>
+                                        </div>
+
+                                        <!-- Card body -->
+                                        <div id="collapse32" class="collapse" role="tabpanel" aria-labelledby="heading32"
+                                             data-parent="#accordionEx5">
+                                            <div class="card-body rgba-black-light white-text z-depth-1">
+                                                <div class="mb-0">
+                                                    <div class="row">
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                                <input value="" id="bar3costID" hidden />
+                                                                <input placeholder="$@("")" min="0" type="number" step="any" id="bar3cost" class="form-control form-control validate">
+                                                                <label for="bar3cost" data-error="invalid" data-success="valid" class="active font-weight-bolder">#3 Bar</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                                <input value="" id="bar4costID" hidden />
+                                                                <input placeholder="$@("")" min="0" type="number" step="any" id="bar4cost" class="form-control form-control validate">
+                                                                <label for="bar4cost" data-error="invalid" data-success="valid" class="active font-weight-bolder">#4 Bar</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                                <input value="" id="bar5costID" hidden />
+                                                                <input placeholder="$@("")" type="number" min="0" step="any" id="bar5cost" class="form-control validate">
+                                                                <label for="bar5cost" data-error="invalid" data-success="valid" class="active font-weight-bolder">#5 Bar</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                                <input value="" id="bar6costID" hidden />
+                                                                <input placeholder="$@("")" type="number" min="0" step="any" id="bar6cost" class="form-control validate">
+                                                                <label for="bar6cost" data-error="invalid" data-success="valid" class="active font-weight-bolder">#6 Bar</label>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                            <input value="" id="bar3bendID" hidden />
+                                                            <input placeholder="$@("")" type="number" min="0" step="any" id="bar3bend" class="form-control form-control validate">
+                                                            <label for="bar3bend" data-error="invalid" data-success="valid" class="active">#3 Bend</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                            <input value="" id="bar4bendID" hidden />
+                                                            <input placeholder="$@("")" type="number" min="0" step="any" id="bar4bend" class="form-control form-control">
+                                                            <label for="bar4bend" data-error="invalid" data-success="valid" class="active">#4 Bend</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                            <input value="" id="bar5bendID" hidden />
+                                                            <input placeholder="$@("")" type="number" min="0" step="any" id="bar5bend" class="form-control">
+                                                            <label for="bar5bend" data-error="invalid" data-success="valid" class="active">#5 Bend</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                            <input value="" id="bar6bendID" hidden />
+                                                            <input placeholder="$@("")" type="number" min="0" step="any" id="bar6bend" class="form-control">
+                                                            <label for="bar6bend" data-error="invalid" data-success="valid" class="active">#6 Bend</label>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row form-group">
+
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                            <input value="" id="bar3cutID" hidden />
+                                                            <input placeholder="$@("")" type="number" min="0" step="any" id="bar3cut" class="form-control form-control">
+                                                            <label for="bar3cut" data-error="invalid" data-success="valid" class="active">#3 Cut</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                            <input value="" id="bar4cutID" hidden />
+                                                            <input placeholder="$@("")" type="number" min="0" step="any" id="bar4cut" class="form-control form-control">
+                                                            <label for="bar4cut" data-error="invalid" data-success="valid" class="active">#4 Cut</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                            <input value="" id="bar5cutID" hidden />
+                                                            <input placeholder="$@("")" type="number" min="0" step="any" id="bar5cut" class="form-control validate">
+                                                            <label for="bar5cut" data-error="invalid" data-success="valid" class="active">#5 Cut</label>
+
+                                                        </div>
+                                                        <!-- Grid column -->
+                                                        <div class="col-md-3 mb-3">
+                                                            <input value="" id="bar6cutID" hidden />
+                                                            <input placeholder="$@("")" type="number" min="0" step="any" id="bar6cut" class="form-control validate">
+                                                            <label data-error="invalid" data-success="valid" for="bar6cut">#6 Cut</label>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Accordion card -->
+                                </div>
+                                <!--/.Accordion wrapper-->
+
+                            </div>
+                        </div>
                     </div>
+                    <!-- Content -->
+                    <input value="" id="setupGlobalID" hidden />
+                    <input value="" id="setupCharge" hidden />
+                    <input value="" id="minOrderGlobalID" hidden />
+                    <input value="" id="minimumOrderCost" hidden />
+                    <!-- Use Functions this took 2 hours to do-->
+                    <span asp-validation-for="UseFormulas" class="text-danger"></span>
+                    <fieldset class="form-check col">
+                        <input asp-for="UseFormulas" class="form-check-input align-content-center" type="checkbox" id="checkbox1" checked="checked">
+                        <label asp-for="UseFormulas" class="form-check-label align-content-center0" for="checkbox1">Use Formulas</label>
+                    </fieldset>
+                    <div class="md-form" hidden>
+                        <i class="fas fa-pencil prefix grey-text"></i>
+                        <textarea type="text" id="form8" class="md-textarea form-control" rows="4"></textarea>
+                        <label data-error="wrong" data-success="right" for="form8">Comments</label>
+                    </div>
+
+                </div>
 
                 <div class="modal-footer d-flex justify-content-center">
                     <button class="btn btn-primary" id="CreateQuoteBtn" type="submit">Continue<i class="fas fa-paper-plane-o ml-1"></i></button>
