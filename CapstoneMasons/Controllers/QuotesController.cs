@@ -19,12 +19,14 @@ namespace CapstoneMasons.Controllers
         IQuoteRepository repo;
         IFormulaRepository repoF;
         ICostRepository repoC;
+        IShapeRepository repoS;
 
-        public QuotesController(IQuoteRepository repository, IFormulaRepository repositoryF, ICostRepository repositoryC)
+        public QuotesController(IQuoteRepository repository, IFormulaRepository repositoryF, ICostRepository repositoryC, IShapeRepository repositoryS)
         {
             repo = repository;
             repoF = repositoryF;
             repoC = repositoryC;
+            repoS = repositoryS;
         }
 
         // GET: Quotes
@@ -226,6 +228,27 @@ namespace CapstoneMasons.Controllers
             var rQ = await FillReviewQuote(q);
             rQ.NeededFormulas = neededFormulas;
             return View("ReviewQuote", rQ);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteShape(int quoteID, int shapeID, string returnUrl)
+        {
+            DeleteShape dS = new DeleteShape
+            {
+                Quote = await repo.GetQuoteByIdAsync(quoteID),
+                Shape = await repoS.GetShapeByIdAsync(shapeID),
+                ReturnUrl = returnUrl
+            };
+            return View(dS);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteShape(DeleteShape dS)
+        {
+            dS.Quote = await repo.GetQuoteByIdAsync(dS.QuoteID);
+            dS.Shape = await repoS.GetShapeByIdAsync(dS.ShapeID);
+            await repoS.DeleteShapeAsync(dS.Shape);
+            return RedirectToAction(dS.ReturnUrl, new { quoteID = dS.Quote.QuoteID });
         }
 
         #region So Jacob doesn't have to keep scrolling past these
