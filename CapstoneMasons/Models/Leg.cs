@@ -13,5 +13,6 @@ namespace CapstoneMasons.Models
         public decimal Length { get; set; }
         public int Degree { get; set; }
         public Mandrel Mandrel { get; set; }
+        public bool IsRight { get; set; }
     }
 }

@@ -47,7 +47,7 @@
                                 {
                                     string percentage = (((decimal)oq.Quote.Shapes[i].NumCompleted / (decimal)oq.Quote.Shapes[i].Qty) * 100).ToString("n0");
                                     <div class="row">
-                                        <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + oq.Quote.Shapes[i].BarSize) Bar, @oq.Quote.Shapes[i].LegCount Legs</div>
+                                        <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + oq.Quote.Shapes[i].BarSize) Bar, @oq.Quote.Shapes[i].Legs.Count Legs</div>
                                         <div class="text-right col">Completed: @(oq.Quote.Shapes[i].NumCompleted + "/" + oq.Quote.Shapes[i].Qty)</div>
                                     </div>
                                     <div class="progress">
