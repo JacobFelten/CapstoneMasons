@@ -149,25 +149,5 @@ namespace CapstoneMasons.Repositories
             context.SaveChanges();
             return Task.CompletedTask;
         }
-
-        public Task<IQueryable<Cost>> BarCosts
-        {
-            get
-            {
-                return Task.FromResult<IQueryable<Cost>>(context.Costs.AsQueryable<Cost>()
-                    .Where(c => c.Name.Contains(KnownObjects.GlobalKeyWord)));
-            }
-        }
-        public Task<bool> UpdateCostAsync(Cost oldC, Cost newC)
-        {
-            bool result = false;
-            if (oldC != null && newC != null)
-            {
-                oldC.LastChanged = DateTime.Now;
-                oldC.Price = newC.Price;
-                result = true;
-            }
-            return Task.FromResult<bool>(result);
-        }
     }
 }

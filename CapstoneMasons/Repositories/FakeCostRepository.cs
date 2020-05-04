@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CapstoneMasons.Models;
 using Microsoft.EntityFrameworkCore;
+using CapstoneMasons.Infrastructure;
 
 namespace CapstoneMasons.Repositories
 {
@@ -14,6 +15,15 @@ namespace CapstoneMasons.Repositories
         public Task<List<Cost>> Costs
         {
             get { return Task.FromResult<List<Cost>>(costs); }
+        }
+
+        public Task<IQueryable<Cost>> BarCosts
+        {
+            get
+            {
+                return Task.FromResult<IQueryable<Cost>>(costs.AsQueryable<Cost>()
+                    .Where(c => c.Name.Contains(KnownObjects.GlobalKeyWord)));
+            }
         }
 
         public Task<bool> AddCostAsync(Cost c)

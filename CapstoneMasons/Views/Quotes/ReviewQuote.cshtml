@@ -161,7 +161,11 @@
             ReviewShape rS = Model.Shapes[i];
             <div class="card container shape">
                 <div class="card-header shape-header">
-                    <h2 class="text-center"><span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(x @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed <a asp-controller="Home" asp-action="NotFinished">Edit</a> | <a asp-controller="Home" asp-action="NotFinished">Delete</a></h2>
+                    <h2 class="text-center">
+                        <span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(qty: @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed 
+                        <a asp-controller="Home" asp-action="NotFinished">Edit</a> | 
+                        <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.QuoteID" asp-route-returnUrl="ReviewQuote">Delete</a>
+                    </h2>
                 </div>
                 <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString(tostring)"</div>
                 @foreach (CutInstruction cI in rS.Instructions)

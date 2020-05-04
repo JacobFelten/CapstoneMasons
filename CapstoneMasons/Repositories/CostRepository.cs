@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CapstoneMasons.Models;
 using Microsoft.EntityFrameworkCore;
+using CapstoneMasons.Infrastructure;
 
 namespace CapstoneMasons.Repositories
 {
@@ -70,6 +71,15 @@ namespace CapstoneMasons.Repositories
             return Task.FromResult<bool>(result);
         }
 
+        public Task<IQueryable<Cost>> BarCosts
+        {
+            get
+            {
+                return Task.FromResult<IQueryable<Cost>>(context.Costs.AsQueryable<Cost>()
+                    .Where(c => c.Name.Contains(KnownObjects.GlobalKeyWord)));
+            }
+        }
+
         public async Task<Cost> FindCostByNameAsync(string costName)
         {
             foreach (Cost c in await Costs)
@@ -81,7 +91,6 @@ namespace CapstoneMasons.Repositories
             }
 
             return null;
-
         }
     }
 }

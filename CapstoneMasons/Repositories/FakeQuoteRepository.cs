@@ -79,6 +79,12 @@ namespace CapstoneMasons.Repositories
         {
             bool result = false;
             Quote oldQ = await GetQuoteByIdAsync(newQ.QuoteID);
+            var newCosts = new List<Cost>();
+            foreach (Cost c in newQ.Costs)
+                newCosts.Add(c);
+            var newShapes = new List<Shape>();
+            foreach (Shape s in newQ.Shapes)
+                newShapes.Add(s);
             if (oldQ != null && newQ != null)
             {
                 oldQ.OrderNum = newQ.OrderNum;
@@ -87,9 +93,10 @@ namespace CapstoneMasons.Repositories
                 oldQ.PickedUp = newQ.PickedUp;
                 oldQ.Open = newQ.Open;
                 oldQ.Costs.Clear();
-                foreach (Cost c in newQ.Costs)
+                foreach (Cost c in newCosts)
                     oldQ.Costs.Add(c);
-                foreach (Shape s in newQ.Shapes)
+                oldQ.Shapes.Clear();
+                foreach (Shape s in newShapes)
                     oldQ.Shapes.Add(s);
                 result = true;
             }
@@ -116,18 +123,6 @@ namespace CapstoneMasons.Repositories
                     throw new Exception(message: "Not a valid prop");
             }
             return Task.CompletedTask;
-        }
-
-        public Task<bool> UpdateCostAsync(Cost oldC, Cost newC)
-        {
-            bool result = false;
-            if (oldC != null && newC != null)
-            {
-                oldC.LastChanged = DateTime.Now;
-                oldC.Price = newC.Price;
-                result = true;
-            }
-            return Task.FromResult<bool>(result);
         }
     }
 }
