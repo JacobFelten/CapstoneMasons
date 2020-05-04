@@ -799,13 +799,19 @@ namespace CapstoneMasons.Controllers
                     setup = c.Price;
             }
 
-            foreach (Shape s in q.Shapes)
+            if (q.AddSetup == false)
+                return 0;
+            else if (q.AddSetup == true)
+                return setup;
+            else
             {
-                if (s.Qty >= 100)
-                    setup = 0;
+                foreach (Shape s in q.Shapes)
+                {
+                    if (s.Qty >= 100)
+                        return 0;
+                }
+                return setup;
             }
-
-            return setup;
         }
 
         private List<UsedBar> CalculateBarsUsed(List<ReviewShape> rSList, Quote q)
