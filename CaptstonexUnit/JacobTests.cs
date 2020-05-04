@@ -7,6 +7,7 @@ using CapstoneMasons.ViewModels;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using CapstoneMasons.Infrastructure;
 
 namespace CaptstonexUnit
 {
@@ -17,6 +18,7 @@ namespace CaptstonexUnit
         private FakeShapeRepository repoS;
         private FakeQuoteRepository repoQ;
         private FakeFormulaRepository repoF;
+        private FakeCostRepository repoC;
         private Quote quote;
         private Quote quote2;
         private Shape shape;
@@ -40,6 +42,12 @@ namespace CaptstonexUnit
         private Cost cost6;
         private Cost cost7;
         private Cost cost8;
+        private Cost cost9;
+        private Cost cost10;
+        private Cost cost11;
+        private Cost cost12;
+        private Cost cost13;
+        private Cost cost14;
         private CreateShape cS;
 
         public JacobTests ()
@@ -67,7 +75,8 @@ namespace CaptstonexUnit
 
             repoQ = new FakeQuoteRepository();
             repoF = new FakeFormulaRepository();
-            controllerQ = new QuotesController(repoQ, repoF);
+            repoC = new FakeCostRepository();
+            controllerQ = new QuotesController(repoQ, repoF, repoC);
             #region Mandrels
             mandrel1 = new Mandrel
             {
@@ -166,57 +175,99 @@ namespace CaptstonexUnit
             cost1 = new Cost
             {
                 CostID = 1,
-                Name = "4 Bar",
+                Name = KnownObjects.Bar4GlobalCost.Name,
                 Price = 10,
                 LastChanged = new DateTime()
             };
             cost2 = new Cost
             {
                 CostID = 2,
-                Name = "4 Cut",
+                Name = KnownObjects.Bar4CutCost.Name,
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             cost3 = new Cost
             {
                 CostID = 3,
-                Name = "4 Bend",
+                Name = KnownObjects.Bar4BendCost.Name,
                 Price = 0.25m,
                 LastChanged = new DateTime()
             };
             cost4 = new Cost
             {
                 CostID = 4,
-                Name = "5 Bar",
+                Name = KnownObjects.Bar5GlobalCost.Name,
                 Price = 15,
                 LastChanged = new DateTime()
             };
             cost5 = new Cost
             {
                 CostID = 5,
-                Name = "5 Cut",
+                Name = KnownObjects.Bar5CutCost.Name,
                 Price = 0.33m,
                 LastChanged = new DateTime()
             };
             cost6 = new Cost
             {
                 CostID = 6,
-                Name = "5 Bend",
+                Name = KnownObjects.Bar5BendCost.Name,
                 Price = 0.33m,
                 LastChanged = new DateTime()
             };
             cost7 = new Cost
             {
                 CostID = 7,
-                Name = "Setup",
+                Name = KnownObjects.SetupCharge.Name,
                 Price = 15,
                 LastChanged = new DateTime()
             };
             cost8 = new Cost
             {
                 CostID = 8,
-                Name = "Setup Min",
-                Price = 150,
+                Name = "4Bar",
+                Price = 10,
+                LastChanged = new DateTime()
+            };
+            cost9 = new Cost
+            {
+                CostID = 9,
+                Name = "4Cut",
+                Price = 0.25m,
+                LastChanged = new DateTime()
+            };
+            cost10 = new Cost
+            {
+                CostID = 10,
+                Name = "4Bend",
+                Price = 0.25m,
+                LastChanged = new DateTime()
+            };
+            cost11 = new Cost
+            {
+                CostID = 11,
+                Name = "5Bar",
+                Price = 15,
+                LastChanged = new DateTime()
+            };
+            cost12 = new Cost
+            {
+                CostID = 12,
+                Name = "5Cut",
+                Price = 0.33m,
+                LastChanged = new DateTime()
+            };
+            cost13 = new Cost
+            {
+                CostID = 13,
+                Name = "5Bend",
+                Price = 0.33m,
+                LastChanged = new DateTime()
+            };
+            cost14 = new Cost
+            {
+                CostID = 14,
+                Name = "Setup",
+                Price = 15,
                 LastChanged = new DateTime()
             };
             #endregion
@@ -225,12 +276,20 @@ namespace CaptstonexUnit
                 QuoteID = 2,
                 Name = "Bob's Concrete",
                 OrderNum = "123456",
+                UseFormulas = true,
                 Shapes = { shape2, shape3, shape4 },
-                Costs = { cost1, cost2, cost3, cost4, cost5, cost6, cost7, cost8 },
+                Costs = { cost8, cost9, cost10, cost11, cost12, cost13, cost14 },
                 DateQuoted = DateTime.Now,
                 PickedUp = false,
                 Open = false
             };
+            repoC.AddCostAsync(cost1);
+            repoC.AddCostAsync(cost2);
+            repoC.AddCostAsync(cost3);
+            repoC.AddCostAsync(cost4);
+            repoC.AddCostAsync(cost5);
+            repoC.AddCostAsync(cost6);
+            repoC.AddCostAsync(cost7);
         }
 
         [Fact]
@@ -273,9 +332,10 @@ namespace CaptstonexUnit
                 InGained = 2,
                 LastChanged = DateTime.Now
             });
+            await repoQ.AddQuoteAsync(quote2);
 
             //Act
-            ViewResult view = (ViewResult)await controllerQ.ReviewQuote(quote2);
+            ViewResult view = (ViewResult)await controllerQ.ReviewQuote(quote2.QuoteID);
             ReviewQuote rQ = (ReviewQuote)view.Model;
 
             //Assert
@@ -285,7 +345,7 @@ namespace CaptstonexUnit
 
             Assert.Equal("123456", rQ.OrderNum);
 
-            Assert.Equal(454.4m, rQ.TotalCost);
+            Assert.Equal(469.4m, rQ.TotalCost);
 
             Assert.Equal(2, rQ.BarsUsed.Count);
                 Assert.Equal(4, rQ.BarsUsed[0].BarSize);
@@ -303,7 +363,7 @@ namespace CaptstonexUnit
                 Assert.Equal(90, rQ.BarsUsed[1].NumOfBends);
                 Assert.Equal(0.33m, rQ.BarsUsed[1].BendCost);
 
-            Assert.Equal(0, rQ.SetUpCharge);
+            Assert.Equal(15, rQ.SetUpCharge);
             
             Assert.Equal(2, rQ.FinalRemnants.Count);
                 Assert.Equal(4, rQ.FinalRemnants[0].BarSize);

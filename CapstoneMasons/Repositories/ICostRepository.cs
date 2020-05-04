@@ -10,6 +10,8 @@ namespace CapstoneMasons.Repositories
     {
         public Task<List<Cost>> Costs { get; }
 
+        public Task<IQueryable<Cost>> BarCosts { get; }
+
         public Task<bool> AddCostAsync(Cost c);
 
         public Task<IQueryable<Cost>> GetAllCostsAsync();

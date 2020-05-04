@@ -18,11 +18,13 @@ namespace CapstoneMasons.Controllers
     {
         IQuoteRepository repo;
         IFormulaRepository repoF;
+        ICostRepository repoC;
 
-        public QuotesController(IQuoteRepository repository, IFormulaRepository repositoryF)
+        public QuotesController(IQuoteRepository repository, IFormulaRepository repositoryF, ICostRepository repositoryC)
         {
             repo = repository;
             repoF = repositoryF;
+            repoC = repositoryC;
         }
 
         // GET: Quotes
@@ -767,7 +769,6 @@ namespace CapstoneMasons.Controllers
         private decimal CalculateSetUp(Quote q, List<UsedBar> usedBars)
         {
             decimal setup = 0;
-            int totalCutsBends = 0;
 
             foreach (Cost c in q.Costs)
             {
@@ -775,26 +776,13 @@ namespace CapstoneMasons.Controllers
                     setup = c.Price;
             }
 
-            foreach (UsedBar uB in usedBars)
+            foreach (Shape s in q.Shapes)
             {
-                totalCutsBends += uB.NumOfBends;
-                totalCutsBends += uB.NumOfCuts;
+                if (s.Qty >= 100)
+                    setup = 0;
             }
 
-            if (totalCutsBends < 100)
-            {
-                if (q.AddSetup != false)
-                    return setup;
-                else
-                    return 0;
-            }
-            else
-            {
-                if (q.AddSetup != true)
-                    return 0;
-                else
-                    return setup;
-            }
+            return setup;
         }
 
         private List<UsedBar> CalculateBarsUsed(List<ReviewShape> rSList, Quote q)
@@ -897,17 +885,17 @@ namespace CapstoneMasons.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BarCost(List<Cost> Costs)
         {
-            var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
+            var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             if (ModelState.IsValid)
             {
                 for (int i = 0; i < 15; i++)//could be foreach too 
                 {
                     if (costsQuote.FirstOrDefault(c => c.CostID == i).Price != Costs[i].Price)
                     {
-                        await repo.UpdateCostAsync(costsQuote.FirstOrDefault(c => c.CostID == i), Costs[i]);
+                        await repoC.UpdateCostAsync(costsQuote.FirstOrDefault(c => c.CostID == i), Costs[i]);
                     }
                 }
-                costsQuote = await repo.BarCosts;
+                costsQuote = await repoC.BarCosts;
                 return View(costsQuote.ToList());
             }
             return View(costsQuote.ToList());
@@ -948,7 +936,7 @@ namespace CapstoneMasons.Controllers
         private async Task<Quote> UpdatePrices(Quote quote)
         {
             quote.Costs.Clear();
-            var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
+            var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             //var sumLegs = 0m;
             //var total = 0m;
 
