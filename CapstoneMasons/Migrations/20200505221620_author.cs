@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CapstoneMasons.Migrations
 {
-    public partial class initial : Migration
+    public partial class author : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -66,6 +66,7 @@ namespace CapstoneMasons.Migrations
                 {
                     QuoteID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Author = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     OrderNum = table.Column<string>(nullable: true),
                     DateQuoted = table.Column<DateTime>(nullable: false),

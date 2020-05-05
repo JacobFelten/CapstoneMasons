@@ -136,6 +136,9 @@ namespace CapstoneMasons.Migrations
                     b.Property<bool?>("AddSetup")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Author")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateQuoted")
                         .HasColumnType("datetime2");
 

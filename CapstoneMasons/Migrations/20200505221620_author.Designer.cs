@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneMasons.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200505165507_initial")]
-    partial class initial
+    [Migration("20200505221620_author")]
+    partial class author
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -137,6 +137,9 @@ namespace CapstoneMasons.Migrations
 
                     b.Property<bool?>("AddSetup")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Author")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateQuoted")
                         .HasColumnType("datetime2");

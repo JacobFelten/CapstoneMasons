@@ -369,7 +369,7 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Open", "true");
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Closed");
         }
 
         #region So Jacob doesn't have to keep scrolling past these
