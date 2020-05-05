@@ -18,11 +18,15 @@ namespace CapstoneMasons.Controllers
     {
         IQuoteRepository repo;
         IFormulaRepository repoF;
+        ICostRepository repoC;
+        IShapeRepository repoS;
 
-        public QuotesController(IQuoteRepository repository, IFormulaRepository repositoryF)
+        public QuotesController(IQuoteRepository repository, IFormulaRepository repositoryF, ICostRepository repositoryC, IShapeRepository repositoryS)
         {
             repo = repository;
             repoF = repositoryF;
+            repoC = repositoryC;
+            repoS = repositoryS;
         }
 
         // GET: Quotes
@@ -224,6 +228,27 @@ namespace CapstoneMasons.Controllers
             var rQ = await FillReviewQuote(q);
             rQ.NeededFormulas = neededFormulas;
             return View("ReviewQuote", rQ);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteShape(int quoteID, int shapeID, string returnUrl)
+        {
+            DeleteShape dS = new DeleteShape
+            {
+                Quote = await repo.GetQuoteByIdAsync(quoteID),
+                Shape = await repoS.GetShapeByIdAsync(shapeID),
+                ReturnUrl = returnUrl
+            };
+            return View(dS);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteShape(DeleteShape dS)
+        {
+            dS.Quote = await repo.GetQuoteByIdAsync(dS.QuoteID);
+            dS.Shape = await repoS.GetShapeByIdAsync(dS.ShapeID);
+            await repoS.DeleteShapeAsync(dS.Shape);
+            return RedirectToAction(dS.ReturnUrl, new { quoteID = dS.Quote.QuoteID });
         }
 
         #region So Jacob doesn't have to keep scrolling past these
@@ -767,7 +792,6 @@ namespace CapstoneMasons.Controllers
         private decimal CalculateSetUp(Quote q, List<UsedBar> usedBars)
         {
             decimal setup = 0;
-            int totalCutsBends = 0;
 
             foreach (Cost c in q.Costs)
             {
@@ -775,25 +799,18 @@ namespace CapstoneMasons.Controllers
                     setup = c.Price;
             }
 
-            foreach (UsedBar uB in usedBars)
-            {
-                totalCutsBends += uB.NumOfBends;
-                totalCutsBends += uB.NumOfCuts;
-            }
-
-            if (totalCutsBends < 100)
-            {
-                if (q.AddSetup != false)
-                    return setup;
-                else
-                    return 0;
-            }
+            if (q.AddSetup == false)
+                return 0;
+            else if (q.AddSetup == true)
+                return setup;
             else
             {
-                if (q.AddSetup != true)
-                    return 0;
-                else
-                    return setup;
+                foreach (Shape s in q.Shapes)
+                {
+                    if (s.Qty >= 100)
+                        return 0;
+                }
+                return setup;
             }
         }
 
@@ -897,17 +914,17 @@ namespace CapstoneMasons.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BarCost(List<Cost> Costs)
         {
-            var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
+            var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             if (ModelState.IsValid)
             {
                 for (int i = 0; i < 15; i++)//could be foreach too 
                 {
                     if (costsQuote.FirstOrDefault(c => c.CostID == i).Price != Costs[i].Price)
                     {
-                        await repo.UpdateCostAsync(costsQuote.FirstOrDefault(c => c.CostID == i), Costs[i]);
+                        await repoC.UpdateCostAsync(costsQuote.FirstOrDefault(c => c.CostID == i), Costs[i]);
                     }
                 }
-                costsQuote = await repo.BarCosts;
+                costsQuote = await repoC.BarCosts;
                 return View(costsQuote.ToList());
             }
             return View(costsQuote.ToList());
@@ -948,7 +965,7 @@ namespace CapstoneMasons.Controllers
         private async Task<Quote> UpdatePrices(Quote quote)
         {
             quote.Costs.Clear();
-            var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
+            var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             //var sumLegs = 0m;
             //var total = 0m;
 
@@ -1507,5 +1524,12 @@ namespace CapstoneMasons.Controllers
             return quote;
         }
         #endregion
+
+
+
+        public IActionResult Canvas()
+        {
+            return View();
+        }
     }
 }

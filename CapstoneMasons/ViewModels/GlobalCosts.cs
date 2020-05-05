@@ -30,6 +30,5 @@ namespace CapstoneMasons.ViewModels
 
         /*Costs pertaining to setup fees and minimum cost amounts */
         public Cost SetupCharge { get; set; }
-        public Cost MinimumOrderCost { get; set; }
     }
 }
