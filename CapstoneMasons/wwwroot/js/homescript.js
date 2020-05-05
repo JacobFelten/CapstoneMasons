@@ -162,3 +162,13 @@ function getLegPrices() {
 
     });
 }
+
+function hideBarCosts(event) {
+    
+    var classes = document.getElementById("collapse-bar-prices").classList;
+    if (classes.contains("show"))
+    {
+        event.stopPropagation();
+        document.getElementById("collapse-bar-prices").classList.remove("show")
+    }
+}
