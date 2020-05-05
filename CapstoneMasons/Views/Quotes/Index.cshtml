@@ -11,9 +11,9 @@
 </div>
 <div>
     <div class="float-right">
-        <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" asp-controller="Home" asp-action="NotFinished">Create New</a>
+        <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" data-toggle="modal" data-target="#createQuote">Create New</a>
     </div>
-    <form asp-action="Search" method="post">
+    <form asp-action="Search" asp-controller="Quotes" method="post">
         <div class="float-left">
             <input name="SearchBar" style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search" />
         </div>
@@ -85,3 +85,5 @@
         }
     </tbody>
 </table>
+
+@await Html.PartialAsync("~/Views/Shared/_PartialPopUp.cshtml", new CreateQuote())

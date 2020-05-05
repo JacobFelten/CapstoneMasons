@@ -153,8 +153,6 @@ function getLegPrices() {
 
             document.getElementById("setupGlobalID").value = response.bar6CutCost.costID;
             document.getElementById("setupCharge").value = response.bar6CutCost.price;
-            document.getElementById("minOrderGlobalID").value = response.minimumOrderCost.costID;
-            document.getElementById("minimumOrderCost").value = response.minimumOrderCost.price;
         },
         error: function () {
             alert("Error Getting Prices");
