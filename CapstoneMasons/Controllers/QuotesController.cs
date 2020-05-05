@@ -338,6 +338,22 @@ namespace CapstoneMasons.Controllers
             return RedirectToAction(dQ.ReturnUrl);
         }
 
+        public async Task<IActionResult> ReviewClosed(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+
+            ReviewQuote rQ = await FillReviewQuote(q);
+
+            return View(rQ);
+        }
+
+        public async Task<IActionResult> OpenClosedQuote(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+            await repo.UpdateQuoteSimpleAsync(q, "Open", "true");
+            return RedirectToAction("Index", "Home");
+        }
+
         #region So Jacob doesn't have to keep scrolling past these
         // GET: Quotes/Edit/5
         public async Task<IActionResult> Edit(int? id)

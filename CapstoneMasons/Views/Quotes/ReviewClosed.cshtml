@@ -1,0 +1,149 @@
+﻿@model ReviewQuote
+
+@{
+    ViewData["Title"] = "ReviewClosed";
+
+    string tostring = "0.";
+    for (int i = 0; i < KnownObjects.Precision; i++)
+    {
+        tostring += "#";
+    }
+}
+
+<style>
+    .line {
+        display: inline;
+    }
+
+    .shape {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .leg {
+        margin-left: 10%;
+    }
+
+    .shape-header {
+        background-color: lightblue;
+    }
+
+    .quote-header {
+        background-color: white;
+    }
+
+    .quote-body {
+        background-color: lightgray;
+    }
+
+    .bottom-btn {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="card container">
+    <div class="card-header quote-header text-center">
+        <h1>@Model.Name</h1>
+        <h1>Order Number: @Model.OrderNum</h1>
+        @if (Model.PickedUp)
+        {
+            <h4>Was picked up by the customer</h4>
+        }
+        else
+        {
+            <h4>Was not picked up by the customer</h4>
+        }
+
+        @if (Model.UseFormulas)
+        {
+            <h4>Total calculated using bend formulas</h4>
+        }
+        else
+        {
+            <h4>Total calculated without using bend formulas</h4>
+        }
+    </div>
+    <div class="card-body quote-body">
+        <h1 class="text-center">Total Cost: @Model.TotalCost.ToString("c")</h1>
+        @if (Model.Discount != 0)
+        {
+            <div class="text-center">Total Cost Before Discount: @((Model.TotalCost + Model.Discount).ToString("c"))</div>
+        }
+        @foreach (UsedBar uB in Model.BarsUsed)
+        {
+            <div class="text-center"><span class="font-weight-bold">#@uB.BarSize Bars Used: </span>@uB.NumOfBars (@uB.BarCost.ToString("c") ea.) + @uB.NumOfCuts Cuts (@uB.CutCost.ToString("c") ea.) + @uB.NumOfBends Bends (@uB.BendCost.ToString("c") ea.)</div>
+        }
+        <div class="text-center"><div class="font-weight-bold">Setup Charge: </div>@Model.SetUpCharge.ToString("c")</div>
+        @foreach (RemnantList rL in Model.FinalRemnants)
+        {
+            <div class="text-center">
+                <span class="font-weight-bold">#@rL.BarSize Remnants: </span>
+                @for (int i = 0; i < rL.Remnants.Count; i++)
+                {
+                    Remnant r = rL.Remnants[i];
+                    string comma = "";
+                    if (i < rL.Remnants.Count - 1)
+                    {
+                        comma = ",";
+                    }
+                    <span>(@r.Length.ToString(tostring)" x @r.Qty)@comma</span>
+                }
+            </div>
+        }
+
+        <h1 class="text-center">Instructions</h1>
+        <div class="text-center">Perform cuts in the following order.</div>
+
+        @for (int i = 0; i < Model.Shapes.Count; i++)
+        {
+            ReviewShape rS = Model.Shapes[i];
+            <div class="card container shape">
+                <div class="card-header shape-header">
+                    <h2 class="text-center">
+                        <span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(qty: @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed
+                    </h2>
+                </div>
+                <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString(tostring)"</div>
+                @foreach (CutInstruction cI in rS.Instructions)
+                {
+                    <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString(tostring)" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
+                }
+                @for (int j = 0; j < rS.Legs.Count; j++)
+                {
+                    ReviewLeg rL = rS.Legs[j];
+                    int num = j + 1;
+                    <div class="leg">
+                        <span class="font-weight-bold">Leg @num: </span><span>@rL.Length.ToString(tostring)"</span>
+                        @if (j < rS.Legs.Count - 1)
+                        {
+                            <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                        }
+                    </div>
+                }
+                <div class="text-center">
+                    <span class="font-weight-bold">Remnants: </span>
+                    @for (int j = 0; j < rS.Remnants.Count; j++)
+                    {
+                        Remnant r = rS.Remnants[j];
+                        string comma = "";
+                        string used = "Will Be";
+                        if (j < rS.Remnants.Count - 1)
+                        {
+                            comma = ",";
+                        }
+                        if (!r.UsedAgain)
+                        {
+                            used = "Not";
+                        }
+                        <span>(@r.Length.ToString(tostring)" x @r.Qty) @used Used Again<span>@comma</span></span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="text-center text-white bottom-btn">
+    <a class="btn btn-secondary" asp-action="OpenClosedQuote" asp-route-quoteID="@Model.QuoteID"><h3>Open Quote</h3></a>
+    <a class="btn btn-danger" asp-action="DeleteQuote" asp-route-quoteID="@Model.QuoteID" asp-route-returnUrl="Index"><h3>Delete Quote</h3></a>
+</div>
