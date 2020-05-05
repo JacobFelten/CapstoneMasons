@@ -29,13 +29,31 @@ namespace CapstoneMasons.Controllers
             repoS = repositoryS;
         }
 
-        // GET: Quotes
+        // GET: Open Quotes
         public async Task<IActionResult> Index()
         {
             List<OpenQuote> openQuotes = new List<OpenQuote>();
             foreach(Quote q in await repo.Quotes)
             {
                 if (q.Open == true)
+                {
+                    OpenQuote open = new OpenQuote();
+                    open.Quote = q;
+                    ReviewQuote rvQ = await FillReviewQuote(open.Quote);
+                    open.TotalCost = rvQ.TotalCost;
+                    openQuotes.Add(open);
+                }
+            }
+            return View(openQuotes);
+        }
+
+        // Get: Closed Quotes
+        public async Task<IActionResult> Closed()
+        {
+            List<OpenQuote> openQuotes = new List<OpenQuote>();
+            foreach (Quote q in await repo.Quotes)
+            {
+                if (q.Open == false)
                 {
                     OpenQuote open = new OpenQuote();
                     open.Quote = q;
