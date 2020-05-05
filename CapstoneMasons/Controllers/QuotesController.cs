@@ -251,6 +251,93 @@ namespace CapstoneMasons.Controllers
             return RedirectToAction(dS.ReturnUrl, new { quoteID = dS.Quote.QuoteID });
         }
 
+        public async Task<IActionResult> ReviewOpen(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+
+            ReviewQuote rQ = await FillReviewQuote(q);
+
+            ReviewOpen rO = new ReviewOpen 
+            { 
+                ReviewQuote = rQ
+            };
+
+            return View(rO);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string useFormulas, string pickedUp)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(rO.QuoteID);
+            await repo.UpdateQuoteSimpleAsync(q, "Name", rO.Name);
+            await repo.UpdateQuoteSimpleAsync(q, "OrderNum", rO.OrderNumber);
+            await repo.UpdateQuoteSimpleAsync(q, "Discount", rO.Discount.ToString());
+            await repo.UpdateQuoteSimpleAsync(q, "AddSetup", rO.Setup);
+            if (pickedUp == null)
+                pickedUp = "false";
+            await repo.UpdateQuoteSimpleAsync(q, "PickedUp", pickedUp);
+            if (useFormulas == null)
+                useFormulas = "false";
+            var neededFormulas = new List<Formula>();
+            if (bool.Parse(useFormulas))
+            {
+                neededFormulas = (List<Formula>)await CanUseFormulas(q);
+                if (neededFormulas.Count == 0)
+                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
+            }
+            else
+            {
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
+            }
+            var rQ = await FillReviewQuote(q);
+            rQ.NeededFormulas = neededFormulas;
+            rO.ReviewQuote = rQ;
+
+            for (int i = 0; i < rQ.Shapes.Count; i++)
+            {
+                Shape s = await repoS.GetShapeByIdAsync(rQ.Shapes[i].ShapeID);
+                s.NumCompleted = rO.Completed[i];
+                Shape newS = new Shape
+                {
+                    BarSize = s.BarSize,
+                    Qty = s.Qty,
+                    NumCompleted = rO.Completed[i]
+                };
+                foreach (Leg l in s.Legs)
+                    newS.Legs.Add(l);
+                await repoS.UpdateShapesAsync(s, newS);
+                rQ.Shapes[i].Completed = rO.Completed[i];
+            }
+
+            return View(rO);
+        }
+
+        public async Task<IActionResult> CloseOpenQuote(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+            await repo.UpdateQuoteSimpleAsync(q, "Open", "false");
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteQuote(int quoteID, string returnUrl)
+        {
+            DeleteQuote dQ = new DeleteQuote
+            {
+                Quote = await repo.GetQuoteByIdAsync(quoteID),
+                ReturnUrl = returnUrl
+            };
+            return View(dQ);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteQuote(DeleteQuote dQ)
+        {
+            dQ.Quote = await repo.GetQuoteByIdAsync(dQ.QuoteID);
+            await repo.DeleteQuoteAsync(dQ.Quote);
+            return RedirectToAction(dQ.ReturnUrl);
+        }
+
         #region So Jacob doesn't have to keep scrolling past these
         // GET: Quotes/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -347,6 +434,7 @@ namespace CapstoneMasons.Controllers
             rQ.AddSetup = q.AddSetup;
             rQ.Discount = q.Discount;
             rQ.UseFormulas = q.UseFormulas;
+            rQ.PickedUp = q.PickedUp;
 
             //After filling the shapes with instructions the shapes are sorted by bar size
             //then by shape length so the instructions make sense.
@@ -390,6 +478,7 @@ namespace CapstoneMasons.Controllers
                     //Do jeff stuff
                     //pass in bar size as bar type, pass in legs as crude legs
                 }
+                rS.Completed = s.NumCompleted;
                 rS.Legs = await CreateLegsAsync(s);
                 rSList.Add(rS);
             }

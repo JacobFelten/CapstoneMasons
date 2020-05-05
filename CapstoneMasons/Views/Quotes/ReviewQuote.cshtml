@@ -112,7 +112,10 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Save Quote</button>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a class="btn btn-info" asp-controller="Home" asp-action="Index">Return to Open Quotes</a>
+            </div>
         </form>
         @if (Model.NeededFormulas != null && Model.NeededFormulas.Count > 0)
         {

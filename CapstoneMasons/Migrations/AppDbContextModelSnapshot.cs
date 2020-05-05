@@ -87,6 +87,9 @@ namespace CapstoneMasons.Migrations
                     b.Property<int>("Degree")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsRight")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("Length")
                         .HasColumnType("decimal(18,4)");
 
@@ -168,9 +171,6 @@ namespace CapstoneMasons.Migrations
 
                     b.Property<int>("BarSize")
                         .HasColumnType("int");
-
-                    b.Property<string>("Img")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LegCount")
                         .HasColumnType("int");

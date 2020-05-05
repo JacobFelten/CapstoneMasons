@@ -58,7 +58,7 @@
                             <div class="col-4">
                                 <div class="row">
                                     <div class="col-12 text-center" style="padding-top: 20px">
-                                        <a class="btn btn-primary text-center" style="width: 150px;" asp-controller="Home" asp-action="NotFinished" asp-route-id=@oq.Quote.QuoteID>Details</a>
+                                        <a class="btn btn-primary text-center" style="width: 150px;" asp-action="ReviewOpen" asp-route-quoteID=@oq.Quote.QuoteID>Details</a>
                                     </div>
                                 </div>
                                 @if (oq.Quote.PickedUp == true)

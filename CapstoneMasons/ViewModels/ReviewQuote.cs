@@ -13,6 +13,7 @@ namespace CapstoneMasons.ViewModels
         public string OrderNum { get; set; }
         public bool? AddSetup { get; set; }
         public bool UseFormulas { get; set; }
+        public bool PickedUp { get; set; }
         public List<Formula> NeededFormulas { get; set; }
         public decimal Discount { get; set; }
         public decimal TotalCost { get; set; }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CapstoneMasons.Migrations
 {
-    public partial class migration : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -242,7 +242,6 @@ namespace CapstoneMasons.Migrations
                     LegCount = table.Column<int>(nullable: false),
                     Qty = table.Column<int>(nullable: false),
                     NumCompleted = table.Column<int>(nullable: false),
-                    Img = table.Column<string>(nullable: true),
                     QuoteID = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -265,6 +264,7 @@ namespace CapstoneMasons.Migrations
                     Length = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Degree = table.Column<int>(nullable: false),
                     MandrelID = table.Column<int>(nullable: true),
+                    IsRight = table.Column<bool>(nullable: false),
                     ShapeID = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
