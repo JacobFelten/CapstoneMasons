@@ -41,6 +41,7 @@
     <div class="card-header quote-header">
         <form method="post">
             <input type="hidden" value="@Model.QuoteID" name="quoteID" />
+            <h6>Quote Written By: @Model.Author</h6>
             <div class="form-group">
                 <label>Quote Name:</label>
                 <input class="form-control" value="@Model.Name" name="name" />
@@ -112,7 +113,7 @@
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a class="btn btn-info" asp-controller="Home" asp-action="Index">Return to Open Quotes</a>
+                <a class="btn btn-info" asp-controller="Home" asp-action="Index">Exit</a>
             </div>
         </form>
         @if (Model.NeededFormulas != null && Model.NeededFormulas.Count > 0)
