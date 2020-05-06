@@ -124,7 +124,9 @@ namespace CapstoneMasons.Controllers
             Quote quote = new Quote()
             {
                 Name = q.Name,
-                OrderNum = q.OrderNum
+                OrderNum = q.OrderNum,
+                UseFormulas = q.UseFormulas,
+                Author = q.Author
             };
             for (var i = 0; i < q.ShapesCount; i++)
             {

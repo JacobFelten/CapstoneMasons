@@ -30,11 +30,17 @@
         background-color: lightgray;
     }
 </style>
+<script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
+<link href="~/css/gino's css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+<script src="~/js/gino's js/jquery.twbs-toggle-buttons.min.js"></script>
+<script type="text/javascript" src="~/js/createQuote.js"></script>
+<script>
+    $(".btn-group-toggle").twbsToggleButtons();
+</script>
+<h1 class="text-center">Create Quote - Continued</h1>
 
-
-<h1>Create Quote - Continued</h1>
-
-<h4>Edit Shapes</h4>
+<h4 class="text-center">Edit Shapes</h4>
 <hr />
 <div class="row">
     <div class="card container">
@@ -53,40 +59,66 @@
 
 
             </div>
-            <div class="card-body quote-body">
-                <div class="panel-group" id="checkout-accordion">
-                    @for (int i = 0; i < Model.Shapes.Count; i++)
-                    {
-                        <div class="bg-danger panel panel-default checkout-panel" id="panel-shape@((i+1).ToString())" style="margin-bottom: 15px;"
-                             onchange="validateShapes(@(i+1),@Model.Shapes[i].Legs.Count)" onclick="validateShapes(@(i+1),@Model.Shapes[i].Legs.Count)">
-                            <div class="panel-heading checkout-heading" id="panel-billing-heading" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())">
+
+            @for (int i = 0; i < Model.Shapes.Count; i++)
+            {
+                <div class="card-body quote-body" style="margin-bottom: 10px;" id="shape-body@(i+1)">
+                    <div class="panel-group" id="checkout-accordion">
+                        <div class="panel panel-default checkout-panel" id="panel-shape@((i+1).ToString())" style="margin-bottom: 15px;"
+                             onchange="validateShapes(@(i+1),@Model.Shapes[i].Legs.Count)" oninput="validateShapes(@(i+1),@Model.Shapes[i].Legs.Count)">
+                            <div class="panel-heading checkout-heading" id="panel-billing-heading">
                                 <h4 class="text-center panel-title checkout-acc-title">
-                                    <a>@(KnownObjects.NumberPrefix[i]) Shape</a>
-                                    <i class="far fa-window-close pull-right" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: Tomato;"></i>
+                                    <a data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())" data-toggle="collapse">
+                                        @(KnownObjects.NumberPrefix[i]) Shape
+                                        <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: #FDA50F;"></i>
+                                    </a>
+                                    <a onclick="deleteShape(@(i+1))">
+                                        <i class="fas fa-trash float-left" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: Tomato;"></i>
+                                    </a>
                                 </h4>
                             </div>
-                            <div id="collapse-shape@((i+1).ToString())" class="container panel-collapse details collapse in" style="padding-bottom: 20px;">
-                                <div class="bg-secondary panel-body checkout-inside" style="padding-left: 10px; padding-right: 10px; padding-bottom: 10px;">
-                                    <div class="text-center font-weight-bold">The Shape will turn Green when Valid</div>
-                                    <div class="row justify-content-md-center">
+                            <div id="collapse-shape@((i+1).ToString())" class="container panel-collapse details collapse in" style="padding-bottom: 20px;padding-top: 15px;">
+                                <div class="bg-secondary panel-body checkout-inside" style="padding-bottom: 10px; outline: 6px solid #28a745!important;">
+                                    <div class="bg-success text-center font-weight-bold" id="validationShape@((i+1).ToString())">The Shape will turn Green when Valid</div>
+                                    <div class="row justify-content-md-center" style="padding-left: 10px; padding-right: 10px;">
                                         <div class="col-md-4 col-lg-3 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Rebar #: </label>
                                             <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
-                                                     onchange="vaidateRebar(this.options[this.selectedIndex].text)">
+                                                    onchange="vaidateRebar(this.options[this.selectedIndex].text)">
                                                 <option>3</option>
                                                 <option>4</option>
                                                 <option>5</option>
                                                 <option>6</option>
                                             </select>
+
+                                            <!--custom radio buttons-->
+                                            <label class="control-label">Is it true?</label>
+                                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                <label class="btn btn-info" role="button" aria-pressed="false">
+                                                    <input type="radio" name="options" value="3" required="">BAR #3
+                                                </label>
+                                                <label class="btn btn-secondary" role="button" aria-pressed="false">
+                                                    <input type="radio" name="options" value="4" required="">BAR #4
+                                                </label>
+                                                <label class="btn btn-warning" role="button" data-twbs-toggle-buttons-class-active="btn-warning" data-twbs-toggle-buttons-class-inactive="btn-error" aria-pressed="true">
+                                                    <input type="radio" name="options" value="5" checked="checked">BAR #5
+                                                </label>
+                                                <label class="btn btn-secondary" role="button" data-twbs-toggle-buttons-class-active="btn-danger" aria-pressed="false">
+                                                    <input type="radio" name="options" value="6">BAR #6
+                                                </label>
+                                            </div>
+                                            <!--custom radio buttons-->
+
+
                                         </div>
                                         <div class="col-md-3 col-lg-2 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Quantity</label>
-                                            <input class="form-control" asp-for="Shapes[i].Qty"/>
+                                            <input class="form-control" asp-for="Shapes[i].Qty" />
                                         </div>
                                     </div>
                                     @for (int leg = 0; leg < Model.Shapes[i].Legs.Count; leg++)
                                     {
-                                        <div class="row">
+                                        <div class="row" style="padding-left: 10px; padding-right: 10px;">
                                             <div class="col-4 form-group">
                                                 <label>@(KnownObjects.NumberPrefix[leg]) Leg Length: </label>
                                                 <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" />
@@ -115,10 +147,11 @@
                                 </div>
                             </div>
                         </div>
-                    }
-
+                    </div>
                 </div>
-            </div>
+            }
+
+
 
             <div class="panel-group" id="checkout-accordion" hidden>
 
@@ -151,9 +184,14 @@
 
 
 
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Review Quote</button>
+            <div class="card container text-center">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Review Quote</button>
+                    <input class="form-check-input" asp-for="@Model.UseFormulas" type="checkbox" value="@Model.UseFormulas" id="UseFormulas" style="margin-left: 20px; margin-top: 40px;">
+                    <label class="form-check-label" for="defaultCheck1" style="margin-left: 40px; border-top-width: 10px; margin-top: 30px; font-size: large;">
+                        Use Fomulas
+                    </label>
+                </div>
             </div>
         </form>
     </div>
@@ -164,6 +202,7 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript" src="~/js/createQuote.js"></script>
+    <link rel="stylesheet" href="~/css/createQuote.css">
     <link rel="stylesheet" href="~/css/fontawesome.css">
+
 }

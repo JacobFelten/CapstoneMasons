@@ -14,7 +14,7 @@ namespace CapstoneMasons.ViewModels
         //[Required] ask
         public string OrderNum { get; set; }
         //[Required] ask
-        public string Creator { get; set; }
+        public string Author { get; set; }
         [Required(ErrorMessage = "The number of Shapes is required")]
         public int ShapesCount { get; set; }
         [Required(ErrorMessage = "Incomplete Leg Numbers")]

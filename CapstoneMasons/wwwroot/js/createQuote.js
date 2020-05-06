@@ -10,15 +10,29 @@ $('#collapse-payment').on('show.bs.collapse', function () {
 })
 
 function validateShapes(shape, legs) {
-    var RebarNum = document.getElementById("RebarNum").innerHTML.options;
+    //var RebarNum = document.getElementById("RebarNum").innerHTML.options;
     
-    document.getElementById("panel-shape" + shape).classList.remove("bg-danger");
-    //document.getElementById(`shape${shape}`).classList.add("bg-warning")
-    document.getElementById("panel-shape"+shape).classList.add("bg-success");
+    //document.getElementById("validationShape" + shape).classList.remove("bg-danger");
+    ////document.getElementById(`shape${shape}`).classList.add("bg-warning")
+    //document.getElementById("validationShape"+shape).classList.add("bg-success");
     if (legs <= 0 || RebarNum.selectedIndex) {
-        document.getElementById("panel-shape" + shape).classList.add("bg-danger");
+        document.getElementById("validationShape" + shape).classList.add("bg-danger");
     }
 }
 function vaidateRebar(RebarNumb) {
 
 }
+function deleteShape(ShapeNumb) {
+    var r = confirm("Are you sure you want to deletea Shape");
+    if (r == true) {
+        var shape = document.getElementById("shape-body" + ShapeNumb);
+        if (document.getElementById("shape-body" + ShapeNumb + 1) != null)
+        {
+
+        }
+        shape.remove();
+    } else {
+        
+    }
+}
+//
