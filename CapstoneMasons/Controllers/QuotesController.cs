@@ -11,6 +11,7 @@ using CapstoneMasons.ViewModels;
 using CapstoneMasons.Logic_Models;
 using CapstoneMasons.Infrastructure;
 using Microsoft.AspNetCore.Connections.Features;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace CapstoneMasons.Controllers
 {
@@ -330,6 +331,22 @@ namespace CapstoneMasons.Controllers
             return View(rO);
         }
 
+        public async Task<IActionResult> UpdateQuotePrices(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+
+            q = await UpdatePrices(q);
+
+            ReviewQuote rQ = await FillReviewQuote(q);
+
+            ReviewOpen rO = new ReviewOpen
+            {
+                ReviewQuote = rQ
+            };
+
+            return View("ReviewOpen", rO);
+        }
+
         public async Task<IActionResult> CloseOpenQuote(int quoteID)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
@@ -463,6 +480,8 @@ namespace CapstoneMasons.Controllers
         {
             ReviewQuote rQ = new ReviewQuote();
             rQ.QuoteID = q.QuoteID; //done
+            rQ.Author = q.Author;
+            rQ.DateQuoted = q.DateQuoted;
             rQ.Name = q.Name; //done
             rQ.OrderNum = q.OrderNum; //done
             rQ.AddSetup = q.AddSetup;
