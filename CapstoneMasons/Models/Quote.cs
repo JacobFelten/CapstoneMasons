@@ -11,6 +11,7 @@ namespace CapstoneMasons.Models
         private List<Cost> costs = new List<Cost>();
 
         public int QuoteID { get; set; }
+        public string Author { get; set; }
         public string Name { get; set; } //After Review
         public string OrderNum { get; set; } //After Review
         public List<Shape> Shapes //Before Review

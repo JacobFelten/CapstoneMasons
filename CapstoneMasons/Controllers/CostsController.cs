@@ -22,7 +22,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpGet]
-        public async Task<ViewResult> GlobalCosts()
+        public async Task<IActionResult> GlobalCosts()
         {
             List<Cost> globalCosts = await repo.Costs;
 
@@ -43,8 +43,14 @@ namespace CapstoneMasons.Controllers
                 Bar6BendCost = await repo.FindCostByNameAsync(KnownObjects.Bar6BendCost.Name),
                 Bar6CutCost = await repo.FindCostByNameAsync(KnownObjects.Bar6CutCost.Name),
                 SetupCharge = await repo.FindCostByNameAsync(KnownObjects.SetupCharge.Name),
-                MinimumOrderCost = await repo.FindCostByNameAsync(KnownObjects.MinimumOrderCost.Name)
+            
             };
+
+            bool isAjax = HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return Json(costs);
+            }
 
             return View(costs);
         }
@@ -140,12 +146,6 @@ namespace CapstoneMasons.Controllers
                 Name = KnownObjects.SetupCharge.Name,
                 Price = setupCharge
             };
-            globals.MinimumOrderCost = new Cost
-            {
-                CostID = minOrderGlobalID,
-                Name = KnownObjects.MinimumOrderCost.Name,
-                Price = minimumOrderCost
-            };
 
             await CheckCosts(globals.Bar3GlobalCost);
             await CheckCosts(globals.Bar3BendCost);
@@ -160,7 +160,13 @@ namespace CapstoneMasons.Controllers
             await CheckCosts(globals.Bar6BendCost);
             await CheckCosts(globals.Bar6CutCost);
             await CheckCosts(globals.SetupCharge);
-            await CheckCosts(globals.MinimumOrderCost);
+            
+
+            bool isAjax = HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax)
+            {
+                return Json("Prices successfully changed");
+            }
 
             return RedirectToAction("GlobalCosts");
         }

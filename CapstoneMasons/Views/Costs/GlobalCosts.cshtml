@@ -116,7 +116,7 @@
 					Setup Charge
 				</th>
 				<th>
-					Setup Minimum Cost
+					
 				</th>
 			</tr>
 		</thead>
@@ -127,14 +127,13 @@
                     <input type="number" name="setupCharge" value=@Model.SetupCharge.Price class="form-control" />
                     <label asp-for="SetupCharge" class="control-label">Edited: @Model.SetupCharge.LastChanged</label>
                 </th>
-                <th>
-                    <input type="hidden" name="minOrderGlobalID" value="@Model.MinimumOrderCost.CostID" />
-                    <input name="minimumOrderCost" value=@Model.MinimumOrderCost.Price class="form-control" />
-                    <label asp-for="MinimumOrderCost" class="control-label">Edited: @Model.MinimumOrderCost.LastChanged</label>
-                </th>
+				<th>
+				</th>
 			</tr>
 		</tbody>
 	</table>
 
-    <input type="submit" class="btn btn-light text-center" asp-action="GlobalCosts"/>
+    <input type="submit" class="btn btn-info text-center" asp-action="GlobalCosts"/>
+	</br>
+	</br>
 </form>

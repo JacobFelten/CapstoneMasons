@@ -1,0 +1,76 @@
+﻿@model DeleteShape
+
+@{
+    ViewData["Title"] = "DeleteShape";
+
+    string tostring = "0.";
+    for (int i = 0; i < KnownObjects.Precision; i++)
+    {
+        tostring += "#";
+    }
+}
+
+    <style>
+        .line {
+            display: inline;
+        }
+
+        .shape {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .leg {
+            margin-left: 10%;
+        }
+
+        .shape-header {
+            background-color: lightblue;
+        }
+
+        .quote-header {
+            background-color: white;
+        }
+
+        .quote-body {
+            background-color: lightgray;
+        }
+    </style>
+
+<h1 class="text-center">Are you sure you want to permanently remove this shape from @Model.Quote.Name?</h1>
+
+<div class="card container shape">
+    <div class="card-header shape-header">
+        <h2 class="text-center">
+            <span class="font-weight-bold">Bar Size #@Model.Shape.BarSize</span>(qty: @Model.Shape.Qty)
+        </h2>
+    </div>
+    @for (int j = 0; j < Model.Shape.Legs.Count; j++)
+    {
+        Leg l = Model.Shape.Legs[j];
+        int num = j + 1;
+        <div class="leg">
+            <span class="font-weight-bold">Leg @num: </span><span>@l.Length.ToString(tostring)"</span>
+            @if (j < Model.Shape.Legs.Count - 1)
+            {
+                <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@l.Degree&#176;, @l.Mandrel.Name Mandrel</span></div>
+            }
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-3 text-center">
+        <form method="post">
+            <input type="hidden" asp-for="QuoteID" value="@Model.Quote.QuoteID" />
+            <input type="hidden" asp-for="ShapeID" value="@Model.Shape.ShapeID" />
+            <input type="hidden" asp-for="ReturnUrl" value="@Model.ReturnUrl" />
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        </form>
+    </div>
+    <div class="col-3 text-center">
+        <a class="btn btn-primary" asp-action="@Model.ReturnUrl" asp-route-quoteID="@Model.Quote.QuoteID">No</a>
+    </div>
+    <div class="col-3"></div>
+</div>

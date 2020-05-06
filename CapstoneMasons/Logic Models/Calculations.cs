@@ -31,7 +31,14 @@ namespace CapstoneMasons.Logic_Models
                 //Hits the if statement if it is on the first leg of the shape
                 if (leg == 0)
                 {
-                    true_legs[leg].Length = crude_legs[leg].Length - ((decimal)Math.Tan(crude_legs[leg].Degree / 2) * crude_legs[leg].Mandrel.Radius * Thickness);  //converts the customer leg value to the true leg value and populates the true_legs array
+                    if (crude_legs.Count == 1)
+                    {
+                        true_legs[leg].Length = crude_legs[leg].Length;
+                    }
+                    else
+                    {
+                        true_legs[leg].Length = crude_legs[leg].Length - ((decimal)Math.Tan(crude_legs[leg].Degree / 2) * crude_legs[leg].Mandrel.Radius * Thickness);  //converts the customer leg value to the true leg value and populates the true_legs array
+                    }
                 }
 
                 //Hits else if statement if it is on the last leg of the shape

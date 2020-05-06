@@ -9,7 +9,6 @@ namespace CapstoneMasons.Repositories
     public interface IQuoteRepository
     {
         public Task<List<Quote>> Quotes { get; }
-        public Task<IQueryable<Cost>> BarCosts { get; }
 
         public Task<bool> AddQuoteAsync(Quote q);
 
@@ -22,7 +21,5 @@ namespace CapstoneMasons.Repositories
         public Task<bool> UpdateQuoteAsync(Quote newQ);
 
         public Task UpdateQuoteSimpleAsync(Quote q, string prop, string value);
-
-        public Task<bool> UpdateCostAsync(Cost oldC, Cost newC);
     }
 }
