@@ -1,0 +1,22 @@
+﻿@model DeleteQuote
+
+@{
+    ViewData["Title"] = "DeleteQuote";
+}
+
+<h1 class="text-center">Are you sure you want to permanently delete @Model.Quote.Name?</h1>
+
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-3 text-center">
+        <form method="post">
+            <input type="hidden" asp-for="QuoteID" value="@Model.Quote.QuoteID" />
+            <input type="hidden" asp-for="ReturnUrl" value="@Model.ReturnUrl" />
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        </form>
+    </div>
+    <div class="col-3 text-center">
+        <a class="btn btn-primary" asp-action="@Model.ReturnUrl">No</a>
+    </div>
+    <div class="col-3"></div>
+</div>
