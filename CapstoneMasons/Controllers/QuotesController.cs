@@ -66,9 +66,8 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Search(string SearchBar, string NewOrOld)
+        public async Task<IActionResult> Search(OpenQuote oq)
         {
-            List<OpenQuote> openQuotes = new List<OpenQuote>();
             foreach(Quote q in await repo.Quotes)
             {
                 if (q.Open == true)
@@ -80,22 +79,22 @@ namespace CapstoneMasons.Controllers
                     openQuotes.Add(open);
                 }
             }
-            if (NewOrOld != null)
+            if (oq.Sort != null)
             {
-                switch (NewOrOld)
+                switch (oq.Sort)
                 {
                     case "Newest":
-                        openQuotes.Sort((a, b) => a.Quote.DateQuoted.CompareTo(b.Quote.DateQuoted));
+                        oq.ReviewQuotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
                         break;
                     case "Oldest":
-                        openQuotes.Sort((a, b) => b.Quote.DateQuoted.CompareTo(a.Quote.DateQuoted));
+                        oq.ReviewQuotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
                         break;
                     case "AtoZ":
-                        openQuotes.Sort((a, b) => a.Quote.Name.CompareTo(b.Quote.Name));
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                         break;
                 }
             }
-            if(SearchBar != null)
+            if(oq.SearchBar != null)
             {
                 List<int> quoteIndex = new List<int>();
                 for(int i = 0; i < openQuotes.Count; i++)

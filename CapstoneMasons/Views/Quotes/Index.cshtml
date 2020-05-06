@@ -1,4 +1,4 @@
-﻿@model List<OpenQuote>
+﻿@model OpenQuote
 
 @{
     ViewData["Title"] = "Index";
@@ -21,9 +21,9 @@
             <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px;" type="submit">Search</button>
         </div>
         <div class="float-right" style="padding-right: 5px;">
-            <select name="NewOrOld" style="width: 100px; height: 35px;">
-                <option value="Newest">Newest</option>
-                <option value="Oldest">Oldest</option>
+            <select name="NewOrOld" style="width: 200px; height: 35px;">
+                <option value="Newest">Newest to Oldest</option>
+                <option value="Oldest">Oldest to Newest</option>
                 <option value="AtoZ">Alphabetical</option>
             </select>
         </div>
@@ -31,14 +31,14 @@
 </div>
 <table class="table">
     <tbody>
-        @foreach (OpenQuote oq in Model)
+        @foreach (ReviewQuote rq in Model.ReviewQuotes)
         {
             <tr>
                 <td>
                     <div>
                         <div class="text-center">
-                            <h3>@oq.Quote.Name</h3>
-                            <h4>$@oq.TotalCost</h4>
+                            <h3>@rq.Name<h3>
+                            <h4>$@rq.TotalCost</h4>
                             <p style="font-size: 19px;">@oq.Quote.DateQuoted</p>
                         </div>
                         <div class="row">
