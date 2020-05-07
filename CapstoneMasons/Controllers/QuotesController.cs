@@ -863,6 +863,7 @@ namespace CapstoneMasons.Controllers
                 ReviewLeg rL = new ReviewLeg();
                 rL.Length = l.Length;
                 rL.Degree = l.Degree;
+                rL.IsRight = l.IsRight;
                 Formula f = await GetFormulaByLegAsync(l, s.BarSize);
                 if (f != null)
                 {
