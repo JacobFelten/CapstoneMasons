@@ -11,10 +11,10 @@ namespace CapstoneMasons.ViewModels
     {
         [Required(ErrorMessage = "The name of the Quote is required")]
         public string Name { get; set; }
-        //[Required] ask
+        [Required(ErrorMessage = "The Order Number is required")]
         public string OrderNum { get; set; }
-        //[Required] ask
-        public string Creator { get; set; }
+        [Required(ErrorMessage = "The Author of the Quote is required")]
+        public string Author { get; set; }
         [Required(ErrorMessage = "The number of Shapes is required")]
         public int ShapesCount { get; set; }
         [Required(ErrorMessage = "Incomplete Leg Numbers")]
