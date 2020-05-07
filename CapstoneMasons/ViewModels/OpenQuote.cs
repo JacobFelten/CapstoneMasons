@@ -8,7 +8,8 @@ namespace CapstoneMasons.ViewModels
 {
     public class OpenQuote
     {
-        public List<ReviewQuote> ReviewQuotes { get; set; }
+        private List<ReviewQuote> reviewquotes = new List<ReviewQuote>();
+        public List<ReviewQuote> ReviewQuotes { get { return reviewquotes; } }
         public string SearchBar { get; set; }
         public string Sort { get; set; }
     }
