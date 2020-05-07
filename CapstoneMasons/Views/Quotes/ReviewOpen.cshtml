@@ -1,0 +1,251 @@
+﻿@model ReviewOpen
+
+@{
+    ViewData["Title"] = "ReviewOpen";
+
+    string tostring = "0.";
+    for (int i = 0; i < KnownObjects.Precision; i++)
+    {
+        tostring += "#";
+    }
+}
+
+<style>
+    .line {
+        display: inline;
+        width: auto;
+    }
+
+    .shape {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .leg {
+        margin-left: 10%;
+    }
+
+    .shape-header {
+        background-color: lightblue;
+    }
+
+    .quote-header {
+        background-color: white;
+    }
+
+    .quote-body {
+        background-color: lightgray;
+    }
+
+    .bottom-btn {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+</style>
+
+<form method="post">
+    <div class="card container">
+        <div class="card-header quote-header">
+            <input type="hidden" value="@Model.ReviewQuote.QuoteID" asp-for="QuoteID" />
+            <h6>Quote/Order Written By: @Model.ReviewQuote.Author - @Model.ReviewQuote.DateQuoted</h6>
+            <div class="form-group">
+                <label>Quote Name:</label>
+                <input class="form-control" value="@Model.ReviewQuote.Name" asp-for="Name" />
+            </div>
+            <div class="form-group">
+                <label>Order Number:</label>
+                <input class="form-control" value="@Model.ReviewQuote.OrderNum" asp-for="OrderNumber" />
+            </div>
+            <div class="row">
+                <div class="col form-group">
+                    <label>Apply Discount ($ amount to be subtracted from Total Cost):</label>
+                    <input class="form-control" value="@Model.ReviewQuote.Discount" asp-for="Discount" />
+                </div>
+                <div class="col form-group">
+                    <p>Apply Setup Charge:</p>
+                    <div>
+                        <label for="automatic">Automatic</label>
+                        @if (Model.ReviewQuote.AddSetup == null)
+                        {
+                            <input type="radio" asp-for="Setup" value="null" id="automatic" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" asp-for="Setup" value="null" id="automatic" />
+                        }
+                    </div>
+                    <div>
+                        <label for="yes">Yes</label>
+                        @if (Model.ReviewQuote.AddSetup == true)
+                        {
+                            <input type="radio" asp-for="Setup" value="true" id="yes" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" asp-for="Setup" value="true" id="yes" />
+                        }
+                    </div>
+                    <div>
+                        <label for="no">No</label>
+                        @if (Model.ReviewQuote.AddSetup == false)
+                        {
+                            <input type="radio" asp-for="Setup" value="false" id="no" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" asp-for="Setup" value="false" id="no" />
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <div class="form-check">
+                            <div class="row">
+                                <div class="col text-right">
+                                    <label class="form-check-label" for="exampleCheck1">Calculate with user entered formulas: </label>
+                                </div>
+                                <div class="col text-left">
+                                    @if (Model.ReviewQuote.UseFormulas)
+                                    {
+                                        <input type="checkbox" class="form-check-input" name="useFormulas" value="true" checked>
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" class="form-check-input" name="useFormulas" value="true">
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="text-center">
+                        <div class="form-check">
+                            <div class="row">
+                                <div class="col text-right">
+                                    <label class="form-check-label" for="exampleCheck1">Has been picked up: </label>
+                                </div>
+                                <div class="col text-left">
+                                    @if (Model.ReviewQuote.PickedUp)
+                                    {
+                                        <input type="checkbox" class="form-check-input" name="pickedUp" value="true" checked>
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" class="form-check-input" name="pickedUp" value="true">
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a class="btn btn-info" asp-action="Index">Return to Open Quotes</a>
+                <a class="btn btn-secondary" asp-action="UpdateQuotePrices" asp-route-quoteID="@Model.ReviewQuote.QuoteID">Update Prices</a>
+            </div>
+            <div>*Click Update Prices when the costs of rebar have changed and you want to recalculate the total cost of this order/quote based on those new rebar costs</div>
+            @if (Model.ReviewQuote.NeededFormulas != null && Model.ReviewQuote.NeededFormulas.Count > 0)
+            {
+                <div class="text-center">
+                    <h4>The following formulas are needed if the order is to be calculated with user entered formulas:</h4>
+                    @foreach (Formula f in Model.ReviewQuote.NeededFormulas)
+                    {
+                        <div class="text-center">Bar Size: @f.BarSize, Degree: @f.Degree&#176;, Mandrel: @f.Mandrel.Name</div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="card-body quote-body">
+            <h1 class="text-center">Total Cost: @Model.ReviewQuote.TotalCost.ToString("c")</h1>
+            @if (Model.Discount != 0)
+            {
+                <div class="text-center">Total Cost Before Discount: @((Model.ReviewQuote.TotalCost + Model.Discount).ToString("c"))</div>
+            }
+            @foreach (UsedBar uB in Model.ReviewQuote.BarsUsed)
+            {
+                <div class="text-center"><span class="font-weight-bold">#@uB.BarSize Bars Used: </span>@uB.NumOfBars (@uB.BarCost.ToString("c") ea.) + @uB.NumOfCuts Cuts (@uB.CutCost.ToString("c") ea.) + @uB.NumOfBends Bends (@uB.BendCost.ToString("c") ea.)</div>
+            }
+            <div class="text-center"><div class="font-weight-bold">Setup Charge: </div>@Model.ReviewQuote.SetUpCharge.ToString("c")</div>
+            @foreach (RemnantList rL in Model.ReviewQuote.FinalRemnants)
+            {
+                <div class="text-center">
+                    <span class="font-weight-bold">#@rL.BarSize Remnants: </span>
+                    @for (int i = 0; i < rL.Remnants.Count; i++)
+                    {
+                        Remnant r = rL.Remnants[i];
+                        string comma = "";
+                        if (i < rL.Remnants.Count - 1)
+                        {
+                            comma = ",";
+                        }
+                        <span>(@r.Length.ToString(tostring)" x @r.Qty)@comma</span>
+                    }
+                </div>
+            }
+
+            <h1 class="text-center">Instructions</h1>
+            <div class="text-center">Perform cuts in the following order.</div>
+
+            @for (int i = 0; i < Model.ReviewQuote.Shapes.Count; i++)
+            {
+                ReviewShape rS = Model.ReviewQuote.Shapes[i];
+                <div class="card container shape">
+                    <div class="card-header shape-header">
+                        <h2 class="text-center">
+                            <span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(qty: @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed
+                            <a asp-controller="Home" asp-action="NotFinished">Edit</a> |
+                            <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.ReviewQuote.QuoteID" asp-route-returnUrl="ReviewOpen">Delete</a>
+                            <div>
+                                <span>Amount Completed:</span>
+                                <input class="form-control line" asp-for="Completed[i]" value="@rS.Completed" />
+                            </div>
+                        </h2>
+                    </div>
+                    <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString(tostring)"</div>
+                    @foreach (CutInstruction cI in rS.Instructions)
+                    {
+                        <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString(tostring)" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
+                    }
+                    @for (int j = 0; j < rS.Legs.Count; j++)
+                    {
+                        ReviewLeg rL = rS.Legs[j];
+                        int num = j + 1;
+                        <div class="leg">
+                            <span class="font-weight-bold">Leg @num: </span><span>@rL.Length.ToString(tostring)"</span>
+                            @if (j < rS.Legs.Count - 1)
+                            {
+                                <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                            }
+                        </div>
+                    }
+                    <div class="text-center">
+                        <span class="font-weight-bold">Remnants: </span>
+                        @for (int j = 0; j < rS.Remnants.Count; j++)
+                        {
+                            Remnant r = rS.Remnants[j];
+                            string comma = "";
+                            string used = "Will Be";
+                            if (j < rS.Remnants.Count - 1)
+                            {
+                                comma = ",";
+                            }
+                            if (!r.UsedAgain)
+                            {
+                                used = "Not";
+                            }
+                            <span>(@r.Length.ToString(tostring)" x @r.Qty) @used Used Again<span>@comma</span></span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="text-center text-white bottom-btn">
+        <a class="btn btn-secondary" asp-action="CloseOpenQuote" asp-route-quoteID="@Model.ReviewQuote.QuoteID"><h3>Close Quote</h3></a>
+        <a class="btn btn-danger" asp-action="DeleteQuote" asp-route-quoteID="@Model.ReviewQuote.QuoteID" asp-route-returnUrl="Index"><h3>Delete Quote</h3></a>
+    </div>
+</form>

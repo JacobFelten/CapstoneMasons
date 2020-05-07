@@ -11,6 +11,7 @@ using CapstoneMasons.ViewModels;
 using CapstoneMasons.Logic_Models;
 using CapstoneMasons.Infrastructure;
 using Microsoft.AspNetCore.Connections.Features;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace CapstoneMasons.Controllers
 {
@@ -18,20 +19,42 @@ namespace CapstoneMasons.Controllers
     {
         IQuoteRepository repo;
         IFormulaRepository repoF;
+        ICostRepository repoC;
+        IShapeRepository repoS;
 
-        public QuotesController(IQuoteRepository repository, IFormulaRepository repositoryF)
+        public QuotesController(IQuoteRepository repository, IFormulaRepository repositoryF, ICostRepository repositoryC, IShapeRepository repositoryS)
         {
             repo = repository;
             repoF = repositoryF;
+            repoC = repositoryC;
+            repoS = repositoryS;
         }
 
-        // GET: Quotes
+        // GET: Open Quotes
         public async Task<IActionResult> Index()
         {
             List<OpenQuote> openQuotes = new List<OpenQuote>();
             foreach(Quote q in await repo.Quotes)
             {
                 if (q.Open == true)
+                {
+                    OpenQuote open = new OpenQuote();
+                    open.Quote = q;
+                    ReviewQuote rvQ = await FillReviewQuote(open.Quote);
+                    open.TotalCost = rvQ.TotalCost;
+                    openQuotes.Add(open);
+                }
+            }
+            return View(openQuotes);
+        }
+
+        // Get: Closed Quotes
+        public async Task<IActionResult> Closed()
+        {
+            List<OpenQuote> openQuotes = new List<OpenQuote>();
+            foreach (Quote q in await repo.Quotes)
+            {
+                if (q.Open == false)
                 {
                     OpenQuote open = new OpenQuote();
                     open.Quote = q;
@@ -226,6 +249,146 @@ namespace CapstoneMasons.Controllers
             return View("ReviewQuote", rQ);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DeleteShape(int quoteID, int shapeID, string returnUrl)
+        {
+            DeleteShape dS = new DeleteShape
+            {
+                Quote = await repo.GetQuoteByIdAsync(quoteID),
+                Shape = await repoS.GetShapeByIdAsync(shapeID),
+                ReturnUrl = returnUrl
+            };
+            return View(dS);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteShape(DeleteShape dS)
+        {
+            dS.Quote = await repo.GetQuoteByIdAsync(dS.QuoteID);
+            dS.Shape = await repoS.GetShapeByIdAsync(dS.ShapeID);
+            await repoS.DeleteShapeAsync(dS.Shape);
+            return RedirectToAction(dS.ReturnUrl, new { quoteID = dS.Quote.QuoteID });
+        }
+
+        public async Task<IActionResult> ReviewOpen(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+
+            ReviewQuote rQ = await FillReviewQuote(q);
+
+            ReviewOpen rO = new ReviewOpen 
+            { 
+                ReviewQuote = rQ
+            };
+
+            return View(rO);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string useFormulas, string pickedUp)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(rO.QuoteID);
+            await repo.UpdateQuoteSimpleAsync(q, "Name", rO.Name);
+            await repo.UpdateQuoteSimpleAsync(q, "OrderNum", rO.OrderNumber);
+            await repo.UpdateQuoteSimpleAsync(q, "Discount", rO.Discount.ToString());
+            await repo.UpdateQuoteSimpleAsync(q, "AddSetup", rO.Setup);
+            if (pickedUp == null)
+                pickedUp = "false";
+            await repo.UpdateQuoteSimpleAsync(q, "PickedUp", pickedUp);
+            if (useFormulas == null)
+                useFormulas = "false";
+            var neededFormulas = new List<Formula>();
+            if (bool.Parse(useFormulas))
+            {
+                neededFormulas = (List<Formula>)await CanUseFormulas(q);
+                if (neededFormulas.Count == 0)
+                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
+            }
+            else
+            {
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
+            }
+            var rQ = await FillReviewQuote(q);
+            rQ.NeededFormulas = neededFormulas;
+            rO.ReviewQuote = rQ;
+
+            for (int i = 0; i < rQ.Shapes.Count; i++)
+            {
+                Shape s = await repoS.GetShapeByIdAsync(rQ.Shapes[i].ShapeID);
+                s.NumCompleted = rO.Completed[i];
+                Shape newS = new Shape
+                {
+                    BarSize = s.BarSize,
+                    Qty = s.Qty,
+                    NumCompleted = rO.Completed[i]
+                };
+                foreach (Leg l in s.Legs)
+                    newS.Legs.Add(l);
+                await repoS.UpdateShapesAsync(s, newS);
+                rQ.Shapes[i].Completed = rO.Completed[i];
+            }
+
+            return View(rO);
+        }
+
+        public async Task<IActionResult> UpdateQuotePrices(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+
+            q = await UpdatePrices(q);
+
+            ReviewQuote rQ = await FillReviewQuote(q);
+
+            ReviewOpen rO = new ReviewOpen
+            {
+                ReviewQuote = rQ
+            };
+
+            return View("ReviewOpen", rO);
+        }
+
+        public async Task<IActionResult> CloseOpenQuote(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+            await repo.UpdateQuoteSimpleAsync(q, "Open", "false");
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteQuote(int quoteID, string returnUrl)
+        {
+            DeleteQuote dQ = new DeleteQuote
+            {
+                Quote = await repo.GetQuoteByIdAsync(quoteID),
+                ReturnUrl = returnUrl
+            };
+            return View(dQ);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteQuote(DeleteQuote dQ)
+        {
+            dQ.Quote = await repo.GetQuoteByIdAsync(dQ.QuoteID);
+            await repo.DeleteQuoteAsync(dQ.Quote);
+            return RedirectToAction(dQ.ReturnUrl);
+        }
+
+        public async Task<IActionResult> ReviewClosed(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+
+            ReviewQuote rQ = await FillReviewQuote(q);
+
+            return View(rQ);
+        }
+
+        public async Task<IActionResult> OpenClosedQuote(int quoteID)
+        {
+            Quote q = await repo.GetQuoteByIdAsync(quoteID);
+            await repo.UpdateQuoteSimpleAsync(q, "Open", "true");
+            return RedirectToAction("Closed");
+        }
+
         #region So Jacob doesn't have to keep scrolling past these
         // GET: Quotes/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -317,11 +480,14 @@ namespace CapstoneMasons.Controllers
         {
             ReviewQuote rQ = new ReviewQuote();
             rQ.QuoteID = q.QuoteID; //done
+            rQ.Author = q.Author;
+            rQ.DateQuoted = q.DateQuoted;
             rQ.Name = q.Name; //done
             rQ.OrderNum = q.OrderNum; //done
             rQ.AddSetup = q.AddSetup;
             rQ.Discount = q.Discount;
             rQ.UseFormulas = q.UseFormulas;
+            rQ.PickedUp = q.PickedUp;
 
             //After filling the shapes with instructions the shapes are sorted by bar size
             //then by shape length so the instructions make sense.
@@ -365,6 +531,7 @@ namespace CapstoneMasons.Controllers
                     //Do jeff stuff
                     //pass in bar size as bar type, pass in legs as crude legs
                 }
+                rS.Completed = s.NumCompleted;
                 rS.Legs = await CreateLegsAsync(s);
                 rSList.Add(rS);
             }
@@ -767,7 +934,6 @@ namespace CapstoneMasons.Controllers
         private decimal CalculateSetUp(Quote q, List<UsedBar> usedBars)
         {
             decimal setup = 0;
-            int totalCutsBends = 0;
 
             foreach (Cost c in q.Costs)
             {
@@ -775,25 +941,18 @@ namespace CapstoneMasons.Controllers
                     setup = c.Price;
             }
 
-            foreach (UsedBar uB in usedBars)
-            {
-                totalCutsBends += uB.NumOfBends;
-                totalCutsBends += uB.NumOfCuts;
-            }
-
-            if (totalCutsBends < 100)
-            {
-                if (q.AddSetup != false)
-                    return setup;
-                else
-                    return 0;
-            }
+            if (q.AddSetup == false)
+                return 0;
+            else if (q.AddSetup == true)
+                return setup;
             else
             {
-                if (q.AddSetup != true)
-                    return 0;
-                else
-                    return setup;
+                foreach (Shape s in q.Shapes)
+                {
+                    if (s.Qty >= 100)
+                        return 0;
+                }
+                return setup;
             }
         }
 
@@ -897,17 +1056,17 @@ namespace CapstoneMasons.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BarCost(List<Cost> Costs)
         {
-            var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
+            var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             if (ModelState.IsValid)
             {
                 for (int i = 0; i < 15; i++)//could be foreach too 
                 {
                     if (costsQuote.FirstOrDefault(c => c.CostID == i).Price != Costs[i].Price)
                     {
-                        await repo.UpdateCostAsync(costsQuote.FirstOrDefault(c => c.CostID == i), Costs[i]);
+                        await repoC.UpdateCostAsync(costsQuote.FirstOrDefault(c => c.CostID == i), Costs[i]);
                     }
                 }
-                costsQuote = await repo.BarCosts;
+                costsQuote = await repoC.BarCosts;
                 return View(costsQuote.ToList());
             }
             return View(costsQuote.ToList());
@@ -948,7 +1107,7 @@ namespace CapstoneMasons.Controllers
         private async Task<Quote> UpdatePrices(Quote quote)
         {
             quote.Costs.Clear();
-            var costsQuote = await repo.BarCosts;//get costs from first quote? seeded?
+            var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             //var sumLegs = 0m;
             //var total = 0m;
 

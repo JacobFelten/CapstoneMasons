@@ -32,6 +32,14 @@
                     <p>Under Construction</p>
                 </div>
             </div>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" hidden>
+                <strong>
+                    Dwight you ignorant slut!
+                </strong> The bar prices havent changed for 2 weeks.
+            </div>
+            <button type="button" class="close" onclick="testAlert()">
+                <span aria-hidden="true">&times;</span>
+            </button>
             <div class="row">
                 <div class="col-12 offset-1 col-lg-8 offset-lg-2 div-wrapper d-flex justify-content-center align-items-center">
                     <a class="btn btn-primary" asp-controller="Quotes" asp-action="Create" data-toggle="modal" data-target="#createQuote">
@@ -48,7 +56,7 @@
                     </a>
                 </div>
                 <div class="col-12 offset-1 col-lg-8 offset-lg-2 div-wrapper d-flex justify-content-center align-items-center">
-                    <a class="btn btn-primary" asp-controller="Home" asp-action="NotFinished">
+                    <a class="btn btn-primary" asp-controller="Quotes" asp-action="Closed">
                         <div class="div-to-align text-white font-weight-bold">
                             <h5>View Closed Quotes</h5>
                         </div>

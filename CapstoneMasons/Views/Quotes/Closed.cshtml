@@ -1,19 +1,19 @@
 ﻿@model List<OpenQuote>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Closed";
 }
 
 <h1>Index</h1>
 
 <div>
-    <h2>Open Quotes</h2>
+    <h2>Closed Quotes</h2>
 </div>
 <div>
     <div class="float-right">
-        <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" data-toggle="modal" data-target="#createQuote">Create New</a>
+        <button class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" asp-action="Create">Create New</button>
     </div>
-    <form asp-action="Search" asp-controller="Quotes" method="post">
+    <form asp-action="Search" method="post">
         <div class="float-left">
             <input name="SearchBar" style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search" />
         </div>
@@ -47,7 +47,7 @@
                                 {
                                     string percentage = (((decimal)oq.Quote.Shapes[i].NumCompleted / (decimal)oq.Quote.Shapes[i].Qty) * 100).ToString("n0");
                                     <div class="row">
-                                        <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + oq.Quote.Shapes[i].BarSize) Bar, @oq.Quote.Shapes[i].Legs.Count Legs</div>
+                                        <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + oq.Quote.Shapes[i].BarSize) Bar, @oq.Quote.Shapes[i].LegCount Legs</div>
                                         <div class="text-right col">Completed: @(oq.Quote.Shapes[i].NumCompleted + "/" + oq.Quote.Shapes[i].Qty)</div>
                                     </div>
                                     <div class="progress">
@@ -58,7 +58,7 @@
                             <div class="col-4">
                                 <div class="row">
                                     <div class="col-12 text-center" style="padding-top: 20px">
-                                        <a class="btn btn-primary text-center" style="width: 150px;" asp-action="ReviewOpen" asp-route-quoteID=@oq.Quote.QuoteID>Details</a>
+                                        <a class="btn btn-primary text-center" style="width: 150px;" asp-action="ReviewClosed" asp-route-quoteID=@oq.Quote.QuoteID>Details</a>
                                     </div>
                                 </div>
                                 @if (oq.Quote.PickedUp == true)
@@ -85,5 +85,3 @@
         }
     </tbody>
 </table>
-
-@await Html.PartialAsync("~/Views/Shared/_PartialPopUp.cshtml", new CreateQuote())
