@@ -15,7 +15,7 @@ function validateShapes(shape, legs) {
     //document.getElementById("validationShape" + shape).classList.remove("bg-danger");
     ////document.getElementById(`shape${shape}`).classList.add("bg-warning")
     //document.getElementById("validationShape"+shape).classList.add("bg-success");
-    if (legs <= 0 || RebarNum.selectedIndex) {
+    if (legs <= 0 ) {
         document.getElementById("validationShape" + shape).classList.add("bg-danger");
     }
 }
