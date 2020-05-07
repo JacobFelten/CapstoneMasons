@@ -337,6 +337,8 @@ namespace CapstoneMasons.Controllers
 
             q = await UpdatePrices(q);
 
+            await repo.UpdateQuoteAsync(q);
+
             ReviewQuote rQ = await FillReviewQuote(q);
 
             ReviewOpen rO = new ReviewOpen
