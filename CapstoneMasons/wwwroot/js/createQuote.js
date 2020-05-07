@@ -55,6 +55,6 @@ function deleteShape(ShapeNumb) {
 
             document.getElementById(`shape-body${ShapeNumb}`).style.display = "none";
         }
-    }
+    } 
 }
 //

@@ -29,15 +29,13 @@
     .quote-body {
         background-color: lightgray;
     }
+    label.btn.btn-primary.active {
+        background-color: #28a745 !important;
+        border-color: #ffc107 !important;
+    }
 </style>
 <script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
-<link href="~/css/gino's css/jquerysctipttop.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-<script src="~/js/gino's js/jquery.twbs-toggle-buttons.min.js"></script>
 <script type="text/javascript" src="~/js/createQuote.js"></script>
-<script>
-    $(".btn-group-toggle").twbsToggleButtons();
-</script>
 <h1 class="text-center">Create Quote - Continued</h1>
 
 <h4 class="text-center">Edit Shapes</h4>
@@ -72,7 +70,7 @@
                                 <h4 class="text-center panel-title checkout-acc-title">
                                     <a data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())" data-toggle="collapse">
                                         @(KnownObjects.NumberPrefix[i]) Shape
-                                        <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: #FDA50F;"></i>
+                                        <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: #007bff;"></i>
                                     </a>
                                     @if (Model.Shapes.Count != 1)
                                     {
@@ -87,31 +85,32 @@
                                 <div class="bg-secondary panel-body checkout-inside" style="padding-bottom: 10px; outline: 6px solid #28a745!important;">
                                     <div class="bg-success text-center font-weight-bold" id="validationShape@((i+1).ToString())">The Shape will turn Green when Valid</div>
                                     <div class="row justify-content-md-center" style="padding-left: 10px; padding-right: 10px;">
-                                        <div class="col-md-4 col-lg-3 col-sm form-group">
+                                        <div class="col-md-4 col-lg-4 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Rebar #: </label>
-                                            <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
+                                            @*<select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
                                                     onchange="vaidateRebar(this.options[this.selectedIndex].text)">
                                                 <option>3</option>
                                                 <option>4</option>
                                                 <option>5</option>
                                                 <option>6</option>
-                                            </select>
+                                            </select>*@
 
                                             <!--custom radio buttons-->
-                                            <label class="control-label">Is it true?</label>
-                                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                <label class="btn btn-info" role="button" aria-pressed="false">
-                                                    <input type="radio" name="options" value="3" required="">BAR #3
-                                                </label>
-                                                <label class="btn btn-secondary" role="button" aria-pressed="false">
-                                                    <input type="radio" name="options" value="4" required="">BAR #4
-                                                </label>
-                                                <label class="btn btn-warning" role="button" data-twbs-toggle-buttons-class-active="btn-warning" data-twbs-toggle-buttons-class-inactive="btn-error" aria-pressed="true">
-                                                    <input type="radio" name="options" value="5" checked="checked">BAR #5
-                                                </label>
-                                                <label class="btn btn-secondary" role="button" data-twbs-toggle-buttons-class-active="btn-danger" aria-pressed="false">
-                                                    <input type="radio" name="options" value="6">BAR #6
-                                                </label>
+                                            <div class="input-group">
+                                                <div class="input-group-btn" data-toggle="buttons">
+                                                    <label class="btn btn-primary active" id="Shapes[@(i.ToString())].bar3">
+                                                        <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="3" autocomplete="off" checked hidden>Bar #3
+                                                    </label>
+                                                    <label class="btn btn-primary" id="Shapes[@(i.ToString())].bar4">
+                                                        <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="4" autocomplete="off" hidden hidd>Bar #4
+                                                    </label>
+                                                    <label class="btn btn-primary" id="Shapes[@(i.ToString())].bar5">
+                                                        <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="5" autocomplete="off" hidden>Bar #5
+                                                    </label>
+                                                    <label class="btn btn-primary" id="Shapes[@(i.ToString())].bar6" >
+                                                        <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="6" autocomplete="off" hidden>Bar #6
+                                                    </label>
+                                                </div>
                                             </div>
                                             <!--custom radio buttons-->
 
@@ -124,30 +123,45 @@
                                     </div>
                                     @for (int leg = 0; leg < Model.Shapes[i].Legs.Count; leg++)
                                     {
-                                        <div class="row" style="padding-left: 10px; padding-right: 10px;">
-                                            <div class="col-4 form-group">
-                                                <label>@(KnownObjects.NumberPrefix[leg]) Leg Length: </label>
-                                                <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght"/>
-                                            </div>
-                                            @if (leg != Model.Shapes[i].Legs.Count - 1)
-                                            {
-                                                <div class="col-5 form-group">
-                                                    <label>@(KnownObjects.NumberPrefix[leg]) Leg Bend (Degrees): </label>
-                                                    <input type="number" min="1" value="0" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree" 
-                                                           id="Shape@(i+1).Leg@(leg+1).degree"/>
-                                                </div>
-                                                <div class="col-3 form-group">
-                                                    <label for="exampleFormControlSelect2">Mandrel: </label>
-                                                    <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
-                                                            onchange="vaidateLeg(this.options[this.selectedIndex].text)">
-                                                        <option>None</option>
-                                                        <option>Small</option>
-                                                        <option>Medium</option>
-                                                        <option>Large</option>
-                                                    </select>
-                                                </div>
-                                            }
+                                <div class="row" style="padding-left: 10px; padding-right: 10px;">
+                                    <div class="col-4 form-group">
+                                        <label>@(KnownObjects.NumberPrefix[leg]) Leg Length: </label>
+                                        <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght" />
+                                    </div>
+                                    @if (leg != Model.Shapes[i].Legs.Count - 1)
+                                    {
+                                        <div class="col-5 form-group">
+                                            <label>@(KnownObjects.NumberPrefix[leg]) Leg Bend (Degrees): </label>
+                                            <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
+                                                   id="Shape@(i+1).Leg@(leg+1).degree" />
                                         </div>
+                                        <div class="col-3 form-group">
+                                            <label for="exampleFormControlSelect2">Mandrel: </label>
+                                            <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
+                                                    onchange="vaidateLeg(this.options[this.selectedIndex].text)">
+                                                <option>None</option>
+                                                <option>Small</option>
+                                                <option>Medium</option>
+                                                <option>Large</option>
+                                            </select>
+                                        </div>
+                                    }
+                                    else
+                                    {
+
+                                        <label for="exampleFormControlSelect2">Bend: </label>
+                                        <div class="">
+                                            <div class="input-group-btn" data-toggle="buttons">
+                                                <label class="btn btn-primary active" id="Shapes[@(i.ToString())].IsLeft">
+                                                    <input type="radio" name="Shapes[@(i.ToString())].Legs[@leg].IsRight" value="false" autocomplete="off" checked hidden>Left
+                                                </label>
+                                                <label class="btn btn-primary" id="Shapes[@(i.ToString())].IsRight">
+                                                    <input type="radio" name="Shapes[@(i.ToString())].Legs[@leg].IsRight" value="true" autocomplete="off" hidden hidd>Right
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
                                     }
 
                                     <button hidden id="toggle-delivery" type="button" class="btn-checkout" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-shape@((i+2).ToString())">Next Shape</button>
