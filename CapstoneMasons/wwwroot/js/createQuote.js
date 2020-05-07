@@ -23,16 +23,38 @@ function vaidateRebar(RebarNumb) {
 
 }
 function deleteShape(ShapeNumb) {
-    var r = confirm("Are you sure you want to deletea Shape");
-    if (r == true) {
-        var shape = document.getElementById("shape-body" + ShapeNumb);
-        if (document.getElementById("shape-body" + ShapeNumb + 1) != null)
-        {
-
-        }
-        shape.remove();
+    var nextShape = document.getElementById(`shape-body${ShapeNumb + 1}`);
+    var prevShape = document.getElementById(`shape-body${ShapeNumb - 1}`);
+    if (nextShape == null && prevShape == null) {//making sure you dont delete the last shape
+        alert("You cant delete the only shape");
     } else {
-        
+        var r = confirm("Are you sure you want to delete Shape #" + ShapeNumb);
+        if (r == true) {
+            document.getElementById(`quantityShape${ShapeNumb}`).min = -9;
+            document.getElementById(`quantityShape${ShapeNumb}`).max = -9;
+            document.getElementById(`quantityShape${ShapeNumb}`).value = -9;
+            var LegNumb = 1;
+            var leg = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
+            leg.value = -9;
+            while (leg != null) {
+                leg.value = -9;
+                LegNumb++;
+                leg = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
+            }
+
+            LegNumb = 1;
+            var legDegree = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.degree`);
+            while (legDegree != null) {
+                legDegree.min = -9;
+                legDegree.max = -9;
+                legDegree.value = -9;
+                LegNumb++;
+                legDegree = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.degree`);
+            }
+            
+
+            document.getElementById(`shape-body${ShapeNumb}`).style.display = "none";
+        }
     }
 }
 //

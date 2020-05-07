@@ -50,14 +50,16 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label>Quote Name:</label>
-                    <input class="form-control" value="@Model.Name" name="name" />
+                    <input asp-for="Name" class="form-control" value="@Model.Name" name="name" />
                 </div>
                 <div class="form-group">
                     <label>Order Number:</label>
-                    <input class="form-control" value="@Model.OrderNum" name="OrderNum" />
+                    <input asp-for="OrderNum" class="form-control" value="@Model.OrderNum" name="OrderNum" />
                 </div>
-
-
+                <div class="form-group">
+                    <label>Author:</label>
+                    <input asp-for="Author" class="form-control" value="@Model.Author" name="OrderNum" />
+                </div>
             </div>
 
             @for (int i = 0; i < Model.Shapes.Count; i++)
@@ -72,9 +74,13 @@
                                         @(KnownObjects.NumberPrefix[i]) Shape
                                         <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: #FDA50F;"></i>
                                     </a>
-                                    <a onclick="deleteShape(@(i+1))">
-                                        <i class="fas fa-trash float-left" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: Tomato;"></i>
-                                    </a>
+                                    @if (Model.Shapes.Count != 1)
+                                    {
+                                        <a onclick="deleteShape(@(i+1))">
+                                            <i class="fas fa-trash float-left" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: Tomato;"></i>
+                                        </a>
+                                    }
+
                                 </h4>
                             </div>
                             <div id="collapse-shape@((i+1).ToString())" class="container panel-collapse details collapse in" style="padding-bottom: 20px;padding-top: 15px;">
@@ -113,7 +119,7 @@
                                         </div>
                                         <div class="col-md-3 col-lg-2 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Quantity</label>
-                                            <input class="form-control" asp-for="Shapes[i].Qty" />
+                                            <input min="1" type="number" asp-for="Shapes[i].Qty" id="quantityShape@(i+1)"/>
                                         </div>
                                     </div>
                                     @for (int leg = 0; leg < Model.Shapes[i].Legs.Count; leg++)
@@ -121,13 +127,14 @@
                                         <div class="row" style="padding-left: 10px; padding-right: 10px;">
                                             <div class="col-4 form-group">
                                                 <label>@(KnownObjects.NumberPrefix[leg]) Leg Length: </label>
-                                                <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" />
+                                                <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght"/>
                                             </div>
                                             @if (leg != Model.Shapes[i].Legs.Count - 1)
                                             {
                                                 <div class="col-5 form-group">
                                                     <label>@(KnownObjects.NumberPrefix[leg]) Leg Bend (Degrees): </label>
-                                                    <input type="number" min="1" value="0" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree" />
+                                                    <input type="number" min="1" value="0" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree" 
+                                                           id="Shape@(i+1).Leg@(leg+1).degree"/>
                                                 </div>
                                                 <div class="col-3 form-group">
                                                     <label for="exampleFormControlSelect2">Mandrel: </label>
