@@ -1,0 +1,23 @@
+﻿body {
+    background-color: #333;
+}
+
+h1 {
+    color: #fff;
+}
+
+.card-body, .btn-group {
+    background-color: #fafafa;
+}
+
+.card {
+    margin-top: 1em;
+}
+
+.form-control {
+    border: none;
+}
+
+.control-label {
+    margin: .5em 1em 0;
+}

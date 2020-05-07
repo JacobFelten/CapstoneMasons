@@ -143,7 +143,9 @@ namespace CapstoneMasons.Controllers
             Quote quote = new Quote()
             {
                 Name = q.Name,
-                OrderNum = q.OrderNum
+                OrderNum = q.OrderNum,
+                UseFormulas = q.UseFormulas,
+                Author = q.Author
             };
             for (var i = 0; i < q.ShapesCount; i++)
             {
@@ -155,16 +157,22 @@ namespace CapstoneMasons.Controllers
                     quote.Shapes[i].Legs.Add(new Leg() { });
                 }
             }
+
             return View(quote);
         }
         [HttpPost]
         public async Task<IActionResult> Create(Quote q)
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
             if (ModelState.IsValid)
             {//Refactors  to Quote
                 q.UseFormulas = false;
                 for (var i = 0; i < q.Shapes.Count; i++)
                 {
+                    if (q.Shapes[i].Qty == -9 && q.Shapes[i].Legs[0].Length == -9)
+                    {
+                        q.Shapes.RemoveAt(i);
+                    }
                     for (var j = 0; j < q.Shapes[i].Legs.Count-1; j++)
                     {
                         q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
