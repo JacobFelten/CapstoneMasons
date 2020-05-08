@@ -185,17 +185,18 @@ function alertPricesBanner() {
             response = JSON.parse(response);
             for (var data in response) {
                 var date = new Date(response[data].lastChanged);
-                var diff = (currentTime.getTime() - date.getTime()) / 1000;
+                var diff = (currentTime - date) / 1000;
                 diff /= (60 * 60 * 24 * 7);
                 var numPastWeeks = Math.abs(Math.round(diff));
-                if (numPastWeeks< 2) {
+                if (numPastWeeks >= 2) {
                     //"5/7/2020, 4:39:30 PM"  "2020-05-06T15:11:06.7879818"
-                    document.getElementById("barPricesBanner").style.display = "none";
+                    showBanner = true;
                 }
+            }
+            if (!showBanner) {
+                document.getElementById("barPricesBanner").style.display = "none";
             }
         }
     });
-    if (showBanner) {
-        document.getElementById(id).classList.add("hidden");
-    }
+
 }
