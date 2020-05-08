@@ -170,3 +170,32 @@ function hideBarCosts(event) {
         document.getElementById("collapse-bar-prices").classList.remove("show")
     }
 }
+
+function alertPricesBanner() {
+    var currentTime = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+    currentTime = new Date(currentTime.toString());
+    var showBanner = false;
+    $.ajax({
+        type: "GET",
+        url: pricesUrl,
+        //contentType: "application/json"
+        dataType: "text",
+        success: function (response)
+        {
+            response = JSON.parse(response);
+            for (var data in response) {
+                var date = new Date(response[data].lastChanged);
+                var diff = (currentTime.getTime() - date.getTime()) / 1000;
+                diff /= (60 * 60 * 24 * 7);
+                var numPastWeeks = Math.abs(Math.round(diff));
+                if (numPastWeeks< 2) {
+                    //"5/7/2020, 4:39:30 PM"  "2020-05-06T15:11:06.7879818"
+                    document.getElementById("barPricesBanner").style.display = "none";
+                }
+            }
+        }
+    });
+    if (showBanner) {
+        document.getElementById(id).classList.add("hidden");
+    }
+}

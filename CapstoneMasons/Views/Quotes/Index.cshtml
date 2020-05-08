@@ -11,17 +11,17 @@
 </div>
 <div>
     <div class="float-right">
-        <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" data-toggle="modal" data-target="#createQuote">Create New</a>
+        <a class="btn btn-primary" style="height: 35px;padding-bottom: 5px; padding-top: 6px; margin-top: 0px;top: 6px;margin-left: 0px;bottom: auto;margin-bottom: 0px;" data-toggle="modal" data-target="#createQuote">Create New</a>
     </div>
     <form asp-action="Search" asp-controller="Quotes" method="post">
         <div class="float-left">
-            <input name="SearchBar" style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search" />
+            <input name="SearchBar" style="width: 150px; height: 35px; margin-top: 7px;" placeholder="Search" />
         </div>
         <div class="float-right" style="padding-right: 5px;">
             <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px;" type="submit">Search</button>
         </div>
         <div class="float-right" style="padding-right: 5px;">
-            <select name="NewOrOld" style="width: 100px; height: 35px;">
+            <select name="NewOrOld" style="width: 100px;height: 35px;margin-top: 6px;">
                 <option value="Newest">Newest</option>
                 <option value="Oldest">Oldest</option>
                 <option value="AtoZ">Alphabetical</option>
