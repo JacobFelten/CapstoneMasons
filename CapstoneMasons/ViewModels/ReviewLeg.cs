@@ -12,5 +12,6 @@ namespace CapstoneMasons.ViewModels
         public string Mandrel { get; set; }
         public string PinNumber { get; set; }
         public decimal InGained { get; set; }
+        public bool IsRight { get; set; }
     }
 }
