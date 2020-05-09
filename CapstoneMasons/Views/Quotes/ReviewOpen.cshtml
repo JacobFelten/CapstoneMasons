@@ -13,6 +13,10 @@
 <script type="text/javascript" src="~/js/ReviewPage JS/Canvas.js">
 </script>
 
+<script>
+    var legs = [];
+</script>
+
 <style>
     .line {
         display: inline;
@@ -195,8 +199,16 @@
 
             @for (int i = 0; i < Model.ReviewQuote.Shapes.Count; i++)
             {
+
+			
 			string canvasID = "canvas" + i;
+			canvasID = canvasID.ToString();
+
                 ReviewShape rS = Model.ReviewQuote.Shapes[i];
+	<script>
+        legs = null;
+        legs = [];
+    </script>
                 <div class="card container shape">
                     <div class="card-header shape-header">
                         <h2 class="text-center">
@@ -218,6 +230,17 @@
 						<div class="col">
 							@for (int j = 0; j < rS.Legs.Count; j++)
 							{
+								string isRight = "";
+								if (Model.ReviewQuote.Shapes[i].Legs[j].IsRight)
+								{
+									isRight = "true";
+								}
+								else
+								{
+									isRight = "false";
+								}
+
+
 								ReviewLeg rL = rS.Legs[j];
 								int num = j + 1;
 								<div class="leg">
@@ -227,6 +250,16 @@
 										<div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
 									}
 								</div>
+
+
+								<script>
+									var leg = {
+										Length: @Model.ReviewQuote.Shapes[i].Legs[j].Length,
+										Degree: @Model.ReviewQuote.Shapes[i].Legs[j].Degree,
+										IsRight: @isRight
+									};
+									legs[@j] = leg;
+								</script>
 							}
 						</div>
 						<div class="col" id="Canvas">
@@ -235,6 +268,12 @@
 										Your browser is not supporting HTML5 Canvas .Upgrade Browser to view this program or check with Chrome or in Firefox.
 									</CANVAS>
 								</SECTION>
+
+								<!---------CANVAS FUNCTION--------->
+								<script>
+									var canvasID = "@canvasID.ToString()";
+									DrawCanvas(canvasID, legs)
+								</script>
 						</div>
 
 

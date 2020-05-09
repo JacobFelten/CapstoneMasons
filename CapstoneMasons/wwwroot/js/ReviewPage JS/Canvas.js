@@ -1,9 +1,11 @@
+//legs is the JS object that holds each leg each with their own Length, Degree, and IsRight values
+function DrawCanvas(canvasID, legs)
+{
 var canvas = document.getElementById(canvasID);
 //Always check for properties and methods, to make sure your code doesn't break in other browsers.
 if (canvas.getContext) {
 
     //global variables for canvas
-    //var thicc = 25;
     var scalar = 1;
     var min_x;
     var max_x;
@@ -12,7 +14,6 @@ if (canvas.getContext) {
     x_shift = 0;
     y_shift = 0;
     f_size = "12px Arial";
-    var angle_shift = -9;
     var Too_Big = 0;
     //To be used to break out of while loop later
     var buffer = 25;
@@ -24,46 +25,18 @@ if (canvas.getContext) {
     var neg_pos = 1;
     var curr_x = 0;
     var curr_y = 0;
-    var prev_x = 0;
-    var prev_y = 0;
-
-    var x0;
-    var y0;
-    var tempx0;
-    var tempy0;
 
     //Variables for Shape creation
-    var x1;
-    var y1;
-    var tempx1;
-    var tempy1;
 
-    var x2;
-    var y2;
-    var tempx2;
-    var tempy2;
-
-    var x3;
-    var y3;
-    var tempx3;
-    var tempy3;
-
-    var x4;
-    var y4;
-    var tempx4;
-    var tempy4;
-
-    var x5;
-    var y5;
-    var tempx5;
-    var tempy5;
-
-    var x6;
-    var y6;
-    var tempx6;
-    var tempy6;
 
     var context = canvas.getContext('2d');
+
+    startx = 0;  //the initial x value of the shape
+    starty = 0;  //the initial y value of the shape
+
+    //initialize x and y arrays
+    xcoords = {};
+    ycoords = {};
 
     scalar = 1;
     //reset scalar back to 1
@@ -73,173 +46,70 @@ if (canvas.getContext) {
     //sets initial y point
     curr_unit_val = 0;
     //set unit circle value
-    for (var j = 0; j < num_legs; j++) {
+
+
+    for (var j = 0; j < legs.length; j++) {
         if (j == 0) {
 
-            x0 = curr_x;
+            startx = curr_x;
+            starty = curr_y;
+
+            xcoords[0] = startx;
+            ycoords[0] = starty;
+
             //save the new x coord
-            y0 = curr_y;
             //save the new y coord
-            min_x = x0;
-            min_y = y0;
-            max_x = x0;
-            max_y = y0;
+            min_x = curr_x;
+            min_y = curr_y;
+            max_x = curr_x;
+            max_y = curr_y;
 
-            x1 = x0 + leg1_length * scalar;
+            xcoords[1] = xcoords[j] + legs[j].Length;
             //save the new x coord
-            y1 = y0;
+            ycoords[1] = ycoords[j]
             //save the new y coord
 
-            if (x1 < min_x) {
-                min_x = x1;
-            } else if (x1 > max_x) {
-                max_x = x1;
+            if (xcoords[j + 1] < min_x) {
+                min_x = xcoords[j + 1];
+            } else if (xcoords[j + 1] > max_x) {
+                max_x = xcoords[j + 1];
             } else {//they are equal do nothing.
             }
 
-            if (y1 < min_y) {
-                min_y = y1;
-            } else if (y1 > max_y) {
-                max_y = y1;
+            if (ycoords[j + 1] < min_y) {
+                min_y = ycoords[j + 1];
+            } else if (ycoords[j + 1] > max_y) {
+                max_y = ycoords[j + 1];
             } else {//They are equal do nothing.
             }
 
 
-        } else if (j == 1) {
-            if (leg1_direction == "right") {
+        } else {
+            if (legs[j - 1].IsRight == true) {
                 neg_pos = 1;
             } else {
                 neg_pos = -1;
             }
 
-            //(x2,y2)
-            x2 = (x1 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree))) * leg2_length);
-            y2 = (y1 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree))) * leg2_length);
+            //(xj+1,yj+1)
+            xcoords[j + 1] = xcoords[j] + Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length;
+            ycoords[j + 1] = ycoords[j] + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length;
 
-            if (x2 < min_x) {
-                min_x = x2;
-            } else if (x2 > max_x) {
-                max_x = x2;
+            if (xcoords[j + 1] < min_x) {
+                min_x = xcoords[j + 1];
+            } else if (xcoords[j + 1] > max_x) {
+                max_x = xcoords[j + 1];
             } else {//they are equal do nothing.
             }
 
-            if (y2 < min_y) {
-                min_y = y2;
-            } else if (y2 > max_y) {
-                max_y = y2;
+            if (ycoords[j + 1] < min_y) {
+                min_y = ycoords[j + 1];
+            } else if (ycoords[j + 1] > max_y) {
+                max_y = ycoords[j + 1];
             } else {//They are equal do nothing.
             }
 
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree);
-
-        } else if (j == 2) {
-            if (leg2_direction == "right") {
-                neg_pos = 1;
-            } else {
-                neg_pos = -1;
-            }
-
-            //(x3,y3)
-            x3 = (x2 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree))) * leg3_length);
-            y3 = (y2 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree))) * leg3_length);
-
-            if (x3 < min_x) {
-                min_x = x3;
-            } else if (x3 > max_x) {
-                max_x = x3;
-            } else {//they are equal do nothing.
-            }
-
-            if (y3 < min_y) {
-                min_y = y3;
-            } else if (y3 > max_y) {
-                max_y = y3;
-            } else {//They are equal do nothing.
-            }
-
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree);
-
-        } else if (j == 3) {
-            if (leg3_direction == "right") {
-                neg_pos = 1;
-            } else {
-                neg_pos = -1;
-            }
-
-            //(x4,y4)
-            x4 = (x3 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree))) * leg4_length);
-            y4 = (y3 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree))) * leg4_length);
-
-            if (x4 < min_x) {
-                min_x = x4;
-            } else if (x4 > max_x) {
-                max_x = x4;
-            } else {//they are equal do nothing.
-            }
-
-            if (y4 < min_y) {
-                min_y = y4;
-            } else if (y4 > max_y) {
-                max_y = y4;
-            } else {//They are equal do nothing.
-            }
-
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree);
-
-        } else if (j == 4) {
-            if (leg4_direction == "right") {
-                neg_pos = 1;
-            } else {
-                neg_pos = -1;
-            }
-
-            //(x5,y5)
-            x5 = (x4 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree))) * leg5_length);
-            y5 = (y4 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree))) * leg5_length);
-
-            if (x5 < min_x) {
-                min_x = x5;
-            } else if (x5 > max_x) {
-                max_x = x5;
-            } else {//they are equal do nothing.
-            }
-
-            if (y5 < min_y) {
-                min_y = y5;
-            } else if (y5 > max_y) {
-                max_y = y5;
-            } else {//They are equal do nothing.
-            }
-
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree);
-
-        } else if (j == 5) {
-            if (leg5_direction == "right") {
-                neg_pos = 1;
-            } else {
-                neg_pos = -1;
-            }
-
-            //(x6,y6)
-            x6 = (x5 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree))) * leg6_length);
-            y6 = (y5 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree))) * leg6_length);
-
-            if (x6 < min_x) {
-                min_x = x6;
-            } else if (x6 > max_x) {
-                max_x = x6;
-            } else {//they are equal do nothing.
-            }
-
-            if (y6 < min_y) {
-                min_y = y6;
-            } else if (y6 > max_y) {
-                max_y = y6;
-            } else {//They are equal do nothing.
-            }
-
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree);
-
+            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
         }
     }
 
@@ -251,246 +121,117 @@ if (canvas.getContext) {
     curr_unit_val = 0;
 
     //set x0 and y0 to new position
-    x0 = x0 + x_shift;
-    y0 = y0 + y_shift;
+    startx = startx + x_shift;
+    starty = starty + y_shift;
+
+
+    //Clear xcoords and ycoords
+    xcoords = [];
+    ycoords = [];
+
 
     //Redraw the shape after x0 and y0 has been repositioned
-    for (var j = 0; j < num_legs; j++) {
+
+    for (var j = 0; j < legs.length; j++) {
         if (j == 0) {
 
-            min_x = x0;
-            min_y = y0;
-            max_x = x0;
-            max_y = y0;
+            xcoords[0] = startx;
+            ycoords[0] = starty;
+
+            //x0 = curr_x;
+            //save the new x coord
+            //y0 = curr_y;
+            //save the new y coord
+            min_x = curr_x;
+            min_y = curr_y;
+            max_x = curr_x;
+            max_y = curr_y;
+
 
             //draw first line of shape
-            context.beginPath();
-            context.fillstyle = "red";
+            //context.beginPath();
 
             //(x0,y0)
-            context.moveTo(x0, y0);
+            //context.moveTo(xcoords[0], ycoords[0]);
 
-            x1 = x0 + leg1_length * scalar;
+
+            xcoords[1] = xcoords[j] + legs[j].Length;
             //save the new x coord
-            y1 = y0;
+            ycoords[1] = ycoords[j];
             //save the new y coord
 
-            if (x1 < min_x) {
-                min_x = x1;
-            } else if (x1 > max_x) {
-                max_x = x1;
+            if (xcoords[j + 1] < min_x) {
+                min_x = xcoords[j + 1];
+            } else if (xcoords[j + 1] > max_x) {
+                max_x = xcoords[j + 1];
             } else {//they are equal do nothing.
             }
 
-            if (y1 < min_y) {
-                min_y = y1;
-            } else if (y1 > max_y) {
-                max_y = y1;
+            if (ycoords[j + 1] < min_y) {
+                min_y = ycoords[j + 1];
+            } else if (ycoords[j + 1] > max_y) {
+                max_y = ycoords[j + 1];
             } else {//They are equal do nothing.
             }
+
 
             //(x1,y1)
-            context.lineTo(x1, y1);
+            //context.lineTo(xcoords[1], ycoords[1]);
 
-            context.stroke();
+            //context.stroke();
             //draw the actual line
 
-            //now draw text on top of the line itself
 
-        } else if (j == 1) {
-            if (leg1_direction == "right") {
+        } else {
+            if (legs[j - 1].IsRight == true) {
                 neg_pos = 1;
             } else {
                 neg_pos = -1;
             }
 
-            context.beginPath();
-            context.moveTo(x1, y1);
+            //context.beginPath();
+            //context.moveTo(xcoords[j], ycoords[j]);
 
-            //(x2,y2)
-            x2 = (x1 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree))) * leg2_length);
-            y2 = (y1 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree))) * leg2_length);
+            //(xj+1,yj+1)
+            xcoords[j + 1] = xcoords[j] + Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length;
+            ycoords[j + 1] = ycoords[j] + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length;
 
-            if (x2 < min_x) {
-                min_x = x2;
-            } else if (x2 > max_x) {
-                max_x = x2;
+            if (xcoords[j + 1] < min_x) {
+                min_x = xcoords[j + 1];
+            } else if (xcoords[j + 1] > max_x) {
+                max_x = xcoords[j + 1];
             } else {//they are equal do nothing.
             }
 
-            if (y2 < min_y) {
-                min_y = y2;
-            } else if (y2 > max_y) {
-                max_y = y2;
+            if (ycoords[j + 1] < min_y) {
+                min_y = ycoords[j + 1];
+            } else if (ycoords[j + 1] > max_y) {
+                max_y = ycoords[j + 1];
             } else {//They are equal do nothing.
             }
 
-            context.lineTo(x2, y2);
+            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
 
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree);
+            //context.lineTo(xcoords[j + 1], ycoords[j + 1]);
 
-            context.stroke();
-            //draw the actual line
-
-            //draw dimensions on top of line
-        } else if (j == 2) {
-            if (leg2_direction == "right") {
-                neg_pos = 1;
-            } else {
-                neg_pos = -1;
-            }
-
-            context.beginPath();
-            context.moveTo(x2, y2);
-
-            //(x3,y3)
-            x3 = (x2 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree))) * leg3_length);
-            y3 = (y2 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree))) * leg3_length);
-
-            if (x3 < min_x) {
-                min_x = x3;
-            } else if (x3 > max_x) {
-                max_x = x3;
-            } else {//they are equal do nothing.
-            }
-
-            if (y3 < min_y) {
-                min_y = y3;
-            } else if (y3 > max_y) {
-                max_y = y3;
-            } else {//They are equal do nothing.
-            }
-
-            context.lineTo(x3, y3);
-
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree);
-
-            context.stroke();
-            //draw the actual line
-
-            //draw dimensions on top of line
-        } else if (j == 3) {
-            if (leg3_direction == "right") {
-                neg_pos = 1;
-            } else {
-                neg_pos = -1;
-            }
-
-            context.beginPath();
-            context.moveTo(x3, y3);
-
-            //(x4,y4)
-            x4 = (x3 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree))) * leg4_length);
-            y4 = (y3 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree))) * leg4_length);
-
-            if (x4 < min_x) {
-                min_x = x4;
-            } else if (x4 > max_x) {
-                max_x = x4;
-            } else {//they are equal do nothing.
-            }
-
-            if (y4 < min_y) {
-                min_y = y4;
-            } else if (y4 > max_y) {
-                max_y = y4;
-            } else {//They are equal do nothing.
-            }
-
-            context.lineTo(x4, y4);
-
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree);
-
-            context.stroke();
-            //draw the actual line
-
-            //draw dimensions on top of line
-        } else if (j == 4) {
-            if (leg4_direction == "right") {
-                neg_pos = 1;
-            } else {
-                neg_pos = -1;
-            }
-
-            context.beginPath();
-            context.moveTo(x4, y4);
-
-            //(x5,y5)
-            x5 = (x4 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree))) * leg5_length);
-            y5 = (y4 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree))) * leg5_length);
-
-            if (x5 < min_x) {
-                min_x = x5;
-            } else if (x5 > max_x) {
-                max_x = x5;
-            } else {//they are equal do nothing.
-            }
-
-            if (y5 < min_y) {
-                min_y = y5;
-            } else if (y5 > max_y) {
-                max_y = y5;
-            } else {//They are equal do nothing.
-            }
-
-            context.lineTo(x5, y5);
-
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree);
-
-            context.stroke();
-            //draw the actual line
-
-            //draw dimensions on top of line
-        } else if (j == 5) {
-            if (leg5_direction == "right") {
-                neg_pos = 1;
-            } else {
-                neg_pos = -1;
-            }
-
-            context.beginPath();
-            context.moveTo(x5, y5);
-
-            //(x6,y6)
-            x6 = (x5 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree))) * leg6_length);
-            y6 = (y5 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree))) * leg6_length);
-
-            if (x6 < min_x) {
-                min_x = x6;
-            } else if (x6 > max_x) {
-                max_x = x6;
-            } else {//they are equal do nothing.
-            }
-
-            if (y6 < min_y) {
-                min_y = y6;
-            } else if (y6 > max_y) {
-                max_y = y6;
-            } else {//They are equal do nothing.
-            }
-
-            context.lineTo(x6, y6);
-
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree);
-
-            context.stroke();
-            //draw the actual line
-
-            //draw dimensions on top of line
-
-            //console.log("Min X is: " + min_x + " Max X is: " + max_x);
-            //console.log("Min Y is: " + min_y + " Max Y is: " + max_y);
-
-            console.log("Middle of tiny shape currently lies on (" + (max_x + min_x) / 2 + "," + (max_y + min_y) / 2 + ")");
-
+            //context.stroke();
         }
-        //End of center-draw for loop
-    }
-    //End of Legs in a single shape loop
+    }//End of Legs in a single shape loop
+
+    console.log("Middle of tiny shape currently lies on (" + (max_x + min_x) / 2 + "," + (max_y + min_y) / 2 + ")");
+
+
+
+
+
+
 
     //Before While LOOP set the temp coordinates up!
-    tempx0 = x0;
-    tempy0 = y0;
+    temp_xcoords = {};
+    temp_ycoords = {};
+    temp_xcoords[0] = xcoords[0];
+    temp_ycoords[0] = ycoords[0];
+
 
     //while Too_big != 1 loop
     while (Too_Big != 1) {
@@ -499,167 +240,59 @@ if (canvas.getContext) {
         curr_unit_val = 0;
 
         //Recalculate the shape coordinates based on scalar
-        for (var j = 0; j < num_legs; j++) {
+        for (var j = 0; j < legs.length; j++) {
             if (j == 0) {
                 //reset the min max val
-                min_x = tempx0;
-                min_y = tempy0;
-                max_x = tempx0;
-                max_y = tempy0;
+                min_x = temp_xcoords[0];
+                min_y = temp_ycoords[0];
+                max_x = temp_xcoords[0];
+                max_y = temp_ycoords[0];
 
-                tempx1 = tempx0 + leg1_length * scalar;
+                temp_xcoords[1] = temp_xcoords[0] + legs[0].Length * scalar;
                 //save the new x coord
-                tempy1 = tempy0;
+                temp_ycoords[1] = temp_ycoords[0];
                 //save the new y coord
 
-                if (tempx1 < min_x) {
-                    min_x = tempx1;
-                } else if (tempx1 > max_x) {
-                    max_x = tempx1;
+                if (temp_xcoords[1] < min_x) {
+                    min_x = temp_xcoords[1];
+                } else if (temp_xcoords[1] > max_x) {
+                    max_x = temp_xcoords[1];
                 } else {//they are equal do nothing.
                 }
 
-                if (tempy1 < min_y) {
-                    min_y = tempy1;
-                } else if (tempy1 > max_y) {
-                    max_y = tempy1;
+                if (temp_ycoords[1] < min_y) {
+                    min_y = temp_ycoords[1];
+                } else if (temp_ycoords[1] > max_y) {
+                    max_y = temp_ycoords[1];
                 } else {//They are equal do nothing.
                 }
 
-            } else if (j == 1) {
-                if (leg1_direction == "right") {
+            } else {
+                if (legs[j - 1].IsRight == true) {
                     neg_pos = 1;
                 } else {
                     neg_pos = -1;
                 }
 
-                //(x2,y2)
-                tempx2 = (tempx1 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree))) * leg2_length);
-                tempy2 = (tempy1 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree))) * leg2_length);
+                //(xj+1,yj+1)
+                temp_xcoords[j + 1] = (temp_xcoords[j] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length);
+                temp_ycoords[j + 1] = (temp_ycoords[j] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length);
 
-                if (tempx2 < min_x) {
-                    min_x = tempx2;
-                } else if (tempx2 > max_x) {
-                    max_x = tempx2;
+                if (temp_xcoords[j + 1] < min_x) {
+                    min_x = temp_xcoords[j + 1];
+                } else if (temp_xcoords[j + 1] > max_x) {
+                    max_x = temp_xcoords[j + 1];
                 } else {//they are equal do nothing.
                 }
 
-                if (tempy2 < min_y) {
-                    min_y = tempy2;
-                } else if (tempy2 > max_y) {
-                    max_y = tempy2;
+                if (temp_ycoords[j + 1] < min_y) {
+                    min_y = temp_ycoords[j + 1];
+                } else if (temp_ycoords[j + 1] > max_y) {
+                    max_y = temp_ycoords[j + 1];
                 } else {//They are equal do nothing.
                 }
 
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree);
-
-            } else if (j == 2) {
-                if (leg2_direction == "right") {
-                    neg_pos = 1;
-                } else {
-                    neg_pos = -1;
-                }
-
-                //(x3,y3)
-                tempx3 = (tempx2 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree))) * leg3_length);
-                tempy3 = (tempy2 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree))) * leg3_length);
-
-                if (tempx3 < min_x) {
-                    min_x = tempx3;
-                } else if (tempx3 > max_x) {
-                    max_x = tempx3;
-                } else {//they are equal do nothing.
-                }
-
-                if (tempy3 < min_y) {
-                    min_y = tempy3;
-                } else if (tempy3 > max_y) {
-                    max_y = tempy3;
-                } else {//They are equal do nothing.
-                }
-
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree);
-
-            } else if (j == 3) {
-                if (leg3_direction == "right") {
-                    neg_pos = 1;
-                } else {
-                    neg_pos = -1;
-                }
-
-                //(x4,y4)
-                tempx4 = (tempx3 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree))) * leg4_length);
-                tempy4 = (tempy3 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree))) * leg4_length);
-
-                if (tempx4 < min_x) {
-                    min_x = tempx4;
-                } else if (tempx4 > max_x) {
-                    max_x = tempx4;
-                } else {//they are equal do nothing.
-                }
-
-                if (tempy4 < min_y) {
-                    min_y = tempy4;
-                } else if (tempy4 > max_y) {
-                    max_y = tempy4;
-                } else {//They are equal do nothing.
-                }
-
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree);
-
-            } else if (j == 4) {
-                if (leg4_direction == "right") {
-                    neg_pos = 1;
-                } else {
-                    neg_pos = -1;
-                }
-
-                //(x5,y5)
-                tempx5 = (tempx4 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree))) * leg5_length);
-                tempy5 = (tempy4 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree))) * leg5_length);
-
-                if (tempx5 < min_x) {
-                    min_x = tempx5;
-                } else if (tempx5 > max_x) {
-                    max_x = tempx5;
-                } else {//they are equal do nothing.
-                }
-
-                if (tempy5 < min_y) {
-                    min_y = tempy5;
-                } else if (tempy5 > max_y) {
-                    max_y = tempy5;
-                } else {//They are equal do nothing.
-                }
-
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree);
-
-            } else if (j == 5) {
-                if (leg5_direction == "right") {
-                    neg_pos = 1;
-                } else {
-                    neg_pos = -1;
-                }
-
-                //(x6,y6)
-                tempx6 = (tempx5 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree))) * leg6_length);
-                tempy6 = (tempy5 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree))) * leg6_length);
-
-                if (tempx6 < min_x) {
-                    min_x = tempx6;
-                } else if (tempx6 > max_x) {
-                    max_x = tempx6;
-                } else {//they are equal do nothing.
-                }
-
-                if (tempy6 < min_y) {
-                    min_y = tempy6;
-                } else if (tempy6 > max_y) {
-                    max_y = tempy6;
-                } else {//They are equal do nothing.
-                }
-
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree);
+                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
 
             }
         }
@@ -668,193 +301,71 @@ if (canvas.getContext) {
         x_shift = (canvas.width / 2) - ((max_x + min_x) / 2);
         y_shift = (canvas.height / 2) - ((max_y + min_y) / 2);
 
-        tempx0 = tempx0 + x_shift;
-        tempy0 = tempy0 + y_shift;
+        temp_xcoords[0] = temp_xcoords[0] + x_shift;
+        temp_ycoords[0] = temp_ycoords[0] + y_shift;
 
         curr_unit_val = 0
         //calculate new positions based on scalar and check new mins and maxes
-        for (var j = 0; j < num_legs; j++) {
+        for (var j = 0; j < legs.length; j++) {
 
             if (j == 0) {
                 //reset the min max val
-                min_x = tempx0;
-                min_y = tempy0;
-                max_x = tempx0;
-                max_y = tempy0;
+                min_x = temp_xcoords[0];
+                min_y = temp_ycoords[0];
+                max_x = temp_xcoords[0];
+                max_y = temp_ycoords[0];
 
-                tempx1 = tempx0 + leg1_length * scalar;
+                temp_xcoords[1] = temp_xcoords[0] + legs[0].Length * scalar;
                 //save the new x coord
-                tempy1 = tempy0;
+                temp_ycoords[1] = temp_ycoords[0];
                 //save the new y coord
 
-                if (tempx1 < min_x) {
-                    min_x = tempx1;
-                } else if (tempx1 > max_x) {
-                    max_x = tempx1;
+                if (temp_xcoords[1] < min_x) {
+                    min_x = temp_xcoords[1];
+                } else if (temp_xcoords[1] > max_x) {
+                    max_x = temp_xcoords[1];
                 } else {//they are equal do nothing.
                 }
 
-                if (tempy1 < min_y) {
-                    min_y = tempy1;
-                } else if (tempy1 > max_y) {
-                    max_y = tempy1;
+                if (temp_ycoords[1] < min_y) {
+                    min_y = temp_ycoords[1];
+                } else if (temp_ycoords[1] > max_y) {
+                    max_y = temp_ycoords[1];
                 } else {//They are equal do nothing.
                 }
 
-            } else if (j == 1) {
-                if (leg1_direction == "right") {
+            } else {
+                if (legs[j - 1].IsRight == true) {
                     neg_pos = 1;
                 } else {
                     neg_pos = -1;
                 }
 
-                //(x2,y2)
-                tempx2 = (tempx1 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree))) * leg2_length);
-                tempy2 = (tempy1 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree))) * leg2_length);
+                temp_xcoords[j + 1] = (temp_xcoords[j] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length);
+                temp_ycoords[j + 1] = (temp_ycoords[j] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length);
 
-                if (tempx2 < min_x) {
-                    min_x = tempx2;
-                } else if (tempx2 > max_x) {
-                    max_x = tempx2;
+                if (temp_xcoords[j + 1] < min_x) {
+                    min_x = temp_xcoords[j + 1];
+                } else if (temp_xcoords[j + 1] > max_x) {
+                    max_x = temp_xcoords[j + 1];
                 } else {//they are equal do nothing.
                 }
 
-                if (tempy2 < min_y) {
-                    min_y = tempy2;
-                } else if (tempy2 > max_y) {
-                    max_y = tempy2;
+                if (temp_ycoords[j + 1] < min_y) {
+                    min_y = temp_ycoords[j + 1];
+                } else if (temp_ycoords[j + 1] > max_y) {
+                    max_y = temp_ycoords[j + 1];
                 } else {//They are equal do nothing.
                 }
 
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg1_degree);
-
-            } else if (j == 2) {
-                if (leg2_direction == "right") {
-                    neg_pos = 1;
-                } else {
-                    neg_pos = -1;
-                }
-
-                //(x3,y3)
-                tempx3 = (tempx2 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree))) * leg3_length);
-                tempy3 = (tempy2 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree))) * leg3_length);
-
-                if (tempx3 < min_x) {
-                    min_x = tempx3;
-                } else if (tempx3 > max_x) {
-                    max_x = tempx3;
-                } else {//they are equal do nothing.
-                }
-
-                if (tempy3 < min_y) {
-                    min_y = tempy3;
-                } else if (tempy3 > max_y) {
-                    max_y = tempy3;
-                } else {//They are equal do nothing.
-                }
-
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg2_degree);
-
-            } else if (j == 3) {
-                if (leg3_direction == "right") {
-                    neg_pos = 1;
-                } else {
-                    neg_pos = -1;
-                }
-
-                //(x4,y4)
-                tempx4 = (tempx3 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree))) * leg4_length);
-                tempy4 = (tempy3 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree))) * leg4_length);
-
-                if (tempx4 < min_x) {
-                    min_x = tempx4;
-                } else if (tempx4 > max_x) {
-                    max_x = tempx4;
-                } else {//they are equal do nothing.
-                }
-
-                if (tempy4 < min_y) {
-                    min_y = tempy4;
-                } else if (tempy4 > max_y) {
-                    max_y = tempy4;
-                } else {//They are equal do nothing.
-                }
-
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg3_degree);
-
-            } else if (j == 4) {
-                if (leg4_direction == "right") {
-                    neg_pos = 1;
-                } else {
-                    neg_pos = -1;
-                }
-
-                //(x5,y5)
-                tempx5 = (tempx4 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree))) * leg5_length);
-                tempy5 = (tempy4 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree))) * leg5_length);
-
-                if (tempx5 < min_x) {
-                    min_x = tempx5;
-                } else if (tempx5 > max_x) {
-                    max_x = tempx5;
-                } else {//they are equal do nothing.
-                }
-
-                if (tempy5 < min_y) {
-                    min_y = tempy5;
-                } else if (tempy5 > max_y) {
-                    max_y = tempy5;
-                } else {//They are equal do nothing.
-                }
-
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg4_degree);
-
-            } else if (j == 5) {
-                if (leg5_direction == "right") {
-                    neg_pos = 1;
-                } else {
-                    neg_pos = -1;
-                }
-
-                //(x6,y6)
-                tempx6 = (tempx5 + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree))) * leg6_length);
-                tempy6 = (tempy5 + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree))) * leg6_length);
-
-                if (tempx6 < min_x) {
-                    min_x = tempx6;
-                } else if (tempx6 > max_x) {
-                    max_x = tempx6;
-                } else {//they are equal do nothing.
-                }
-
-                if (tempy6 < min_y) {
-                    min_y = tempy6;
-                } else if (tempy6 > max_y) {
-                    max_y = tempy6;
-                } else {//They are equal do nothing.
-                }
-
-                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (leg5_degree);
-
+                curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
             }
         }
 
         //if min and max are within bounds then save the coords permanently and repeat
         if (min_x > (0 + buffer) && max_x < (canvas.width - buffer) && min_y > (0 + buffer) && max_y < (canvas.height - buffer)) {
-            x0 = tempx0;
-            y0 = tempy0;
-            x1 = tempx1;
-            y1 = tempy1;
-            x2 = tempx2;
-            y2 = tempy2;
-            x3 = tempx3;
-            y3 = tempy3;
-            x4 = tempx4;
-            y4 = tempy4;
-            x5 = tempx5;
-            y5 = tempy5;
-            x6 = tempx6;
-            y6 = tempy6;
+            xcoords = temp_xcoords;
+            ycoords = temp_ycoords;
         }
         //else  when shapes is equal to or greater than the bounds of the canvas then don't save the values of coords and set Too_Big equal to 1
         else {
@@ -865,6 +376,14 @@ if (canvas.getContext) {
     //Draw the final shape after it has been scaled up!
 
     context.lineJoin = "round";
+
+    //Find shape's total length
+    var total_crude_length = 0;
+    for (var k = 0; k < legs.length; k++)
+    {
+        total_crude_length = total_crude_length + legs[k].Length;
+    }
+
 
     if (total_crude_length > 0 && total_crude_length <= 50) {
         context.lineWidth = 2 * scalar;
@@ -880,15 +399,22 @@ if (canvas.getContext) {
         context.lineWidth = 1 * scalar;
     }
 
+    //get size of xcoord object to know how many coords are in it
+    var num_coords = Object.keys(xcoords).length;
+
     context.beginPath();
-    context.moveTo(x0, y0);
-    context.lineTo(x1, y1);
-    context.lineTo(x2, y2);
-    context.lineTo(x3, y3);
-    context.lineTo(x4, y4);
-    context.lineTo(x5, y5);
-    context.lineTo(x6, y6);
+    context.moveTo(xcoords[0], ycoords[0]);
+    for (var coord = 1; coord < num_coords; coord++)
+    {
+        context.lineTo(xcoords[coord], ycoords[coord]);
+    }
     context.stroke();
 
+    console.log("Middle of Big Boi shape currently lies on (" + (max_x + min_x) / 2 + "," + (max_y + min_y) / 2 + ")");
+    console.log("Shape Total Crude Length: " + total_crude_length);
+    console.log("-------------------------------------------------")
+
     //End of if(canvas.getcontext) block
+    }
+
 }
