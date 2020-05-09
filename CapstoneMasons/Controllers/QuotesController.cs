@@ -861,6 +861,7 @@ namespace CapstoneMasons.Controllers
             foreach (Leg l in s.Legs)
             {
                 ReviewLeg rL = new ReviewLeg();
+                rL.LegID = l.LegID;
                 rL.Length = l.Length;
                 rL.Degree = l.Degree;
                 rL.IsRight = l.IsRight;
