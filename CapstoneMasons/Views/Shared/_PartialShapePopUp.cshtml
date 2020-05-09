@@ -1,0 +1,147 @@
+﻿@model ReviewShape
+
+<script type="text/javascript" src="~/js/openQuote.js"></script>
+<link rel="stylesheet" href="~/css/glyphicon.css" />
+
+<style>
+    .panel-heading a:after {
+        font-family: 'Glyphicons Halflings';
+        content: "\e114";
+        float: right;
+        color: grey;
+    }
+
+    .panel-heading a.collapsed:after {
+        content: "\e080";
+    }
+</style>
+
+<!-- Modal: ShapeEdit -->
+<div class="modal fade" id="modalShapeEdit@(Model.ShapeID)" tabindex="-1" role="dialog" aria-labelledby="modalShapeLabel@(Model.ShapeID)" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="Shape@(Model.ShapeID).Modal">Editing shape</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="Shape@(Model.ShapeID).Quantity">Quantity</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" asp-for="Qty">
+                </div>
+
+                <!--bar size radio buttons-->
+                <div class="input-group justify-content-center">
+                    <div class="input-group-btn" data-toggle="buttons">
+                        <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].bar3">
+                            <input type="radio" asp-for="BarSize" value="3" autocomplete="off" checked hidden>Bar #3
+                        </label>
+                        <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar4">
+                            <input type="radio" asp-for="BarSize" value="4" autocomplete="off" hidden hidd>Bar #4
+                        </label>
+                        <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar5">
+                            <input type="radio" asp-for="BarSize" value="5" autocomplete="off" hidden>Bar #5
+                        </label>
+                        <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar6">
+                            <input type="radio" asp-for="BarSize" value="6" autocomplete="off" hidden>Bar #6
+                        </label>
+                    </div>
+                </div>
+                <!--custom radio buttons-->
+                <hr>
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    @for (int legIndex = 1; legIndex <= Model.Legs.Count; legIndex++)
+                    {
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingLeg@(legIndex)">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLeg@(legIndex)" aria-expanded="false" aria-controls="collapseLeg@(legIndex)">
+                                        @(KnownObjects.NumberPrefix[legIndex-1]) Leg
+                                    </a>
+                                    @if (legIndex < Model.Legs.Count)
+                                    {
+                                        <i class="fas fa-trash-alt float-right" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;margin-top: 5px;margin-right: 15px;" onclick=""></i>
+                                    }
+                                </h4>
+                            </div>
+                            <div id="collapseLeg@(legIndex)" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLeg@(legIndex)">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-4 form-group">
+                                            <label>@(KnownObjects.NumberPrefix[legIndex-1]) Leg Length: </label>
+                                            <input class="form-control" value="@Model.Legs[legIndex-1].Length" asp-for="Legs[legIndex-1].Length" id="Shape@(Model.ShapeID).Leg@(legIndex).lenght" />
+                                        </div>
+                                        @if (legIndex < Model.Legs.Count)
+                                        {
+                                            <div class="col-4 form-group">
+                                                <label>@(KnownObjects.NumberPrefix[legIndex-1]) Leg Degree: </label>
+                                                <input class="form-control" value="@Model.Legs[legIndex-1].Degree" min="0" max="180" type="number" step="any" asp-for="Legs[legIndex-1].Degree" id="Shape@(Model.ShapeID).Leg@(legIndex).degree" />
+                                            </div>
+
+                                            <div class="col-4 form-group">
+                                                <label>@(KnownObjects.NumberPrefix[legIndex-1]) Leg Direction: </label>
+                                                <div class="input-group">
+                                                    <div class="input-group-btn" data-toggle="buttons">
+                                                        <label class="btn btn-info" id="Legs@(legIndex).IsLeft">
+                                                            <input type="radio" asp-for="Legs[legIndex-1].IsRight" value="false" autocomplete="off" hidden>Left
+                                                        </label>
+                                                        <label class="btn btn-info" id="Legs@(legIndex).IsRight">
+                                                            <input type="radio" asp-for="Legs[legIndex-1].IsRight" value="true" autocomplete="off" hidden>Right
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-12 text-center">Mandrel Size</div>
+                                                <div class="input-group justify-content-center" style="margin-left: 45px;">
+                                                    <div class="input-group-btn" data-toggle="buttons">
+                                                        <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelNone">
+                                                            <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="None" autocomplete="off" checked hidden>None
+                                                        </label>
+                                                        <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelSmall">
+                                                            <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Small" autocomplete="off" hidden>Small
+                                                        </label>
+                                                        <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelMed">
+                                                            <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Medium" autocomplete="off" hidden>Medium
+                                                        </label>
+                                                        <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelLarge">
+                                                            <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Large" autocomplete="off" hidden>Large
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (legIndex < Model.Legs.Count)
+                        {
+                            <hr />
+                        }
+                    }
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="" disabled>Add a Leg</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" disabled>Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+@section script{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+}

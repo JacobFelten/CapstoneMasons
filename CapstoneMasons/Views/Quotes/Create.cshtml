@@ -70,7 +70,7 @@
                                 <h4 class="text-center panel-title checkout-acc-title">
                                     <a data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())" data-toggle="collapse">
                                         @(KnownObjects.NumberPrefix[i]) Shape
-                                        <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: #007bff;"></i>
+                                        <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;line-height: unset;margin-top: 4px;"></i>
                                     </a>
                                     @if (Model.Shapes.Count != 1)
                                     {
@@ -203,8 +203,6 @@
                     </div>
                 </div>
             </div>
-
-            @await Html.PartialAsync("~/Views/Shared/_PartialCanvas.cshtml")
 
 
             <div class="card container text-center">
