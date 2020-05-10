@@ -12,6 +12,9 @@
 
 }
 
+<script type="text/javascript" src="~/js/ReviewPage JS/Canvas.js">
+</script>
+
 <script>
     var legs = [];
 </script>
@@ -167,10 +170,14 @@
         <input type="hidden" id="shapeCount" value="@Model.Shapes.Count" />
         @for (int i = 0; i < Model.Shapes.Count; i++)
         {
-            <script>
-                legs = null;
-                legs = [];
-            </script>
+
+		string canvasID = "canvas" + i;
+		canvasID = canvasID.ToString();
+
+<script>
+    legs = null;
+    legs = [];
+</script>
             ReviewShape rS = Model.Shapes[i];
             <input type="hidden" id="legCount" value="@Model.Shapes[i].Legs.Count" />
             <div class="card container shape">
@@ -186,7 +193,9 @@
                 {
                     <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString(tostring)" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
                 }
-                <div>
+
+			<div class="row">
+				<div class="col">
                     @for (int j = 0; j < rS.Legs.Count; j++)
                     {
                         string isRight = "";
@@ -207,6 +216,7 @@
                                 <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
                             }
                         </div>
+
                         <script>
                             var leg = {
                                 Length: @Model.Shapes[i].Legs[j].Length,
@@ -216,10 +226,21 @@
                             legs[@j] = leg;
                         </script>
                     }
-                    <script>
-                        JeffsMagic(legs);
-                    </script>
                 </div>
+				<div class="col" id="Canvas">
+							    <SECTION style="border-style: solid; border-width: 3px; width: 250px;">
+									<CANVAS HEIGHT="250" WIDTH="250px" ID="@canvasID">
+										Your browser is not supporting HTML5 Canvas .Upgrade Browser to view this program or check with Chrome or in Firefox.
+									</CANVAS>
+								</SECTION>
+
+								<!---------CANVAS FUNCTION--------->
+								<script>
+									var canvasID = "@canvasID.ToString()";
+									DrawCanvas(canvasID, legs)
+								</script>
+				</div>
+			</div>
                 <div class="text-center">
                     <span class="font-weight-bold">Remnants: </span>
                     @for (int j = 0; j < rS.Remnants.Count; j++)
@@ -242,7 +263,3 @@
         }
     </div>
 </div>
-
-<script>
-    var testy = legs;
-</script>
