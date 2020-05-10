@@ -8,6 +8,12 @@
     {
         tostring += "#";
     }
+
+    foreach (ReviewShape shape in Model.ReviewQuote.Shapes)
+    {
+        shape.ReviewOpen = true;
+        shape.ReviewQuote = false;
+    }
 }
 
 <script type="text/javascript" src="~/js/ReviewPage JS/Canvas.js">
