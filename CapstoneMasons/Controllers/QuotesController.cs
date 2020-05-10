@@ -1686,7 +1686,7 @@ namespace CapstoneMasons.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> EditShapeAsync(ReviewShape shape)
+        public async Task<IActionResult> EditShape(ReviewShape shape)
         {
             var oldShape = await repoS.GetShapeByIdAsync(shape.ShapeID);
             var newShape = new Shape()

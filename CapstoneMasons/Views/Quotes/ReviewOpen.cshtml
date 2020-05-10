@@ -56,7 +56,10 @@
         margin-bottom: 30px;
     }
 </style>
-
+@foreach (var shape in Model.ReviewQuote.Shapes)
+{
+    @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
+}
 <form method="post">
     <div class="card container">
         <div class="card-header quote-header">
@@ -212,7 +215,7 @@
                 canvasID = canvasID.ToString();
 
                 ReviewShape rS = Model.ReviewQuote.Shapes[i];
-                @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", rS)
+
                 <script>
                     legs = null;
                     legs = [];
@@ -221,9 +224,9 @@
                     <div class="card-header shape-header">
                         <h2 class="text-center">
                             <span class="font-weight-bold" id="Shape@(rS.ShapeID).Title">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(qty: @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed
-                        <script>
+                            <script>
                             getShapeNames(@(rS.ShapeID));
-                        </script>
+                            </script>
                             <a data-toggle="modal" data-target="#modalShapeEdit@(rS.ShapeID)"><i class="fas fa-edit" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: #F6C700;"></i></a> |
                             <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.ReviewQuote.QuoteID" asp-route-returnUrl="ReviewOpen">Delete</a>
                             <div>
@@ -316,4 +319,6 @@
         <a class="btn btn-danger" asp-action="DeleteQuote" asp-route-quoteID="@Model.ReviewQuote.QuoteID" asp-route-returnUrl="Index"><h3>Delete Quote</h3></a>
     </div>
 </form>
+
+
 
