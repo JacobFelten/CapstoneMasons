@@ -30,6 +30,7 @@
                     <form data-toggle="validator" asp-controller="Quotes" asp-action="EditShape" id="modalShapeEdit@(Model.ShapeID).form">
                         <input asp-for="ShapeID" value="@Model.ShapeID" hidden />
                         <input asp-for="QuoteID" value="@Model.QuoteID" hidden />
+                        <input asp-for="NumOfBars" value="@Model.NumOfBars" hidden />
                         <input asp-for="ReviewOpen" value="@Model.ReviewOpen" id="Shape@(Model.ShapeID).ReviewOpen" hidden />
                         <input asp-for="ReviewQuote" value="@Model.ReviewQuote" id="Shape@(Model.ShapeID).ReviewQuote" hidden />
                         <!--using this to know where to redirect ()-->

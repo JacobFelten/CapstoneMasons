@@ -1708,7 +1708,7 @@ namespace CapstoneMasons.Controllers
                     {
                         Degree = shape.Legs[legIndex].Degree,
                         Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
-                        LegID = oldShape.Legs[legIndex].LegID,
+                        //LegID = oldShape.Legs[legIndex].LegID, this is not ok database gets new ids
                         IsRight = shape.Legs[legIndex].IsRight,
                         Length = shape.Legs[legIndex].Length
                     };
