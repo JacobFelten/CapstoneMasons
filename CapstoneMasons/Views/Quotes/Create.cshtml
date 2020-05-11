@@ -139,7 +139,7 @@
                                             </div>
                                             @if (leg != Model.Shapes[i].Legs.Count - 1)
                                             {
-                                                <div class="col-5 form-group">
+                                                <div class="col-3 form-group">
                                                     <label>@if (leg < 13) {
                                                     @(KnownObjects.NumberPrefix[leg])
                                                     }
@@ -153,15 +153,22 @@
                                                             <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
                                                            id="Shape@(i+1).Leg@(leg+1).degree" />
                                                 </div>
-                                                <div class="col-3 form-group">
-                                                    <label for="exampleFormControlSelect2">Mandrel: </label>
-                                                    <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
-                                                            onchange="vaidateLeg(this.options[this.selectedIndex].text)">
-                                                        <option>None</option>
-                                                        <option>Small</option>
-                                                        <option>Medium</option>
-                                                        <option>Large</option>
-                                                    </select>
+                                                <div class="col-5 form-group">
+                                                    <label>Mandrel: </label>
+                                                    <div class="input-group-btn" data-toggle="buttons">
+                                                        <label class="btn btn-info active" id="Shapes[@(i)].Legs[@(leg)].mandrelNone">
+                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel" value="None" autocomplete="off" checked hidden>None
+                                                        </label>
+                                                        <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelSmall">
+                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel" value="Small" autocomplete="off" hidden>Small
+                                                        </label>
+                                                        <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelMed">
+                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel" value="Medium" autocomplete="off" hidden>Medium
+                                                        </label>
+                                                        <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelLarge">
+                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel" value="Large" autocomplete="off" hidden>Large
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             }
                                         </div>
