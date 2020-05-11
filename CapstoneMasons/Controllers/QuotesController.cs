@@ -866,16 +866,18 @@ namespace CapstoneMasons.Controllers
                 rL.Length = l.Length;
                 rL.Degree = l.Degree;
                 rL.IsRight = l.IsRight;
+                if (l.Mandrel != null)
+                    rL.Mandrel = l.Mandrel.Name;
+                else
+                    rL.Mandrel = "";
                 Formula f = await GetFormulaByLegAsync(l, s.BarSize);
                 if (f != null)
                 {
-                    rL.Mandrel = f.Mandrel.Name;
                     rL.PinNumber = f.PinNumber;
                     rL.InGained = f.InGained;
                 }
                 else
                 {
-                    rL.Mandrel = null;
                     rL.PinNumber = "";
                     rL.InGained = 0;
                 }
