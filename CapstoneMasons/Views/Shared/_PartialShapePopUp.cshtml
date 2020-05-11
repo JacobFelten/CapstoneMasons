@@ -68,7 +68,14 @@
                                     <div class="panel-heading" role="tab" id="headingLeg@(legIndex)">
                                         <h4 class="panel-title">
                                             <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLeg@(legIndex)" aria-expanded="false" aria-controls="collapseLeg@(legIndex)">
-                                                @(KnownObjects.NumberPrefix[legIndex-1]) Leg
+                                                @if (legIndex < 14)
+                                                {
+                                                    @(KnownObjects.NumberPrefix[legIndex - 1])
+                                                }
+                                                else
+                                                {
+                                                    @((legIndex).ToString()+"th ")
+                                                }Leg
                                             </a>
                                             @if (legIndex < Model.Legs.Count)
                                             {

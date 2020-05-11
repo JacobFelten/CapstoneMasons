@@ -8,13 +8,18 @@
     {
         tostring += "#";
     }
-
+    foreach (ReviewShape shape in Model.Shapes)
+    {
+        shape.ReviewOpen = false;
+        shape.ReviewQuote = true;
+    }
 
 }
 
 <script type="text/javascript" src="~/js/ReviewPage JS/Canvas.js">
 </script>
-
+<script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
+<link rel="stylesheet" href="~/css/fontawesome.css">
 <script>
     var legs = [];
 </script>
@@ -36,7 +41,7 @@
     .shape-header {
         background-color: lightblue;
     }
-    
+
     .quote-header {
         background-color: white;
     }
@@ -45,7 +50,10 @@
         background-color: lightgray;
     }
 </style>
-
+@foreach (var shape in Model.Shapes)
+{
+    @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
+}
 <div class="card container">
     <div class="card-header quote-header">
         <form method="post">
@@ -171,20 +179,23 @@
         @for (int i = 0; i < Model.Shapes.Count; i++)
         {
 
-		string canvasID = "canvas" + i;
-		canvasID = canvasID.ToString();
+            string canvasID = "canvas" + i;
+            canvasID = canvasID.ToString();
 
-<script>
-    legs = null;
-    legs = [];
-</script>
+            <script>
+                legs = null;
+                legs = [];
+            </script>
             ReviewShape rS = Model.Shapes[i];
             <input type="hidden" id="legCount" value="@Model.Shapes[i].Legs.Count" />
             <div class="card container shape">
                 <div class="card-header shape-header">
                     <h2 class="text-center">
-                        <span class="font-weight-bold">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(qty: @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed
-                        <a asp-controller="Home" asp-action="NotFinished">Edit</a> |
+                        <span class="font-weight-bold" id="Shape@(rS.ShapeID).Title">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape</span>(qty: @rS.Qty): @rS.NumOfBars bars of #@rS.BarSize needed
+                        <script>
+                            getShapeNames(@(rS.ShapeID));
+                        </script>
+                        <a data-toggle="modal" data-target="#modalShapeEdit@(rS.ShapeID)"><i class="fas fa-edit" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: #F6C700;"></i></a>
                         <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.QuoteID" asp-route-returnUrl="ReviewQuote">Delete</a>
                     </h2>
                 </div>
@@ -194,53 +205,53 @@
                     <div class="text-center"><span class="font-weight-bold">Cut </span>(@cI.CutQty) <span class="font-weight-bold">per </span>(@cI.PerLength.ToString(tostring)" @cI.PerType) <span class="font-weight-bold">for </span>(@cI.ForQty @cI.PerType<span>s</span>)</div>
                 }
 
-			<div class="row">
-				<div class="col">
-                    @for (int j = 0; j < rS.Legs.Count; j++)
-                    {
-                        string isRight = "";
-                        if (Model.Shapes[i].Legs[j].IsRight)
+                <div class="row">
+                    <div class="col">
+                        @for (int j = 0; j < rS.Legs.Count; j++)
                         {
-                            isRight = "true";
-                        }
-                        else
-                        {
-                            isRight = "false";
-                        }
-                        ReviewLeg rL = rS.Legs[j];
-                        int num = j + 1;
-                        <div class="leg">
-                            <span class="font-weight-bold">Leg @num: </span><span>@rL.Length.ToString(tostring)"</span>
-                            @if (j < rS.Legs.Count - 1)
+                            string isRight = "";
+                            if (Model.Shapes[i].Legs[j].IsRight)
                             {
-                                <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                                isRight = "true";
                             }
-                        </div>
+                            else
+                            {
+                                isRight = "false";
+                            }
+                            ReviewLeg rL = rS.Legs[j];
+                            int num = j + 1;
+                            <div class="leg">
+                                <span class="font-weight-bold">Leg @num: </span><span>@rL.Length.ToString(tostring)"</span>
+                                @if (j < rS.Legs.Count - 1)
+                                {
+                                    <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                                }
+                            </div>
 
-                        <script>
+                            <script>
                             var leg = {
                                 Length: @Model.Shapes[i].Legs[j].Length,
                                 Degree: @Model.Shapes[i].Legs[j].Degree,
                                 IsRight: @isRight
                             };
                             legs[@j] = leg;
-                        </script>
-                    }
-                </div>
-				<div class="col" id="Canvas">
-							    <SECTION style="border-style: solid; border-width: 3px; width: 250px;">
-									<CANVAS HEIGHT="250" WIDTH="250px" ID="@canvasID">
-										Your browser is not supporting HTML5 Canvas .Upgrade Browser to view this program or check with Chrome or in Firefox.
-									</CANVAS>
-								</SECTION>
+                            </script>
+                        }
+                    </div>
+                    <div class="col" id="Canvas">
+                        <SECTION style="border-style: solid; border-width: 3px; width: 250px;">
+                            <CANVAS HEIGHT="250" WIDTH="250px" ID="@canvasID">
+                                Your browser is not supporting HTML5 Canvas .Upgrade Browser to view this program or check with Chrome or in Firefox.
+                            </CANVAS>
+                        </SECTION>
 
-								<!---------CANVAS FUNCTION--------->
-								<script>
+                        <!---------CANVAS FUNCTION--------->
+                        <script>
 									var canvasID = "@canvasID.ToString()";
 									DrawCanvas(canvasID, legs)
-								</script>
-				</div>
-			</div>
+                        </script>
+                    </div>
+                </div>
                 <div class="text-center">
                     <span class="font-weight-bold">Remnants: </span>
                     @for (int j = 0; j < rS.Remnants.Count; j++)
