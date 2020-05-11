@@ -87,18 +87,45 @@
                                         <div class="panel-body">
                                             <div class="row">
                                                 <div class="col-4 form-group">
-                                                    <label>@(KnownObjects.NumberPrefix[legIndex-1]) Leg Length: </label>
+                                                    <label>
+                                                        @if (legIndex < 14)
+                                                        {
+                                                            @(KnownObjects.NumberPrefix[legIndex - 1])
+                                                        }
+                                                        else
+                                                        {
+                                                            @((legIndex).ToString()+"th ")
+                                                        } Leg Length:
+                                                    </label>
                                                     <input class="form-control" value="@Model.Legs[legIndex-1].Length" asp-for="Legs[legIndex-1].Length" id="Shape@(Model.ShapeID).Leg@(legIndex).lenght" />
                                                 </div>
                                                 @if (legIndex < Model.Legs.Count)
                                                 {
                                                     <div class="col-4 form-group">
-                                                        <label>@(KnownObjects.NumberPrefix[legIndex-1]) Leg Degree: </label>
+                                                        <label>
+                                                            @if (legIndex < 14)
+                                                            {
+                                                                @(KnownObjects.NumberPrefix[legIndex - 1])
+                                                            }
+                                                            else
+                                                            {
+                                                                @((legIndex).ToString()+"th ")
+                                                            } Leg Degree:
+                                                                                                            </label>
                                                         <input class="form-control" value="@Model.Legs[legIndex-1].Degree" min="0" max="180" type="number" step="any" asp-for="Legs[legIndex-1].Degree" id="Shape@(Model.ShapeID).Leg@(legIndex).degree" />
                                                     </div>
 
                                                     <div class="col-4 form-group">
-                                                        <label>@(KnownObjects.NumberPrefix[legIndex-1]) Leg Direction: </label>
+                                                        <label>
+                                                            @if (legIndex < 14)
+                                                            {
+                                                                @(KnownObjects.NumberPrefix[legIndex - 1])
+                                                            }
+                                                            else
+                                                            {
+                                                                @((legIndex).ToString()+"th ")
+                                                            } Leg Direction:
+                                                                                                            </label>
                                                         <div class="input-group">
                                                             <div class="input-group-btn" data-toggle="buttons">
                                                                 <label class="btn btn-info" id="Legs@(legIndex).IsLeft">

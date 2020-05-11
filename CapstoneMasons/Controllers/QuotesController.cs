@@ -184,11 +184,28 @@ namespace CapstoneMasons.Controllers
                 //q.QuoteID = quoteId;
                 //quotes.Add(q);
                 //added to repo but not to the database
+                var invalidLeg = false;
+                foreach (Shape s in q.Shapes)
+                {
+                    foreach (Leg l in s.Legs)
+                    {
+                        if (l.Length > 240)
+                        {
+                            invalidLeg = true;
+                        }
+                    }
+                }
 
+                if (invalidLeg)
+                {
+                    ModelState.AddModelError(string.Empty, "A leg cannot be more than 240 inches");
+                    return View("Create", q);
+                }
                 return RedirectToAction("ReviewQuote", new { quoteID = q.QuoteID });
                 //return await ReviewQuote(q.QuoteID);
             }
             return View("Create", q);
+
         }
 
         [HttpPost]
