@@ -40,6 +40,7 @@ namespace CapstoneMasons.Controllers
                 {
                     ReviewQuote r = await FillReviewQuote(q);
                     oq.ReviewQuotes.Add(r);
+                    oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                 }
             }
             return View(oq);
@@ -55,6 +56,7 @@ namespace CapstoneMasons.Controllers
                 {
                     ReviewQuote r = await FillReviewQuote(q);
                     oq.ReviewQuotes.Add(r);
+                    oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                 }
             }
             return View(oq);
@@ -71,7 +73,74 @@ namespace CapstoneMasons.Controllers
                     oq.ReviewQuotes.Add(r);
                 }
             }
-            if (oq.Sort != null)
+            if (oq.Sort2 != null)
+            {
+                List<ReviewQuote> rqList = new List<ReviewQuote>();
+                IOrderedEnumerable<ReviewQuote> reviewQuotes;
+                switch (oq.Sort2)
+                {
+                    case "PickedUp":
+                        switch (oq.Sort)
+                        {
+                            case "Newest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
+                        break;
+                    case "NotPickedUp":
+                        switch (oq.Sort)
+                        {
+                            case "Newest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
+                        break;
+                    case "ClosestToCompletion":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                    case "FarthestToCompletion":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                }
+                oq.ReviewQuotes = rqList;
+            }
+            else
             {
                 switch (oq.Sort)
                 {
@@ -119,31 +188,63 @@ namespace CapstoneMasons.Controllers
                     oq.ReviewQuotes.Add(r);
                 }
             }
-            if (oq.Sort != null)
-            {
-                switch (oq.Sort)
-                {
-                    case "Newest":
-                        oq.ReviewQuotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
-                        break;
-                    case "Oldest":
-                        oq.ReviewQuotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
-                        break;
-                    case "AtoZ":
-                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
-                        break;
-                }
-            }
             if (oq.Sort2 != null)
             {
-
-                switch (oq.Sort)
+                List<ReviewQuote> rqList = new List<ReviewQuote>();
+                IOrderedEnumerable<ReviewQuote> reviewQuotes;
+                switch (oq.Sort2)
                 {
                     case "PickedUp":
-                        oq.ReviewQuotes.Sort((a, b) => b.PickedUp.CompareTo(a.PickedUp));
+                        switch (oq.Sort)
+                        {
+                            case "Newest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
                         break;
                     case "NotPickedUp":
-                        oq.ReviewQuotes.Sort((a, b) => a.PickedUp.CompareTo(b.PickedUp));
+                        switch (oq.Sort)
+                        {
+                            case "Newest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
                         break;
                     case "ClosestToCompletion":
                         oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
@@ -152,6 +253,18 @@ namespace CapstoneMasons.Controllers
                         oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                         break;
                 }
+            }
+            switch (oq.Sort)
+            {
+                case "Newest":
+                    oq.ReviewQuotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
+                    break;
+                case "Oldest":
+                    oq.ReviewQuotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
+                    break;
+                case "AtoZ":
+                    oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                    break;
             }
             if (oq.SearchBar != null)
             {
