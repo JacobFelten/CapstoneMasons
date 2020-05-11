@@ -51,7 +51,7 @@
                                         <div class="text-right col">Completed: @(oq.Quote.Shapes[i].NumCompleted + "/" + oq.Quote.Shapes[i].Qty)</div>
                                     </div>
                                     <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@oq.Quote.Shapes[i].NumCompleted" aria-valuemin="0" aria-valuemax="@oq.Quote.Shapes[i].Qty">@percentage%</div>
+                                        <div class="progress-bar" role="progressbar" style="width: @(percentage)%;" aria-valuenow="@(oq.Quote.Shapes[i].NumCompleted)" aria-valuemin="0" aria-valuemax="@oq.Quote.Shapes[i].Qty">@(percentage)%</div>
                                     </div>
                                 }
                             </div>
