@@ -62,4 +62,8 @@ function deleteShape(ShapeNumb) {
         }
     } 
 }
+
+function hideDeletedShapes() {//hide previously deleted shapes to "mitigate" bug
+    //while (nextShape !=null)
+}
 //

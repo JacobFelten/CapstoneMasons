@@ -10,12 +10,13 @@
     <h2>Open Quotes</h2>
 </div>
 <div>
-    <div class="float-right" style="padding-bottom: 0px; width: 119px">
-        <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px;padding-top: 5px;padding-left: 12px;margin-right: 0px;margin-left: 0px;left: 0px;" data-toggle="modal" data-target="#createQuote">Create New</a>
+
+    <div class="float-right">
+        <a class="btn btn-primary" style="height: 35px;padding-bottom: 5px;padding-top: 6px;margin-top: 6px;top: 6px;margin-left: 0px;bottom: auto;margin-bottom: 0px;" data-toggle="modal" data-target="#createQuote">Create New</a>
     </div>
-    <form asp-action="SearchOpen" asp-controller="Quotes" method="post">
-        <div class="float-left" style="padding-top: 6px;">
-            <input asp-for="SearchBar" style="border-radius: 5px; width: 350px; height: 35px;" placeholder="Search" />
+    <form asp-action="Search" asp-controller="Quotes" method="post">
+        <div class="float-left">
+            <input name="SearchBar" style="width: 150px; height: 35px; margin-top: 7px;" placeholder="Search" />
         </div>
         <div class="float-right" style="padding-right: 0px; width: 161px; padding-left: 0px;">
             <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px; margin-left: 6px ;margin-right: 6px; left: auto;" type="submit">Search</button>
@@ -117,6 +118,7 @@
                                     </div>
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@rq.Shapes[i].Completed" aria-valuemin="0" aria-valuemax="@rq.Shapes[i].Qty">@percentage%</div>
+
                                     </div>
                                 }
                             </div>

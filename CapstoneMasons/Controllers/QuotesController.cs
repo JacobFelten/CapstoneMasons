@@ -354,11 +354,28 @@ namespace CapstoneMasons.Controllers
                 //q.QuoteID = quoteId;
                 //quotes.Add(q);
                 //added to repo but not to the database
+                var invalidLeg = false;
+                foreach (Shape s in q.Shapes)
+                {
+                    foreach (Leg l in s.Legs)
+                    {
+                        if (l.Length > 240)
+                        {
+                            invalidLeg = true;
+                        }
+                    }
+                }
 
+                if (invalidLeg)
+                {
+                    ModelState.AddModelError(string.Empty, "A leg cannot be more than 240 inches");
+                    return View("Create", q);
+                }
                 return RedirectToAction("ReviewQuote", new { quoteID = q.QuoteID });
                 //return await ReviewQuote(q.QuoteID);
             }
             return View("Create", q);
+
         }
 
         [HttpPost]
@@ -698,6 +715,7 @@ namespace CapstoneMasons.Controllers
             foreach (Shape s in q.Shapes)
             {
                 ReviewShape rS = new ReviewShape();
+                rS.QuoteID = q.QuoteID;
                 rS.ShapeID = s.ShapeID;
                 rS.Qty = s.Qty;
                 rS.BarSize = s.BarSize;
@@ -1853,6 +1871,58 @@ namespace CapstoneMasons.Controllers
         public IActionResult Canvas()
         {
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditShape(ReviewShape shape)
+        {
+            var oldShape = await repoS.GetShapeByIdAsync(shape.ShapeID);
+            var newShape = new Shape()
+            {
+                ShapeID = shape.ShapeID,
+                BarSize = shape.BarSize,
+                Qty = shape.Qty,
+                NumCompleted = 0,
+                LegCount = shape.Legs.Count()
+            };
+            
+
+            List<Leg> newLegs = new List<Leg>();
+            for (int legIndex = 0; legIndex<shape.Legs.Count; legIndex++)
+            {
+                if(oldShape.Legs[legIndex] != null)
+                {
+                    var newLeg = new Leg()
+                    {
+                        Degree = shape.Legs[legIndex].Degree,
+                        Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
+                        //LegID = oldShape.Legs[legIndex].LegID, this is not ok database gets new ids
+                        IsRight = shape.Legs[legIndex].IsRight,
+                        Length = shape.Legs[legIndex].Length
+                    };
+                    newShape.Legs.Add(newLeg);
+                }
+                else
+                {
+                    newShape.Legs.Add(new Leg() {
+
+                        Degree = shape.Legs[legIndex].Degree,
+                        Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
+                        IsRight = shape.Legs[legIndex].IsRight,
+                        Length = shape.Legs[legIndex].Length
+                    });
+                    //add new leg to repo
+                }
+                
+            }
+            await repoS.UpdateShapesAsync(oldShape, newShape);
+            if (shape.ReviewOpen == true)
+            {
+                return RedirectToAction("ReviewOpen", new { quoteID = shape.QuoteID });
+            }
+            else
+            {
+                return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
+            }
         }
     }
 }

@@ -76,7 +76,8 @@ namespace CaptstonexUnit
             repoQ = new FakeQuoteRepository();
             repoF = new FakeFormulaRepository();
             repoC = new FakeCostRepository();
-            controllerQ = new QuotesController(repoQ, repoF, repoC);
+            repoS = new FakeShapeRepository();
+            controllerQ = new QuotesController(repoQ, repoF, repoC,repoS);
             #region Mandrels
             mandrel1 = new Mandrel
             {
