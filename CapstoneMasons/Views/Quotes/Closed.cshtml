@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <div>
-    <h2>Open Quotes</h2>
+    <h2>Closed Quotes</h2>
 </div>
 <div>
     <div class="float-right">
@@ -72,9 +72,6 @@
                                     <div class="row">
                                         <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + rq.Shapes[i].BarSize) Bar, @rq.Shapes[i].Legs.Count Legs</div>
                                         <div class="text-right col">Completed: @(rq.Shapes[i].Completed + "/" + rq.Shapes[i].Qty)</div>
-                                    </div>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@rq.Shapes[i].Completed" aria-valuemin="0" aria-valuemax="@rq.Shapes[i].Qty">@percentage%</div>
                                     </div>
                                 }
                             </div>
