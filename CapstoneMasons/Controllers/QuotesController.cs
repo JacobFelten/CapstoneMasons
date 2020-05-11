@@ -134,6 +134,25 @@ namespace CapstoneMasons.Controllers
                         break;
                 }
             }
+            if (oq.Sort2 != null)
+            {
+
+                switch (oq.Sort)
+                {
+                    case "PickedUp":
+                        oq.ReviewQuotes.Sort((a, b) => b.PickedUp.CompareTo(a.PickedUp));
+                        break;
+                    case "NotPickedUp":
+                        oq.ReviewQuotes.Sort((a, b) => a.PickedUp.CompareTo(b.PickedUp));
+                        break;
+                    case "ClosestToCompletion":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                    case "FarthestToCompletion":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                }
+            }
             if (oq.SearchBar != null)
             {
                 List<int> quoteIndex = new List<int>();
@@ -153,7 +172,7 @@ namespace CapstoneMasons.Controllers
                 }
             }
 
-            return View("Index", oq);
+            return View("Closed", oq);
         }
 
         // GET: Quotes/Details/5

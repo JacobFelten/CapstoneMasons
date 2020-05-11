@@ -12,5 +12,6 @@ namespace CapstoneMasons.ViewModels
         public List<ReviewQuote> ReviewQuotes { get { return reviewquotes; } }
         public string SearchBar { get; set; }
         public string Sort { get; set; }
+        public string Sort2 { get; set; }
     }
 }

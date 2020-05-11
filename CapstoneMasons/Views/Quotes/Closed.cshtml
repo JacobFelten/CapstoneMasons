@@ -10,17 +10,17 @@
     <h2>Closed Quotes</h2>
 </div>
 <div>
-    <div class="float-right">
-        <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" data-toggle="modal" data-target="#createQuote">Create New</a>
+    <div class="float-right" style="padding-bottom: 0px; width: 119px">
+        <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px;padding-top: 5px;padding-left: 12px;margin-right: 0px;margin-left: 0px;left: 0px;" data-toggle="modal" data-target="#createQuote">Create New</a>
     </div>
-    <form asp-action="Search" asp-controller="Quotes" method="post">
-        <div class="float-left">
-            <input asp-for="SearchBar" style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search" />
+    <form asp-action="SearchClosed" asp-controller="Quotes" method="post">
+        <div class="float-left" style="padding-top: 6px;">
+            <input asp-for="SearchBar" style="border-radius: 5px; width: 350px; height: 35px;" placeholder="Search" />
         </div>
-        <div class="float-right" style="padding-right: 5px;">
-            <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px;" type="submit">Search</button>
+        <div class="float-right" style="padding-right: 0px; width: 161px; padding-left: 0px;">
+            <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px; margin-left: 6px ;margin-right: 6px; left: auto;" type="submit">Search</button>
         </div>
-        <div class="float-right" style="padding-right: 5px;">
+        <div class="float-right" style="padding-right: 8px; padding-top: 6px;">
             <select asp-for="Sort" style="width: 200px; height: 35px;">
                 @switch (Model.Sort)
                 {
@@ -46,6 +46,48 @@
                         <option value="Newest">Newest to Oldest</option>
                         <option value="Oldest">Oldest to Newest</option>
                         <option value="AtoZ" selected>Alphabetical</option>
+                        break;
+                }
+            </select>
+        </div>
+        <div class="float-right" style="padding-right: 5px; padding-top: 6px;">
+            <select asp-for="Sort2" style="width: 250px; height: 35px;">
+                @switch (Model.Sort)
+                {
+                    case "PickedUp":
+                        <option value="PickedUp" selected>Picked Up</option>
+                        <option value="NotPickedUp">Not Picked Up</option>
+                        <option value="ClosestToCompletion">Closest To Completion</option>
+                        <option value="FarthestToCompletion">Farthest to Completion</option>
+                        break;
+
+                    case "NotPickedUp":
+                        <option value="PickedUp">Picked Up</option>
+                        <option value="NotPickedUp" selected>Not Picked Up</option>
+                        <option value="ClosestToCompletion">Closest To Completion</option>
+                        <option value="FarthestToCompletion">Farthest to Completion</option>
+                        break;
+
+                    case "ClosestToCompletion":
+                        <option value="PickedUp">Picked Up</option>
+                        <option value="NotPickedUp">Not Picked Up</option>
+                        <option value="ClosestToCompletion" selected>Closest To Completion</option>
+                        <option value="FarthestToCompletion">Farthest to Completion</option>
+                        break;
+
+                    case "FarthestToCompletion":
+                        <option value="PickedUp">Picked Up</option>
+                        <option value="NotPickedUp">Not Picked Up</option>
+                        <option value="ClosestToCompletion">Closest To Completion</option>
+                        <option value="FarthestToCompletion" selected>Farthest to Completion</option>
+                        break;
+
+                    default:
+                        <option value="null" selected>- Select an Option -</option>
+                        <option value="PickedUp">Picked Up</option>
+                        <option value="NotPickedUp">Not Picked Up</option>
+                        <option value="ClosestToCompletion">Closest To Completion</option>
+                        <option value="FarthestToCompletion">Farthest to Completion</option>
                         break;
                 }
             </select>
