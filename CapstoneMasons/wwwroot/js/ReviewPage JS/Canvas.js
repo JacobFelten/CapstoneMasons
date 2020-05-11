@@ -14,6 +14,9 @@ if (canvas.getContext) {
     x_shift = 0;
     y_shift = 0;
     var Too_Big = 0;
+    var thicc = 10;
+    var max_thicc = 20;
+
     //To be used to break out of while loop later
     var buffer = 25;
     var total_crude_length;
@@ -405,19 +408,28 @@ if (canvas.getContext) {
     }
 
 
-    if (total_crude_length > 0 && total_crude_length <= 50) {
-        context.lineWidth = 2 * scalar;
-    } else if (total_crude_length > 50 && total_crude_length <= 100) {
-        context.lineWidth = 3 * scalar;
-    } else if (total_crude_length > 100 && total_crude_length <= 150) {
-        context.lineWidth = 4 * scalar;
+    if (total_crude_length > 0 && total_crude_length <= 150) {
+        thicc = 4 * scalar;
     } else if (total_crude_length > 150 && total_crude_length <= 200) {
-        context.lineWidth = 5 * scalar;
+        thicc = 5 * scalar;
     } else if (total_crude_length > 200 && total_crude_length <= 240) {
-        context.lineWidth = 6 * scalar;
+        thicc = 6 * scalar;
     } else {
-        context.lineWidth = 1 * scalar;
+        thicc = 1 * scalar;
     }
+
+    //if thicc is too thicc
+    if (thicc > 20) {
+        thicc = max_thicc;
+    }
+    else if (thicc < 17) {
+        thicc = 17;
+    }
+    else {
+        //do nothing
+    }
+
+    context.lineWidth = thicc;
 
     //get size of xcoord object to know how many coords are in it
     var num_coords = Object.keys(xcoords).length;
@@ -593,9 +605,10 @@ if (canvas.getContext) {
                     text_2digit_x_shift = -3;
                 }
                 text_x_shift = -3;
-                text_y_shift = -3;
+                text_y_shift = -5;
             }
 
+        
 
         context.fillText( (coord).toString(), text_2digit_x_shift + text_x_shift + (xcoords[coord - 1] + xcoords[coord]) / 2, (-1) * text_2digit_y_shift + (-1) * text_y_shift + (ycoords[coord - 1] + ycoords[coord]) / 2);
     }
