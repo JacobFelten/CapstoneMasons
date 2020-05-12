@@ -148,7 +148,7 @@ namespace CapstoneMasons
             SeedData.Seed(context);
             AppDbContext.CreateAdminAccount(serviceProvider, Configuration).Wait();
 
-            context.Database.Migrate(); //to be removed when published?
+            //context.Database.Migrate(); //to be removed when published?
         }
     }
 }
