@@ -44,7 +44,7 @@
     <div class="card container">
         <form asp-action="Create" asp-controller="Quotes" method="post">
             <div class="card-header quote-header">
-
+                <input value="@Model.Shapes.Count" id="Shapes.Count" hidden/>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label>Quote Name:</label>

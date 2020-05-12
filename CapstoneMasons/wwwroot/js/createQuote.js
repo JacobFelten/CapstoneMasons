@@ -26,7 +26,7 @@ function deleteShape(ShapeNumb) {
     var numbShapes = document.getElementById(`Shapes.Count`);
     
 
-    if (numbShapes < 2) {//making sure you dont delete the last shape
+    if (numbShapes.value < 2) {//making sure you dont delete the last shape
         alert("You cant delete the only shape");
     } else {
         var r = confirm("Are you sure you want to delete Shape #" + ShapeNumb);
@@ -35,7 +35,7 @@ function deleteShape(ShapeNumb) {
             document.getElementById(`quantityShape${ShapeNumb}`).min = -9;
             document.getElementById(`quantityShape${ShapeNumb}`).max = -9;
             document.getElementById(`quantityShape${ShapeNumb}`).value = -9;
-            var LegNumb = 1;
+            var LegNumb = 0;
             var leg = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
             leg.value = -9;
             while (leg != null) {
