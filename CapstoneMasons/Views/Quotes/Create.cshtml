@@ -135,7 +135,7 @@
                                                         @((leg + 1).ToString()+"th")
                                                     } Leg Length (Inches):
                                                 </label>
-                                                <input class="form-control" value="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght" />
+                                                <input class="form-control" type="number" value="@Model.Shapes[i].Legs[leg].Length" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght" />
                                             </div>
                                             @if (leg != Model.Shapes[i].Legs.Count - 1)
                                             {
@@ -154,7 +154,7 @@
 
 
                                                 <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
-                                                       id="Shape@(i+1).Leg@(leg+1).degree" />
+                                                       id="Shape@(i+1).Leg@(leg+1).degree" value="@Model.Shapes[i].Legs[leg].Degree"/>
                                             </div>
                                             <div class="col-5 form-group">
                                                 <label for="exampleFormControlSelect2">Mandrel: </label>
