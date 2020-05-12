@@ -33,6 +33,7 @@
                         <input asp-for="NumOfBars" value="@Model.NumOfBars" hidden />
                         <input asp-for="ReviewOpen" value="@Model.ReviewOpen" id="Shape@(Model.ShapeID).ReviewOpen" hidden />
                         <input asp-for="ReviewQuote" value="@Model.ReviewQuote" id="Shape@(Model.ShapeID).ReviewQuote" hidden />
+                        <input asp-for="Completed" value="@Model.Completed" id="Shape@(Model.ShapeID).Comleted" hidden />
                         <!--using this to know where to redirect ()-->
 
                         <div class="input-group mb-3">
@@ -45,18 +46,55 @@
                         <!--bar size radio buttons-->
                         <div class="input-group justify-content-center">
                             <div class="input-group-btn" data-toggle="buttons">
-                                <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].bar3">
-                                    <input type="radio" asp-for="BarSize" value="3" autocomplete="off" checked hidden>Bar #3
-                                </label>
-                                <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar4">
-                                    <input type="radio" asp-for="BarSize" value="4" autocomplete="off" hidden hidd>Bar #4
-                                </label>
-                                <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar5">
-                                    <input type="radio" asp-for="BarSize" value="5" autocomplete="off" hidden>Bar #5
-                                </label>
-                                <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar6">
-                                    <input type="radio" asp-for="BarSize" value="6" autocomplete="off" hidden>Bar #6
-                                </label>
+                                @if (Model.BarSize == 3)
+                                {
+                                    <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].bar3">
+                                        <input type="radio" asp-for="BarSize" value="3" autocomplete="off" checked hidden>Bar #3
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar3">
+                                        <input type="radio" asp-for="BarSize" value="3" autocomplete="off" hidden>Bar #3
+                                    </label>
+                                }
+                                @if (Model.BarSize == 4)
+                                {
+                                    <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].bar4">
+                                        <input type="radio" asp-for="BarSize" value="4" autocomplete="off" checked hidden>Bar #4
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar4">
+                                        <input type="radio" asp-for="BarSize" value="4" autocomplete="off" hidden hidd>Bar #4
+                                    </label>
+                                }
+                                @if (Model.BarSize == 5)
+                                {
+                                    <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].bar5">
+                                        <input type="radio" asp-for="BarSize" value="5" autocomplete="off" checked hidden>Bar #5
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar5">
+                                        <input type="radio" asp-for="BarSize" value="5" autocomplete="off" hidden>Bar #5
+                                    </label>
+                                }
+                                @if (Model.BarSize == 6)
+                                {
+                                    <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].bar6">
+                                        <input type="radio" asp-for="BarSize" value="6" autocomplete="off" checked hidden>Bar #6
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].bar6">
+                                        <input type="radio" asp-for="BarSize" value="6" autocomplete="off" hidden>Bar #6
+                                    </label>
+                                }
+
                             </div>
                         </div>
                         <!--custom radio buttons-->
@@ -111,7 +149,7 @@
                                                             {
                                                                 @((legIndex).ToString()+"th ")
                                                             } Leg Degree:
-                                                                                                            </label>
+                                                        </label>
                                                         <input class="form-control" value="@Model.Legs[legIndex-1].Degree" min="0" max="180" type="number" step="any" asp-for="Legs[legIndex-1].Degree" id="Shape@(Model.ShapeID).Leg@(legIndex).degree" />
                                                     </div>
 
@@ -125,15 +163,28 @@
                                                             {
                                                                 @((legIndex).ToString()+"th ")
                                                             } Leg Direction:
-                                                                                                            </label>
+                                                        </label>
                                                         <div class="input-group">
                                                             <div class="input-group-btn" data-toggle="buttons">
-                                                                <label class="btn btn-info" id="Legs@(legIndex).IsLeft">
-                                                                    <input type="radio" asp-for="Legs[legIndex-1].IsRight" value="false" autocomplete="off" hidden>Left
-                                                                </label>
-                                                                <label class="btn btn-info" id="Legs@(legIndex).IsRight">
-                                                                    <input type="radio" asp-for="Legs[legIndex-1].IsRight" value="true" autocomplete="off" hidden>Right
-                                                                </label>
+                                                                @if (Model.Legs[legIndex - 1].IsRight == false)
+                                                                {
+                                                                    <label class="btn btn-info active" id="Legs@(legIndex).IsLeft">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].IsRight" value="false" autocomplete="off" checked hidden>Left
+                                                                    </label>
+                                                                    <label class="btn btn-info" id="Legs@(legIndex).IsRight">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].IsRight" value="true" autocomplete="off" hidden>Right
+                                                                    </label>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label class="btn btn-info" id="Legs@(legIndex).IsLeft">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].IsRight" value="false" autocomplete="off" hidden>Left
+                                                                    </label>
+                                                                    <label class="btn btn-info active" id="Legs@(legIndex).IsRight">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].IsRight" value="true" autocomplete="off" checked hidden>Right
+                                                                    </label>
+                                                                }
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -142,18 +193,54 @@
                                                         <div class="col-12 text-center">Mandrel Size</div>
                                                         <div class="input-group justify-content-center" style="margin-left: 45px;">
                                                             <div class="input-group-btn" data-toggle="buttons">
-                                                                <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelNone">
-                                                                    <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="None" autocomplete="off" checked hidden>None
-                                                                </label>
-                                                                <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelSmall">
-                                                                    <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Small" autocomplete="off" hidden>Small
-                                                                </label>
-                                                                <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelMed">
-                                                                    <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Medium" autocomplete="off" hidden>Medium
-                                                                </label>
-                                                                <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelLarge">
-                                                                    <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Large" autocomplete="off" hidden>Large
-                                                                </label>
+                                                                @if (Model.Legs[legIndex - 1].Mandrel == "None")
+                                                                {
+                                                                    <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelNone">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="None" autocomplete="off" checked hidden>None
+                                                                    </label>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelNone">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="None" autocomplete="off" hidden>None
+                                                                    </label>
+                                                                }
+                                                                @if (Model.Legs[legIndex - 1].Mandrel == "Small")
+                                                                {
+                                                                    <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelSmall">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Small" autocomplete="off" checked hidden>Small
+                                                                    </label>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelSmall">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Small" autocomplete="off" hidden>Small
+                                                                    </label>
+                                                                }
+                                                                @if (Model.Legs[legIndex - 1].Mandrel == "Medium")
+                                                                {
+                                                                    <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelMed">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Medium" autocomplete="off" checked hidden>Medium
+                                                                    </label>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelMed">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Medium" autocomplete="off" hidden>Medium
+                                                                    </label>
+                                                                }
+                                                                @if (Model.Legs[legIndex - 1].Mandrel == "Large")
+                                                                {
+                                                                    <label class="btn btn-secondary active" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelLarge">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Large" autocomplete="off" checked hidden>Large
+                                                                    </label>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg@(legIndex).mandrelLarge">
+                                                                        <input type="radio" asp-for="Legs[legIndex-1].Mandrel" value="Large" autocomplete="off" hidden>Large
+                                                                    </label>
+                                                                }
                                                             </div>
                                                         </div>
                                                     </div>
