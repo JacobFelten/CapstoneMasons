@@ -33,77 +33,136 @@ namespace CapstoneMasons.Controllers
         // GET: Open Quotes
         public async Task<IActionResult> Index()
         {
-            List<OpenQuote> openQuotes = new List<OpenQuote>();
+            OpenQuote oq = new OpenQuote();
             foreach(Quote q in await repo.Quotes)
             {
                 if (q.Open == true)
                 {
-                    OpenQuote open = new OpenQuote();
-                    open.Quote = q;
-                    ReviewQuote rvQ = await FillReviewQuote(open.Quote);
-                    open.TotalCost = rvQ.TotalCost;
-                    openQuotes.Add(open);
+                    ReviewQuote r = await FillReviewQuote(q);
+                    oq.ReviewQuotes.Add(r);
+                    oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                 }
             }
-            return View(openQuotes);
+            return View(oq);
         }
 
         // Get: Closed Quotes
         public async Task<IActionResult> Closed()
         {
-            List<OpenQuote> openQuotes = new List<OpenQuote>();
+            OpenQuote oq = new OpenQuote();
             foreach (Quote q in await repo.Quotes)
             {
                 if (q.Open == false)
                 {
-                    OpenQuote open = new OpenQuote();
-                    open.Quote = q;
-                    ReviewQuote rvQ = await FillReviewQuote(open.Quote);
-                    open.TotalCost = rvQ.TotalCost;
-                    openQuotes.Add(open);
+                    ReviewQuote r = await FillReviewQuote(q);
+                    oq.ReviewQuotes.Add(r);
+                    oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                 }
             }
-            return View(openQuotes);
+            return View(oq);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Search(string SearchBar, string NewOrOld)
+        public async Task<IActionResult> SearchOpen(OpenQuote oq)
         {
-            List<OpenQuote> openQuotes = new List<OpenQuote>();
             foreach(Quote q in await repo.Quotes)
             {
                 if (q.Open == true)
                 {
-                    OpenQuote open = new OpenQuote();
-                    open.Quote = q;
-                    ReviewQuote rvQ = await FillReviewQuote(open.Quote);
-                    open.TotalCost = rvQ.TotalCost;
-                    openQuotes.Add(open);
+                    ReviewQuote r = await FillReviewQuote(q);
+                    oq.ReviewQuotes.Add(r);
                 }
             }
-            if (NewOrOld != null)
+            if (oq.Sort2 != null)
             {
-                switch (NewOrOld)
+                List<ReviewQuote> rqList = new List<ReviewQuote>();
+                IOrderedEnumerable<ReviewQuote> reviewQuotes;
+                switch (oq.Sort2)
+                {
+                    case "PickedUp":
+                        switch (oq.Sort)
+                        {
+                            case "Newest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
+                        break;
+                    case "NotPickedUp":
+                        switch (oq.Sort)
+                        {
+                            case "Newest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
+                        break;
+                    case "ClosestToCompletion":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                    case "FarthestToCompletion":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                }
+                oq.ReviewQuotes = rqList;
+            }
+            else
+            {
+                switch (oq.Sort)
                 {
                     case "Newest":
-                        openQuotes.Sort((a, b) => a.Quote.DateQuoted.CompareTo(b.Quote.DateQuoted));
+                        oq.ReviewQuotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
                         break;
                     case "Oldest":
-                        openQuotes.Sort((a, b) => b.Quote.DateQuoted.CompareTo(a.Quote.DateQuoted));
+                        oq.ReviewQuotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
                         break;
                     case "AtoZ":
-                        openQuotes.Sort((a, b) => a.Quote.Name.CompareTo(b.Quote.Name));
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                         break;
                 }
             }
-            if(SearchBar != null)
+            if(oq.SearchBar != null)
             {
                 List<int> quoteIndex = new List<int>();
-                for(int i = 0; i < openQuotes.Count; i++)
+                for(int i = 0; i < oq.ReviewQuotes.Count; i++)
                 {
-                    string smagastooble = openQuotes[i].Quote.Name;
+                    string smagastooble = oq.ReviewQuotes[i].Name;
                     smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
-                    if(!smagastooble.Contains(SearchBar.ToLower().Trim().Replace("'", "")))
+                    if(!smagastooble.Contains(oq.SearchBar.ToLower().Trim().Replace("'", "")))
                     {
                         quoteIndex.Add(i);
                     }
@@ -111,11 +170,122 @@ namespace CapstoneMasons.Controllers
                 quoteIndex.Sort((a, b) => b.CompareTo(a));
                 foreach(int i in quoteIndex)
                 {
-                    openQuotes.RemoveAt(i);
+                    oq.ReviewQuotes.RemoveAt(i);
                 }
             }
             
-            return View("Index", openQuotes);
+            return View("Index", oq);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchClosed(OpenQuote oq)
+        {
+            foreach (Quote q in await repo.Quotes)
+            {
+                if (q.Open == false)
+                {
+                    ReviewQuote r = await FillReviewQuote(q);
+                    oq.ReviewQuotes.Add(r);
+                }
+            }
+            if (oq.Sort2 != null)
+            {
+                List<ReviewQuote> rqList = new List<ReviewQuote>();
+                IOrderedEnumerable<ReviewQuote> reviewQuotes;
+                switch (oq.Sort2)
+                {
+                    case "PickedUp":
+                        switch (oq.Sort)
+                        {
+                            case "Newest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
+                        break;
+                    case "NotPickedUp":
+                        switch (oq.Sort)
+                        {
+                            case "Newest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
+                        break;
+                    case "ClosestToCompletion":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                    case "FarthestToCompletion":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                }
+            }
+            switch (oq.Sort)
+            {
+                case "Newest":
+                    oq.ReviewQuotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
+                    break;
+                case "Oldest":
+                    oq.ReviewQuotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
+                    break;
+                case "AtoZ":
+                    oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                    break;
+            }
+            if (oq.SearchBar != null)
+            {
+                List<int> quoteIndex = new List<int>();
+                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                {
+                    string smagastooble = oq.ReviewQuotes[i].Name;
+                    smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
+                    if (!smagastooble.Contains(oq.SearchBar.ToLower().Trim().Replace("'", "")))
+                    {
+                        quoteIndex.Add(i);
+                    }
+                }
+                quoteIndex.Sort((a, b) => b.CompareTo(a));
+                foreach (int i in quoteIndex)
+                {
+                    oq.ReviewQuotes.RemoveAt(i);
+                }
+            }
+
+            return View("Closed", oq);
         }
 
         // GET: Quotes/Details/5
