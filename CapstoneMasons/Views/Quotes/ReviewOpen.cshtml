@@ -161,7 +161,7 @@
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a class="btn btn-info" asp-action="Index">Return to Open Quotes</a>
+                <a class="btn btn-info" asp-action="Index">Return to Open Quotes/Orders</a>
                 <a class="btn btn-secondary" asp-action="UpdateQuotePrices" asp-route-quoteID="@Model.ReviewQuote.QuoteID">Update Prices</a>
             </div>
             <div>*Click Update Prices when the costs of rebar have changed and you want to recalculate the total cost of this order/quote based on those new rebar costs</div>
@@ -315,8 +315,8 @@
         </div>
     </div>
     <div class="text-center text-white bottom-btn">
-        <a class="btn btn-secondary" asp-action="CloseOpenQuote" asp-route-quoteID="@Model.ReviewQuote.QuoteID"><h3>Close Quote</h3></a>
-        <a class="btn btn-danger" asp-action="DeleteQuote" asp-route-quoteID="@Model.ReviewQuote.QuoteID" asp-route-returnUrl="Index"><h3>Delete Quote</h3></a>
+        <a class="btn btn-secondary" asp-action="CloseOpenQuote" asp-route-quoteID="@Model.ReviewQuote.QuoteID"><h3>Close Quote/Order</h3></a>
+        <a class="btn btn-danger" asp-action="DeleteQuote" asp-route-quoteID="@Model.ReviewQuote.QuoteID" asp-route-returnUrl="Index"><h3>Delete Quote/Order</h3></a>
     </div>
 </form>
 
