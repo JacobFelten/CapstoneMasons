@@ -44,7 +44,7 @@
     <div class="card container">
         <form asp-action="Create" asp-controller="Quotes" method="post">
             <div class="card-header quote-header">
-
+                <input value="@Model.Shapes.Count" id="Shapes.Count" hidden />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label>Quote Name:</label>
@@ -88,12 +88,12 @@
                                         <div class="col-md-4 col-lg-4 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Rebar #: </label>
                                             @*<select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
-                        onchange="vaidateRebar(this.options[this.selectedIndex].text)">
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                    <option>6</option>
-                </select>*@
+                                                onchange="vaidateRebar(this.options[this.selectedIndex].text)">
+                                            <option>3</option>
+                                            <option>4</option>
+                                            <option>5</option>
+                                            <option>6</option>
+                                        </select>*@
 
                                             <!--custom radio buttons-->
                                             <div class="input-group">
@@ -134,36 +134,39 @@
                                                     {
                                                         @("#"+(leg + 1).ToString())
                                                     } Leg Length:
-                                                                                            </label>
+                                                </label>
                                                 <input class="form-control" value="" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght" />
                                             </div>
                                             @if (leg != Model.Shapes[i].Legs.Count - 1)
                                             {
                                                 <div class="col-5 form-group">
-                                                    <label>@if (leg < 13) {
-                                                    @(KnownObjects.NumberPrefix[leg])
-                                                    }
-                                                    else
-                                                    {
-                                                        @("#"+(leg + 1).ToString()) 
-                                                            }
-                                                            Leg Bend (Degrees): </label>
-    
+                                                    <label>
+                                                        @if (leg < 13)
+                                                        {
+                                                            @(KnownObjects.NumberPrefix[leg])
+                                                        }
+                                                        else
+                                                        {
+                                                            @("#"+(leg + 1).ToString())
+                                                        }
+                                                    Leg Bend (Degrees):
+                                                </label>
 
-                                                            <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
-                                                           id="Shape@(i+1).Leg@(leg+1).degree" />
-                                                </div>
-                                                <div class="col-3 form-group">
-                                                    <label for="exampleFormControlSelect2">Mandrel: </label>
-                                                    <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
-                                                            onchange="vaidateLeg(this.options[this.selectedIndex].text)">
-                                                        <option>None</option>
-                                                        <option>Small</option>
-                                                        <option>Medium</option>
-                                                        <option>Large</option>
-                                                    </select>
-                                                </div>
-                                            }
+
+                                                <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
+                                                       id="Shape@(i+1).Leg@(leg+1).degree" />
+                                            </div>
+                                            <div class="col-3 form-group">
+                                                <label for="exampleFormControlSelect2">Mandrel: </label>
+                                                <select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].Legs[leg].Mandrel.Name"
+                                                        onchange="vaidateLeg(this.options[this.selectedIndex].text)">
+                                                    <option>None</option>
+                                                    <option>Small</option>
+                                                    <option>Medium</option>
+                                                    <option>Large</option>
+                                                </select>
+                                            </div>
+                                        }
                                         </div>
                                         @if (leg != Model.Shapes[i].Legs.Count - 1)
                                         {
@@ -189,6 +192,9 @@
                         </div>
                     </div>
                 </div>
+                <script>
+                    hideDeletedShapes();
+                </script>
             }
 
 

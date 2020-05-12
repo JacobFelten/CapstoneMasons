@@ -23,18 +23,15 @@ function vaidateRebar(RebarNumb) {
 
 }
 function deleteShape(ShapeNumb) {
-    var nextShape = document.getElementById(`quantityShape${ShapeNumb + 1}`);
-    var prevShape = document.getElementById(`quantityShape${ShapeNumb - 1}`);
-    if (prevShape != null && prevShape.value == -9 || nextShape != null && nextShape.value == -9) {
-        prevShape = null;
-        nextShape = null;
-    }
+    var numbShapes = document.getElementById(`Shapes.Count`);
+    
 
-    if ((nextShape == null && prevShape == null)) {//making sure you dont delete the last shape
+    if (numbShapes < 2) {//making sure you dont delete the last shape
         alert("You cant delete the only shape");
     } else {
         var r = confirm("Are you sure you want to delete Shape #" + ShapeNumb);
         if (r == true) {
+            numbShapes.value = numbShapes.value -1;//setting bogus values to know which shape to delete
             document.getElementById(`quantityShape${ShapeNumb}`).min = -9;
             document.getElementById(`quantityShape${ShapeNumb}`).max = -9;
             document.getElementById(`quantityShape${ShapeNumb}`).value = -9;
@@ -64,6 +61,12 @@ function deleteShape(ShapeNumb) {
 }
 
 function hideDeletedShapes() {//hide previously deleted shapes to "mitigate" bug
-    //while (nextShape !=null)
+
+    var numbShapes = document.getElementById(`Shapes.Count`);
+    for (var ShapeNumb = 1; ShapeNumb < numbShapes; i++) {
+        if (document.getElementById(`quantityShape${ShapeNumb}`).value == -9
+            && document.getElementById(`Shape${ShapeNumb}.Leg${ShapeNumb}.lenght`).value == -9)
+            document.getElementById(`shape-body${ShapeNumb}`).style.display = none;
+        }
 }
 //
