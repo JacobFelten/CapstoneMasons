@@ -185,6 +185,7 @@ namespace CapstoneMasons.Controllers
                 //quotes.Add(q);
                 //added to repo but not to the database
                 var invalidLeg = false;
+                var invalidShape = 0;
                 foreach (Shape s in q.Shapes)
                 {
                     foreach (Leg l in s.Legs)
@@ -192,13 +193,14 @@ namespace CapstoneMasons.Controllers
                         if (l.Length > 240)
                         {
                             invalidLeg = true;
+                            invalidShape = q.Shapes.IndexOf(s);
                         }
                     }
                 }
 
                 if (invalidLeg)
                 {
-                    ModelState.AddModelError(string.Empty, "A leg cannot be more than 240 inches");
+                    ModelState.AddModelError(string.Empty, "A leg in shape "+ invalidShape.ToString()+ " and cannot be more than 240 inches");
                     return View("Create", q);
                 }
                 return RedirectToAction("ReviewQuote", new { quoteID = q.QuoteID });
