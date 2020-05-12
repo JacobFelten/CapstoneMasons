@@ -23,18 +23,13 @@ function vaidateRebar(RebarNumb) {
 
 }
 function deleteShape(ShapeNumb) {
-    var nextShape = document.getElementById(`quantityShape${ShapeNumb + 1}`);
-    var prevShape = document.getElementById(`quantityShape${ShapeNumb - 1}`);
-    if (prevShape != null && prevShape.value == -9 || nextShape != null && nextShape.value == -9) {
-        prevShape = null;
-        nextShape = null;
-    }
+    confirm("Are you sure you want to delete Shape #" + ShapeNumb);
 
-    if ((nextShape == null && prevShape == null)) {//making sure you dont delete the last shape
+    if ((false)) {//making sure you dont delete the last shape
         alert("You cant delete the only shape");
     } else {
         var r = confirm("Are you sure you want to delete Shape #" + ShapeNumb);
-        if (r == true) {
+        if (false) {//r==true
             document.getElementById(`quantityShape${ShapeNumb}`).min = -9;
             document.getElementById(`quantityShape${ShapeNumb}`).max = -9;
             document.getElementById(`quantityShape${ShapeNumb}`).value = -9;
