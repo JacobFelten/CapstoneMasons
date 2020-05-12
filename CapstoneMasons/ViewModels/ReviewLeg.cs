@@ -7,6 +7,7 @@ namespace CapstoneMasons.ViewModels
 {
     public class ReviewLeg
     {
+        public int LegID { get; set; }
         public decimal Length { get; set; }
         public int Degree { get; set; }
         public string Mandrel { get; set; }

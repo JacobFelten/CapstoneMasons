@@ -4,10 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
 <div>
-    <h2>Open Quotes</h2>
+    <h2>Open Quotes/Orders</h2>
 </div>
 <div>
     <script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
@@ -15,7 +13,7 @@
     <div class="float-right">
         <a class="btn btn-primary" style="height: 35px;padding-bottom: 5px;padding-top: 6px;margin-top: 0px;top: 6px;margin-left: 0px;bottom: auto;" data-toggle="modal" data-target="#createQuote">Create New</a>
     </div>
-    <form asp-action="Search" asp-controller="Quotes" method="post">
+    <form asp-action="SearchOpen" asp-controller="Quotes" method="post">
         <div class="float-left">
             <input name="SearchBar" style="width: 150px; height: 35px; margin-top: 7px;" placeholder="Search" />
         </div>

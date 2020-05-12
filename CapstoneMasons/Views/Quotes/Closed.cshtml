@@ -4,15 +4,14 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
 <div>
     <h2>Closed Quotes</h2>
 </div>
 <div>
+    <!--
     <div class="float-right" style="padding-bottom: 0px; width: 119px">
         <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px;padding-top: 5px;padding-left: 12px;margin-right: 0px;margin-left: 0px;left: 0px;" data-toggle="modal" data-target="#createQuote">Create New</a>
-    </div>
+    </div>-->
     <form asp-action="SearchClosed" asp-controller="Quotes" method="post">
         <div class="float-left" style="padding-top: 6px;">
             <input asp-for="SearchBar" style="border-radius: 5px; width: 350px; height: 35px;" placeholder="Search" />
@@ -125,19 +124,21 @@
                                 </div>
                                 @if (rq.PickedUp == true)
                                 {
-                                    <div class="row">
-                                        <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
-                                            The Customer has picked up their rebar.
-                                        </div>
-                                    </div>
+                                    <!--
+        <div class="row">
+            <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
+                The Customer has picked up their rebar.
+            </div>
+        </div>-->
                                 }
                                 else
                                 {
-                                    <div class="row">
-                                        <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
-                                            The Customer has not picked up their rebar yet.
-                                        </div>
-                                    </div>
+                                    <!--
+           <div class="row">
+               <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
+                   The Customer has not picked up their rebar yet.
+               </div>
+           </div>-->
                                 }
                             </div>
                         </div>
