@@ -13,12 +13,13 @@ if (canvas.getContext) {
     var max_y;
     x_shift = 0;
     y_shift = 0;
-    f_size = "12px Arial";
     var Too_Big = 0;
+    var thicc = 10;
+    var max_thicc = 20;
+
     //To be used to break out of while loop later
     var buffer = 25;
     var total_crude_length;
-
 
     //variables for shape
     var curr_unit_val = 0;
@@ -37,6 +38,10 @@ if (canvas.getContext) {
     //initialize x and y arrays
     xcoords = {};
     ycoords = {};
+
+    //Keep track of the unit circle positions for potential Leg Labeling
+    unit_val_list = {};
+
 
     scalar = 1;
     //reset scalar back to 1
@@ -83,7 +88,8 @@ if (canvas.getContext) {
             } else {//They are equal do nothing.
             }
 
-
+            //add the starting unit circle value to the list
+            unit_val_list[j] = curr_unit_val;
         } else {
             if (legs[j - 1].IsRight == true) {
                 neg_pos = 1;
@@ -110,6 +116,21 @@ if (canvas.getContext) {
             }
 
             curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
+
+            //make sure that curr_unit_val never gets bigger than 180 or smaller than -180
+            while (curr_unit_val > 180 || curr_unit_val < -180)
+            {
+                if (curr_unit_val > 180) {
+                    curr_unit_val = curr_unit_val - 360;
+                }
+                else
+                {
+                    curr_unit_val = curr_unit_val + 360;
+                }
+            }
+
+            //save curr_unit_val to the list
+            unit_val_list[j] = curr_unit_val;
         }
     }
 
@@ -211,6 +232,7 @@ if (canvas.getContext) {
             }
 
             curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
+
 
             //context.lineTo(xcoords[j + 1], ycoords[j + 1]);
 
@@ -359,6 +381,7 @@ if (canvas.getContext) {
                 }
 
                 curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
+
             }
         }
 
@@ -385,19 +408,28 @@ if (canvas.getContext) {
     }
 
 
-    if (total_crude_length > 0 && total_crude_length <= 50) {
-        context.lineWidth = 2 * scalar;
-    } else if (total_crude_length > 50 && total_crude_length <= 100) {
-        context.lineWidth = 3 * scalar;
-    } else if (total_crude_length > 100 && total_crude_length <= 150) {
-        context.lineWidth = 4 * scalar;
+    if (total_crude_length > 0 && total_crude_length <= 150) {
+        thicc = 4 * scalar;
     } else if (total_crude_length > 150 && total_crude_length <= 200) {
-        context.lineWidth = 5 * scalar;
+        thicc = 5 * scalar;
     } else if (total_crude_length > 200 && total_crude_length <= 240) {
-        context.lineWidth = 6 * scalar;
+        thicc = 6 * scalar;
     } else {
-        context.lineWidth = 1 * scalar;
+        thicc = 1 * scalar;
     }
+
+    //if thicc is too thicc
+    if (thicc > 20) {
+        thicc = max_thicc;
+    }
+    else if (thicc < 17) {
+        thicc = 17;
+    }
+    else {
+        //do nothing
+    }
+
+    context.lineWidth = thicc;
 
     //get size of xcoord object to know how many coords are in it
     var num_coords = Object.keys(xcoords).length;
@@ -407,6 +439,178 @@ if (canvas.getContext) {
     for (var coord = 1; coord < num_coords; coord++)
     {
         context.lineTo(xcoords[coord], ycoords[coord]);
+    }
+    context.stroke();
+
+
+    //Text control variables
+    f_size = "12px Arial";
+    context.font = f_size;
+    context.fillStyle = "white";
+    text_x_shift = 0;
+    text_y_shift = 0;
+    text_2digit_x_shift = 0;
+    text_2digit_y_shift = 0;
+
+    //Drawing the text onto the shape
+    context.beginPath();
+    context.moveTo(xcoords[0], ycoords[0]);
+    for (var coord = 1; coord < num_coords; coord++)
+    {
+        //introduce a text shift value dependant on the curr_unit_val at that spot
+        //may get harder if introducing a number with two digits or more
+        text_x_shift = 0;
+        text_y_shift = 0;
+        text_2digit_x_shift = 0;
+        text_2digit_y_shift = 0;
+
+        //if unit val is at 0 or 180 or -180 THEN shift straight down
+        if (unit_val_list[coord - 1] == 0 || unit_val_list[coord - 1] == 180 || unit_val_list[coord - 1] == -180)
+        {
+            if (coord > 9) {
+                text_2digit_x_shift = -5;
+            }
+            text_y_shift = -4;
+        }
+
+            //if unit val is between 0 and -30 or between -180 and -150 THEN diagonal down left
+            else if (0 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > -30 || -150 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > -180) {
+                if (coord > 9) {
+                    text_2digit_x_shift = -3;
+                }
+                text_x_shift = -3;
+                text_y_shift = -3;
+            }
+
+        //if unit val is at -30 or 150 THEN diagonal down left MORE LEFT THAN DOWN
+        else if (unit_val_list[coord - 1] == -30 || unit_val_list[coord - 1] == 150)
+        {
+            if (coord > 9) {
+                text_2digit_x_shift = -3;
+            }
+            text_x_shift = -3;
+            text_y_shift = -3;
+        }
+
+            //if unit between -30 and -45 or between 135 and 150 THEN diagonal down left
+            else if (-30 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > -45 || 150 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > 135) {
+                if (coord > 9) {
+                    text_2digit_x_shift = -3;
+                }
+                text_x_shift = -3;
+                text_y_shift = -3;
+            }
+
+        //if unit val is at -45 or 135 THEN do nothing
+        else if (unit_val_list[coord - 1] == -45 || unit_val_list[coord - 1] == 135)
+        {
+            if (coord > 9) {
+                text_2digit_x_shift = -3;
+            }
+        }
+
+            //if unit between -45 and -60 or between 135 and 120 THEN diagonal down left
+            else if (-45 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > -60 || 135 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > 120) {
+                if (coord > 9) {
+                    text_2digit_x_shift = -3;
+                }
+                text_x_shift = -3;
+                text_y_shift = -3;
+            }
+
+        //if unit val is at -60 or 120 THEN diagonal down left
+        else if (unit_val_list[coord - 1] == -60 || unit_val_list[coord - 1] == 120)
+        {
+            if (coord > 9) {
+                text_2digit_x_shift = -3;
+            }
+            text_x_shift = -4;
+            text_y_shift = -4;
+        }
+
+            //if unit is between -60 and -90 or 120 and 90 THEN left
+            else if (-60 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > -90 || 120 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > 90) {
+                if (coord > 9) {
+                    text_2digit_x_shift = -3;
+                }
+                text_x_shift = -3;
+            }
+
+        //if unit val is at -90 or 90 THEN move to the left
+        else if (unit_val_list[coord - 1] == -90 || unit_val_list[coord - 1] == 90) {
+            if (coord > 9) {
+                text_2digit_x_shift = -3;
+            }
+            text_x_shift = -4;
+        }
+
+            //if unit is between -90 and -120 or 90 and 60 THEN diagonal down left MORE LEFT THAN DOWN
+            else if (-90 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > -120 || 90 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > 60) {
+                if (coord > 9) {
+                    text_2digit_x_shift = -3;
+                }
+                text_x_shift = -4;
+                text_y_shift = -2;
+            }
+
+        //if unit val is at -120 or 60 THEN diagonal down left MORE LEFT THAN DOWN
+        else if (unit_val_list[coord - 1] == -120 || unit_val_list[coord - 1] == 60) {
+            if (coord > 9) {
+                text_2digit_x_shift = -4;
+            }
+            text_x_shift = -4;
+            text_y_shift = -2;
+        }
+
+            //if unit is between -120 and -135 or 60 and 45 THEN diagonal down left
+            else if (-120 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > -135 || 60 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > 45) {
+                if (coord > 9) {
+                    text_2digit_x_shift = -3;
+                }
+                text_x_shift = -3;
+                text_y_shift = -3;
+            }
+
+        //if unit val is at -135 or 45 THEN diagonal down left
+        else if (unit_val_list[coord - 1] == -135 || unit_val_list[coord - 1] == 45) {
+            if (coord > 9) {
+                text_2digit_x_shift = -4;
+            }
+            text_x_shift = -4;
+            text_y_shift = -4;
+        }
+
+            //if unit val is between -135 and -150 or 45 and 30 THEN diagonal down left MORE DOWN THAN LEFT
+            else if (-135 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > -150 || 45 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > 30) {
+                if (coord > 9) {
+                    text_2digit_x_shift = -3;
+                }
+                text_x_shift = -2;
+                text_y_shift = -4;
+            }
+
+        //if unit val is at -150 or 30 THEN diagonal down left MORE DOWN THAN LEFT
+        else if (unit_val_list[coord - 1] == -150 || unit_val_list[coord - 1] == 30) {
+            if (coord > 9) {
+                text_2digit_x_shift = -4;
+                text_2digit_y_shift = -1;
+            }
+            text_x_shift = -3;
+            text_y_shift = -4;
+        }
+
+            //if unit val is between 150 and 180 or -30 and 0 THEN 
+            else if (180 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > 150 || 30 > unit_val_list[coord - 1] && unit_val_list[coord - 1] > 0) {
+                if (coord > 9) {
+                    text_2digit_x_shift = -3;
+                }
+                text_x_shift = -3;
+                text_y_shift = -5;
+            }
+
+        
+
+        context.fillText( (coord).toString(), text_2digit_x_shift + text_x_shift + (xcoords[coord - 1] + xcoords[coord]) / 2, (-1) * text_2digit_y_shift + (-1) * text_y_shift + (ycoords[coord - 1] + ycoords[coord]) / 2);
     }
     context.stroke();
 

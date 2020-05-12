@@ -1,7 +1,7 @@
-﻿@model List<OpenQuote>
+﻿@model OpenQuote
 
 @{
-    ViewData["Title"] = "Closed";
+    ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
@@ -10,58 +10,122 @@
     <h2>Closed Quotes</h2>
 </div>
 <div>
-    <div class="float-right">
-        <button class="btn btn-primary" style="height: 35px; padding-bottom: 5px; padding-top: 5px;" asp-action="Create">Create New</button>
+    <script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="~/js/homescript.js"></script>
+    <div class="float-right" style="padding-bottom: 0px; width: 119px">
+        <a class="btn btn-primary" style="height: 35px; padding-bottom: 5px;padding-top: 5px;padding-left: 12px;margin-right: 0px;margin-left: 0px;left: 0px;" data-toggle="modal" data-target="#createQuote">Create New</a>
     </div>
-    <form asp-action="Search" method="post">
-        <div class="float-left">
-            <input name="SearchBar" style="border-radius: 5px; width: 500px; height: 35px;" placeholder="Search" />
+    <form asp-action="SearchClosed" asp-controller="Quotes" method="post">
+        <div class="float-left" style="padding-top: 6px;">
+            <input asp-for="SearchBar" style="border-radius: 5px; width: 350px; height: 35px;" placeholder="Search" />
         </div>
-        <div class="float-right" style="padding-right: 5px;">
-            <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px;" type="submit">Search</button>
+        <div class="float-right" style="padding-right: 0px; width: 161px; padding-left: 0px;">
+            <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px; margin-left: 6px ;margin-right: 6px; left: auto;" type="submit">Search</button>
         </div>
-        <div class="float-right" style="padding-right: 5px;">
-            <select name="NewOrOld" style="width: 100px; height: 35px;">
-                <option value="Newest">Newest</option>
-                <option value="Oldest">Oldest</option>
-                <option value="AtoZ">Alphabetical</option>
+        <div class="float-right" style="padding-right: 8px; padding-top: 6px;">
+            <select asp-for="Sort" style="width: 200px; height: 35px;">
+                @switch (Model.Sort)
+                {
+                    case "Newest":
+                        <option value="Newest" selected>Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        <option value="AtoZ">Alphabetical</option>
+                        break;
+
+                    case "Oldest":
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest" selected>Oldest to Newest</option>
+                        <option value="AtoZ">Alphabetical</option>
+                        break;
+
+                    case "AtoZ":
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        <option value="AtoZ" selected>Alphabetical</option>
+                        break;
+
+                    default:
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        <option value="AtoZ" selected>Alphabetical</option>
+                        break;
+                }
+            </select>
+        </div>
+        <div class="float-right" style="padding-right: 5px; padding-top: 6px;">
+            <select asp-for="Sort2" style="width: 250px; height: 35px;">
+                @switch (Model.Sort)
+                {
+                    case "PickedUp":
+                        <option value="PickedUp" selected>Picked Up</option>
+                        <option value="NotPickedUp">Not Picked Up</option>
+                        <option value="ClosestToCompletion">Closest To Completion</option>
+                        <option value="FarthestToCompletion">Farthest to Completion</option>
+                        break;
+
+                    case "NotPickedUp":
+                        <option value="PickedUp">Picked Up</option>
+                        <option value="NotPickedUp" selected>Not Picked Up</option>
+                        <option value="ClosestToCompletion">Closest To Completion</option>
+                        <option value="FarthestToCompletion">Farthest to Completion</option>
+                        break;
+
+                    case "ClosestToCompletion":
+                        <option value="PickedUp">Picked Up</option>
+                        <option value="NotPickedUp">Not Picked Up</option>
+                        <option value="ClosestToCompletion" selected>Closest To Completion</option>
+                        <option value="FarthestToCompletion">Farthest to Completion</option>
+                        break;
+
+                    case "FarthestToCompletion":
+                        <option value="PickedUp">Picked Up</option>
+                        <option value="NotPickedUp">Not Picked Up</option>
+                        <option value="ClosestToCompletion">Closest To Completion</option>
+                        <option value="FarthestToCompletion" selected>Farthest to Completion</option>
+                        break;
+
+                    default:
+                        <option value="" selected>- Select an Option -</option>
+                        <option value="PickedUp">Picked Up</option>
+                        <option value="NotPickedUp">Not Picked Up</option>
+                        <option value="ClosestToCompletion">Closest To Completion</option>
+                        <option value="FarthestToCompletion">Farthest to Completion</option>
+                        break;
+                }
             </select>
         </div>
     </form>
 </div>
 <table class="table">
     <tbody>
-        @foreach (OpenQuote oq in Model)
+        @foreach (ReviewQuote rq in Model.ReviewQuotes)
         {
             <tr>
                 <td>
                     <div>
                         <div class="text-center">
-                            <h3>@oq.Quote.Name</h3>
-                            <h4>$@oq.TotalCost</h4>
-                            <p style="font-size: 19px;">@oq.Quote.DateQuoted</p>
+                            <h3>@rq.Name</h3>
+                            <h4>$@rq.TotalCost</h4>
+                            <p style="font-size: 19px;">@rq.DateQuoted</p>
                         </div>
                         <div class="row">
                             <div class="col-8">
-                                @for (int i = 0; i < oq.Quote.Shapes.Count; i++)
+                                @for (int i = 0; i < rq.Shapes.Count; i++)
                                 {
-                                    string percentage = (((decimal)oq.Quote.Shapes[i].NumCompleted / (decimal)oq.Quote.Shapes[i].Qty) * 100).ToString("n0");
+                                    string percentage = (((decimal)rq.Shapes[i].Completed / (decimal)rq.Shapes[i].Qty) * 100).ToString("n0");
                                     <div class="row">
-                                        <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + oq.Quote.Shapes[i].BarSize) Bar, @oq.Quote.Shapes[i].LegCount Legs</div>
-                                        <div class="text-right col">Completed: @(oq.Quote.Shapes[i].NumCompleted + "/" + oq.Quote.Shapes[i].Qty)</div>
-                                    </div>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@oq.Quote.Shapes[i].NumCompleted" aria-valuemin="0" aria-valuemax="@oq.Quote.Shapes[i].Qty">@percentage%</div>
+                                        <div class="text-left col">@(i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString()) Shape: @("#" + rq.Shapes[i].BarSize) Bar, @rq.Shapes[i].Legs.Count Legs</div>
+                                        <div class="text-right col">Completed: @(rq.Shapes[i].Completed + "/" + rq.Shapes[i].Qty)</div>
                                     </div>
                                 }
                             </div>
                             <div class="col-4">
                                 <div class="row">
                                     <div class="col-12 text-center" style="padding-top: 20px">
-                                        <a class="btn btn-primary text-center" style="width: 150px;" asp-action="ReviewClosed" asp-route-quoteID=@oq.Quote.QuoteID>Details</a>
+                                        <a class="btn btn-primary text-center" style="width: 150px;" asp-action="ReviewClosed" asp-route-quoteID=@rq.QuoteID>Details</a>
                                     </div>
                                 </div>
-                                @if (oq.Quote.PickedUp == true)
+                                @if (rq.PickedUp == true)
                                 {
                                     <div class="row">
                                         <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
@@ -85,3 +149,5 @@
         }
     </tbody>
 </table>
+
+@await Html.PartialAsync("~/Views/Shared/_PartialPopUp.cshtml", new CreateQuote())
