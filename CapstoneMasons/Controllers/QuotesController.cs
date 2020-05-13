@@ -1310,17 +1310,22 @@ namespace CapstoneMasons.Controllers
         //[ValidateAntiForgeryToken]
         private async Task<Quote> UpdatePrices(Quote quote)
         {
+            for (int i = quote.Costs.Count - 1; i >= 0; i--)
+            {
+                await repoC.DeleteCostByIdAsync(quote.Costs[i].CostID);
+            }
             quote.Costs.Clear();
+
             var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             //var sumLegs = 0m;
             //var total = 0m;
 
-            foreach (Shape shape in quote.Shapes)
+            foreach (int barSize in KnownObjects.ValidRebarSizes)
             {
                 Cost bar = null;
                 Cost cut = null;
                 Cost bend = null;
-                switch(shape.BarSize)
+                switch(barSize)
                 {
                     case 3:
                         bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3GlobalCost.Name);
@@ -1345,7 +1350,7 @@ namespace CapstoneMasons.Controllers
                 }
                 var barCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.BarCost,
+                    Name = barSize.ToString() + KnownObjects.BarCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == bar.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
@@ -1355,7 +1360,7 @@ namespace CapstoneMasons.Controllers
 
                 var cutCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.CutCost,
+                    Name = barSize.ToString() + KnownObjects.CutCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == cut.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
@@ -1366,7 +1371,7 @@ namespace CapstoneMasons.Controllers
 
                 var bendCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.BendCost,
+                    Name = barSize.ToString() + KnownObjects.BendCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == bend.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
