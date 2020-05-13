@@ -550,7 +550,7 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Open", "false");
-            return RedirectToAction("Index");
+            return RedirectToAction("ReviewClosed", new { quoteID = quoteID });
         }
 
         [HttpGet]
@@ -585,7 +585,7 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Open", "true");
-            return RedirectToAction("Closed");
+            return RedirectToAction("ReviewOpen", new { quoteID = quoteID });
         }
 
         #region So Jacob doesn't have to keep scrolling past these

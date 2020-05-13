@@ -159,15 +159,22 @@
         {
             <div class="text-center">
                 <span class="font-weight-bold">#@rL.BarSize Remnants: </span>
-                @for (int i = 0; i < rL.Remnants.Count; i++)
+                @if (rL.Remnants.Count > 0)
                 {
-                    Remnant r = rL.Remnants[i];
-                    string comma = "";
-                    if (i < rL.Remnants.Count - 1)
+                    for (int i = 0; i < rL.Remnants.Count; i++)
                     {
-                        comma = ",";
+                        Remnant r = rL.Remnants[i];
+                        string comma = "";
+                        if (i < rL.Remnants.Count - 1)
+                        {
+                            comma = ",";
+                        }
+                        <span>(@r.Length.ToString(tostring)" x @r.Qty)@comma</span>
                     }
-                    <span>(@r.Length.ToString(tostring)" x @r.Qty)@comma</span>
+                }
+                else
+                {
+                    <span>None</span>
                 }
             </div>
         }
@@ -254,20 +261,27 @@
                 </div>
                 <div class="text-center">
                     <span class="font-weight-bold">Remnants: </span>
-                    @for (int j = 0; j < rS.Remnants.Count; j++)
+                    @if (rS.Remnants.Count > 0)
                     {
-                        Remnant r = rS.Remnants[j];
-                        string comma = "";
-                        string used = "Will Be";
-                        if (j < rS.Remnants.Count - 1)
+                        for (int j = 0; j < rS.Remnants.Count; j++)
                         {
-                            comma = ",";
+                            Remnant r = rS.Remnants[j];
+                            string comma = "";
+                            string used = "Will Be";
+                            if (j < rS.Remnants.Count - 1)
+                            {
+                                comma = ",";
+                            }
+                            if (!r.UsedAgain)
+                            {
+                                used = "Not";
+                            }
+                            <span>(@r.Length.ToString(tostring)" x @r.Qty) @used Used Again<span>@comma</span></span>
                         }
-                        if (!r.UsedAgain)
-                        {
-                            used = "Not";
-                        }
-                        <span>(@r.Length.ToString(tostring)" x @r.Qty) @used Used Again<span>@comma</span></span>
+                    }
+                    else
+                    {
+                        <span>None</span>
                     }
                 </div>
             </div>
