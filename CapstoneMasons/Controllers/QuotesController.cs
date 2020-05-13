@@ -12,6 +12,7 @@ using CapstoneMasons.Logic_Models;
 using CapstoneMasons.Infrastructure;
 using Microsoft.AspNetCore.Connections.Features;
 using Org.BouncyCastle.Asn1.X509;
+using Microsoft.Extensions.Primitives;
 
 namespace CapstoneMasons.Controllers
 {
@@ -405,6 +406,28 @@ namespace CapstoneMasons.Controllers
         public async Task<IActionResult> ReviewQuote(int quoteID)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
+
+            for (int i = 0; i < q.Shapes.Count; i++)
+            {
+                Shape s = q.Shapes[i];
+                string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
+                decimal cutLength = 0;
+                if (q.UseFormulas)
+                {
+                    cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    cutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
+                if (cutLength > 240)
+                {
+                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    return View("Create", q);
+                }
+            }
 
             q.DateQuoted = TimeZoneInfo.ConvertTime(DateTime.Now,
                  TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
