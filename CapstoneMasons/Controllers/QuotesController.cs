@@ -1071,6 +1071,7 @@ namespace CapstoneMasons.Controllers
         private async Task<List<ReviewLeg>> CreateLegsAsync(Shape s)
         {
             List<ReviewLeg> rLList = new List<ReviewLeg>();
+            s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
             foreach (Leg l in s.Legs)
             {
                 ReviewLeg rL = new ReviewLeg();

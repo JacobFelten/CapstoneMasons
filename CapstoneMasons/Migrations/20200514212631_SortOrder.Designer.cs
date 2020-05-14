@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneMasons.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200507220429_migration")]
-    partial class migration
+    [Migration("20200514212631_SortOrder")]
+    partial class SortOrder
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -99,6 +99,9 @@ namespace CapstoneMasons.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("ShapeID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
                         .HasColumnType("int");
 
                     b.HasKey("LegID");

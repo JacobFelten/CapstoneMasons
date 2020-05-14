@@ -99,6 +99,9 @@ namespace CapstoneMasons.Migrations
                     b.Property<int?>("ShapeID")
                         .HasColumnType("int");
 
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
                     b.HasKey("LegID");
 
                     b.HasIndex("MandrelID");
