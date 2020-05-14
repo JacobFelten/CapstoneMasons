@@ -167,11 +167,11 @@
             <div>*Click Update Prices when the costs of rebar have changed and you want to recalculate the total cost of this order/quote based on those new rebar costs</div>
             @if (Model.ReviewQuote.NeededFormulas != null && Model.ReviewQuote.NeededFormulas.Count > 0)
             {
-                <div class="text-center">
+                <div class="text-center alert alert-warning alert-dismissible fade show" role="alert" style="padding-right: 20px;">
                     <h4>The following formulas are needed if the order is to be calculated with user entered formulas:</h4>
                     @foreach (Formula f in Model.ReviewQuote.NeededFormulas)
                     {
-                        <div class="text-center">Bar Size: @f.BarSize, Degree: @f.Degree&#176;, Mandrel: @f.Mandrel.Name</div>
+                        <div class="text-center"><strong>Bar Size: </strong>@f.BarSize, <strong>Degree:</strong> @f.Degree&#176;, <strong>Mandrel:</strong> @f.Mandrel.Name</div>
                     }
                 </div>
             }
