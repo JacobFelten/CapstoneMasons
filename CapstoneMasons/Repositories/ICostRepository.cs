@@ -18,6 +18,8 @@ namespace CapstoneMasons.Repositories
 
         public Task<Cost> GetCostByIdAsync(int? id);
 
+        public Task<bool> DeleteCostByIdAsync(int? id);
+
         public Task<bool> UpdateCostAsync(Cost oldC, Cost newC);
 
         public Task<Cost> FindCostByNameAsync(string costName);

@@ -163,14 +163,6 @@ namespace CapstoneMasons.Repositories
                  TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
                 });
 
-                context.Costs.Add(new Cost
-                {
-                    Name = KnownObjects.MinimumOrderCost.Name,
-                    Price = 200.00M,
-                    LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
-                 TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
-                });
-
                 context.SaveChanges();
             }
         }
