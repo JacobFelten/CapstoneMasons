@@ -29,19 +29,22 @@ function deleteShape(ShapeNumb) {
     if (numbShapes.value < 2) {//making sure you dont delete the last shape
         alert("You cant delete the only shape");
     } else {
-        var r = confirm("Are you sure you want to delete Shape #" + ShapeNumb);
+        ShapeNumb;
+        var r = confirm("Are you sure you want to delete Shape #" + (ShapeNumb));
         if (r == true) {
+            ShapeNumb;
             numbShapes.value = numbShapes.value -1;//setting bogus values to know which shape to delete
             document.getElementById(`quantityShape${ShapeNumb}`).min = -9;
             document.getElementById(`quantityShape${ShapeNumb}`).max = -9;
             document.getElementById(`quantityShape${ShapeNumb}`).value = -9;
-            var LegNumb = 0;
-            var leg = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
-            leg.value = -9;
-            while (leg != null) {
-                leg.value = -9;
+            var LegNumb = 1;
+            var legLenght = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
+            while (legLenght != null) {
+                legLenght.value = -9;
+                legLenght.min = -9;
+                legLenght.max = -9;
                 LegNumb++;
-                leg = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
+                legLenght = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
             }
 
             LegNumb = 1;
@@ -67,6 +70,28 @@ function hideDeletedShapes() {//hide previously deleted shapes to "mitigate" bug
         if (document.getElementById(`quantityShape${ShapeNumb}`).value == -9
             && document.getElementById(`Shape${ShapeNumb}.Leg${ShapeNumb}.lenght`).value == -9)
             document.getElementById(`shape-body${ShapeNumb}`).style.display = none;
+            document.getElementById(`quantityShape${ShapeNumb}`).min = -9;//rehide and make shape marked to delete
+            document.getElementById(`quantityShape${ShapeNumb}`).max = -9;
+
+            var LegNumb = 1;
+            var legLenght = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
+            while (legLenght != null) {
+                legLenght.value = -9;
+                legLenght.min = -9;
+                legLenght.max = -9;
+                LegNumb++;
+                legLenght = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.lenght`);
+            }
+
+            LegNumb = 1;
+            var legDegree = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.degree`);
+            while (legDegree != null) {
+                legDegree.min = -9;
+                legDegree.max = -9;
+                legDegree.value = -9;
+                LegNumb++;
+                legDegree = document.getElementById(`Shape${ShapeNumb}.Leg${LegNumb}.degree`);
+            }
         }
 }
 //

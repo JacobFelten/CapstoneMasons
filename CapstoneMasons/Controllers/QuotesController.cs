@@ -337,16 +337,21 @@ namespace CapstoneMasons.Controllers
             if (ModelState.IsValid)
             {//Refactors  to Quote
                 q.UseFormulas = false;
-                for (var i = 0; i < q.Shapes.Count; i++)
+                for (var i = q.Shapes.Count-1; i > -1; i--)
                 {
+
                     if (q.Shapes[i].Qty == -9 && q.Shapes[i].Legs[0].Length == -9)
                     {
                         q.Shapes.RemoveAt(i);
                     }
-                    for (var j = 0; j < q.Shapes[i].Legs.Count-1; j++)
+                    else
                     {
-                        q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
+                        for (var j = 0; j < q.Shapes[i].Legs.Count - 1; j++)
+                        {
+                            q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
+                        }
                     }
+
                 }
                 await repo.AddQuoteAsync(q);
                 //var quotes = await repo.Quotes;
@@ -364,6 +369,7 @@ namespace CapstoneMasons.Controllers
                         {
                             invalidLeg = true;
                             invalidShape = q.Shapes.IndexOf(s);
+                            invalidShape++;
                         }
                     }
                 }
@@ -1886,7 +1892,7 @@ namespace CapstoneMasons.Controllers
                 ShapeID = shape.ShapeID,
                 BarSize = shape.BarSize,
                 Qty = shape.Qty,
-                NumCompleted = 0,
+                NumCompleted = shape.Completed,
                 LegCount = shape.Legs.Count()
             };
             
