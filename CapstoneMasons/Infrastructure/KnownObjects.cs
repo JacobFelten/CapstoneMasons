@@ -114,9 +114,5 @@ namespace CapstoneMasons.Infrastructure
         {
             Name = "SetupCharge" + GlobalKeyWord
         };
-        public static Cost MinimumOrderCost = new Cost
-        {
-            Name = "MinimumOrderCost"
-        };
     }
 }

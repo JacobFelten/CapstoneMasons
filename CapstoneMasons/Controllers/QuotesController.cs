@@ -12,6 +12,7 @@ using CapstoneMasons.Logic_Models;
 using CapstoneMasons.Infrastructure;
 using Microsoft.AspNetCore.Connections.Features;
 using Org.BouncyCastle.Asn1.X509;
+using Microsoft.Extensions.Primitives;
 
 namespace CapstoneMasons.Controllers
 {
@@ -412,6 +413,28 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            for (int i = 0; i < q.Shapes.Count; i++)
+            {
+                Shape s = q.Shapes[i];
+                string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
+                decimal cutLength = 0;
+                if (q.UseFormulas)
+                {
+                    cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    cutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
+                if (cutLength > 240)
+                {
+                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    return View("Create", q);
+                }
+            }
+
             q.DateQuoted = TimeZoneInfo.ConvertTime(DateTime.Now,
                  TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
 
@@ -556,7 +579,7 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Open", "false");
-            return RedirectToAction("Index");
+            return RedirectToAction("ReviewClosed", new { quoteID = quoteID });
         }
 
         [HttpGet]
@@ -591,7 +614,7 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Open", "true");
-            return RedirectToAction("Closed");
+            return RedirectToAction("ReviewOpen", new { quoteID = quoteID });
         }
 
         #region So Jacob doesn't have to keep scrolling past these
@@ -1054,6 +1077,7 @@ namespace CapstoneMasons.Controllers
         private async Task<List<ReviewLeg>> CreateLegsAsync(Shape s)
         {
             List<ReviewLeg> rLList = new List<ReviewLeg>();
+            s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
             foreach (Leg l in s.Legs)
             {
                 ReviewLeg rL = new ReviewLeg();
@@ -1316,17 +1340,22 @@ namespace CapstoneMasons.Controllers
         //[ValidateAntiForgeryToken]
         private async Task<Quote> UpdatePrices(Quote quote)
         {
+            for (int i = quote.Costs.Count - 1; i >= 0; i--)
+            {
+                await repoC.DeleteCostByIdAsync(quote.Costs[i].CostID);
+            }
             quote.Costs.Clear();
+
             var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             //var sumLegs = 0m;
             //var total = 0m;
 
-            foreach (Shape shape in quote.Shapes)
+            foreach (int barSize in KnownObjects.ValidRebarSizes)
             {
                 Cost bar = null;
                 Cost cut = null;
                 Cost bend = null;
-                switch(shape.BarSize)
+                switch(barSize)
                 {
                     case 3:
                         bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3GlobalCost.Name);
@@ -1351,7 +1380,7 @@ namespace CapstoneMasons.Controllers
                 }
                 var barCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.BarCost,
+                    Name = barSize.ToString() + KnownObjects.BarCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == bar.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
@@ -1361,7 +1390,7 @@ namespace CapstoneMasons.Controllers
 
                 var cutCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.CutCost,
+                    Name = barSize.ToString() + KnownObjects.CutCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == cut.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
@@ -1372,7 +1401,7 @@ namespace CapstoneMasons.Controllers
 
                 var bendCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.BendCost,
+                    Name = barSize.ToString() + KnownObjects.BendCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == bend.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
