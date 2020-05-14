@@ -55,6 +55,25 @@ namespace CapstoneMasons.Repositories
                 
         }
 
+        public async Task<bool> DeleteCostByIdAsync(int? id)
+        {
+            if (id != null)
+            {
+                foreach (Cost c in await Costs)
+                    if (c.CostID == id)
+                    {
+                        context.Costs.Remove(c);
+                        context.SaveChanges();
+                        return true;
+                    }                       
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         //Make sure that oldC and newC are not the same before doing this method
         public Task<bool> UpdateCostAsync(Cost oldC, Cost newC)
         {
