@@ -325,7 +325,10 @@ namespace CapstoneMasons.Controllers
 
                 for (var j = 0; j < q.LegsInShapes[i]; j++)
                 {
-                    quote.Shapes[i].Legs.Add(new Leg() { });
+                    quote.Shapes[i].Legs.Add(new Leg()
+                    {
+                        SortOrder = j
+                    });
                 }
             }
 

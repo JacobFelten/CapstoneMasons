@@ -136,7 +136,7 @@
                                         </div>
                                     </div>
                                     @for (int leg = 0; leg < Model.Shapes[i].Legs.Count; leg++)
-                                    {
+                                    {<input value="@Model.Shapes[i].Legs[leg].SortOrder" name="Shapes[@(i.ToString())].Legs[@leg].SortOrder" hidden />
                                         <div class="row" style="padding-left: 10px; padding-right: 10px;">
                                             <div class="col-4 form-group">
                                                 <label>
