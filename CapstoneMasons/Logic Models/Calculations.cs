@@ -120,7 +120,7 @@ namespace CapstoneMasons.Logic_Models
             total_flat_blank = total_crude_length - Total_BD;
 
 //total_shape_length = Math.Round(total_shape_length * KnownObjects.RoundToNth, MidpointRounding.ToEven) / KnownObjects.RoundToNth;
-            total_flat_blank = Math.Round(total_flat_blank * KnownObjects.RoundToNth, MidpointRounding.ToEven) / KnownObjects.RoundToNth;
+            total_flat_blank = Math.Ceiling(total_flat_blank * KnownObjects.RoundToNth) / KnownObjects.RoundToNth;
 
 //return total_shape_length; //returns the summation of all the parts of the shape
             return total_flat_blank;

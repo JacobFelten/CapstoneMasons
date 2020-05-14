@@ -419,6 +419,7 @@ namespace CapstoneMasons.Controllers
             for (int i = 0; i < q.Shapes.Count; i++)
             {
                 Shape s = q.Shapes[i];
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
                 decimal cutLength = 0;
                 if (q.UseFormulas)
@@ -748,6 +749,7 @@ namespace CapstoneMasons.Controllers
             List<ReviewShape> rSList = new List<ReviewShape>();
             foreach (Shape s in q.Shapes)
             {
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 ReviewShape rS = new ReviewShape();
                 rS.QuoteID = q.QuoteID;
                 rS.ShapeID = s.ShapeID;
@@ -1080,7 +1082,7 @@ namespace CapstoneMasons.Controllers
         private async Task<List<ReviewLeg>> CreateLegsAsync(Shape s)
         {
             List<ReviewLeg> rLList = new List<ReviewLeg>();
-            s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+
             foreach (Leg l in s.Legs)
             {
                 ReviewLeg rL = new ReviewLeg();
