@@ -422,7 +422,8 @@ namespace CapstoneMasons.Controllers
                 s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
                 decimal cutLength = 0;
-                if (q.UseFormulas)
+                List<Formula> useFormulas = await CanUseFormulas(q);
+                if (useFormulas.Count == 0)
                 {
                     cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
                 }
@@ -435,6 +436,7 @@ namespace CapstoneMasons.Controllers
                 if (cutLength > 240)
                 {
                     ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    await repo.DeleteQuoteAsync(q);
                     return View("Create", q);
                 }
             }
@@ -454,28 +456,14 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup, string useFormulas)
+        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", name);
             await repo.UpdateQuoteSimpleAsync(q, "OrderNum", orderNumber);
             await repo.UpdateQuoteSimpleAsync(q, "Discount", discount.ToString());
             await repo.UpdateQuoteSimpleAsync(q, "AddSetup", setup);
-            if (useFormulas == null)
-                useFormulas = "false";
-            var neededFormulas = new List<Formula>();
-            if (bool.Parse(useFormulas))
-            {
-                neededFormulas = (List<Formula>)await CanUseFormulas(q);
-                if (neededFormulas.Count == 0)
-                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
-            else
-            {
-                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
             var rQ = await FillReviewQuote(q);
-            rQ.NeededFormulas = neededFormulas;
             return View("ReviewQuote", rQ);
         }
 
@@ -515,7 +503,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string useFormulas, string pickedUp)
+        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string pickedUp)
         {
             Quote q = await repo.GetQuoteByIdAsync(rO.QuoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", rO.Name);
@@ -525,21 +513,7 @@ namespace CapstoneMasons.Controllers
             if (pickedUp == null)
                 pickedUp = "false";
             await repo.UpdateQuoteSimpleAsync(q, "PickedUp", pickedUp);
-            if (useFormulas == null)
-                useFormulas = "false";
-            var neededFormulas = new List<Formula>();
-            if (bool.Parse(useFormulas))
-            {
-                neededFormulas = (List<Formula>)await CanUseFormulas(q);
-                if (neededFormulas.Count == 0)
-                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
-            else
-            {
-                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
             var rQ = await FillReviewQuote(q);
-            rQ.NeededFormulas = neededFormulas;
             rO.ReviewQuote = rQ;
 
             for (int i = 0; i < rQ.Shapes.Count; i++)
@@ -718,7 +692,14 @@ namespace CapstoneMasons.Controllers
             rQ.OrderNum = q.OrderNum; //done
             rQ.AddSetup = q.AddSetup;
             rQ.Discount = q.Discount;
+
+            rQ.NeededFormulas = await CanUseFormulas(q);
+            if (rQ.NeededFormulas.Count == 0 && !q.UseFormulas)
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", "true");
+            else if (rQ.NeededFormulas.Count > 0 && q.UseFormulas)
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", "false");
             rQ.UseFormulas = q.UseFormulas;
+
             rQ.PickedUp = q.PickedUp;
 
             //After filling the shapes with instructions the shapes are sorted by bar size
