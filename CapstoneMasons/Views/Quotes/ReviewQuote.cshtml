@@ -246,6 +246,25 @@
                             {
                                 isRight = "false";
                             }
+
+							decimal mandrel = 0;
+							if (@Model.Shapes[i].Legs[j].Mandrel == "None")
+							{
+								mandrel = 0.5m;
+							}
+							else if (@Model.Shapes[i].Legs[j].Mandrel == "Small")
+							{
+								mandrel = 1.00m;
+							}
+							else if (@Model.Shapes[i].Legs[j].Mandrel == "Medium")
+							{
+								mandrel = 1.5m;
+							}
+							else if (@Model.Shapes[i].Legs[j].Mandrel == "Large")
+							{
+								mandrel = 2.25m;
+							}
+
                             ReviewLeg rL = rS.Legs[j];
                             int num = j + 1;
                             <div class="leg">
@@ -260,7 +279,9 @@
                             var leg = {
                                 Length: @Model.Shapes[i].Legs[j].Length,
                                 Degree: @Model.Shapes[i].Legs[j].Degree,
-                                IsRight: @isRight
+                                IsRight: @isRight,
+								Mandrel: @mandrel,
+								Size: @Model.Shapes[i].BarSize
                             };
                             legs[@j] = leg;
                             </script>
