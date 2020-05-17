@@ -14,5 +14,6 @@ namespace CapstoneMasons.ViewModels
         public string PinNumber { get; set; }
         public decimal InGained { get; set; }
         public bool IsRight { get; set; }
+        public int SortOrder { get; set; }
     }
 }
