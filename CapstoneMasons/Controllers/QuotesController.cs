@@ -1088,7 +1088,6 @@ namespace CapstoneMasons.Controllers
                 rL.Length = l.Length;
                 rL.Degree = l.Degree;
                 rL.IsRight = l.IsRight;
-                rL.SortOrder = l.SortOrder;
                 if (l.Mandrel != null)
                     rL.Mandrel = l.Mandrel.Name;
                 else
@@ -1933,32 +1932,17 @@ namespace CapstoneMasons.Controllers
             List<Leg> newLegs = new List<Leg>();
             for (int legIndex = 0; legIndex<shape.Legs.Count; legIndex++)
             {
-                if(oldShape.Legs[legIndex] != null)
+                var newLeg = new Leg()
                 {
-                    var newLeg = new Leg()
-                    {
-                        Degree = shape.Legs[legIndex].Degree,
-                        Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
-                        //LegID = oldShape.Legs[legIndex].LegID, this is not ok database gets new ids
-                        IsRight = shape.Legs[legIndex].IsRight,
-                        Length = shape.Legs[legIndex].Length,
-                        SortOrder = shape.Legs[legIndex].SortOrder
-                    };
-                    newShape.Legs.Add(newLeg);
-                }
-                else
-                {
-                    newShape.Legs.Add(new Leg() {
+                    Degree = shape.Legs[legIndex].Degree,
+                    Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
+                    //LegID = oldShape.Legs[legIndex].LegID,
+                    IsRight = shape.Legs[legIndex].IsRight,
+                    Length = shape.Legs[legIndex].Length,
+                    SortOrder = shape.Legs[legIndex].SortOrder
+                };
+                newShape.Legs.Add(newLeg);
 
-                        Degree = shape.Legs[legIndex].Degree,
-                        Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
-                        IsRight = shape.Legs[legIndex].IsRight,
-                        Length = shape.Legs[legIndex].Length,
-                        SortOrder = shape.Legs[legIndex].SortOrder
-                    });
-                    //add new leg to repo
-                }
-                
             }
             await repoS.UpdateShapesAsync(oldShape, newShape);
             if (shape.ReviewOpen == true)
