@@ -55,11 +55,24 @@
         margin-top: 20px;
         margin-bottom: 30px;
     }
+
+    #BackButton {
+        position: fixed; /* Fixed/sticky position */
+        top: 50px; /* Place the button at the top of the page */
+        right: 15px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        padding: 15px; /* Some padding */
+        background-color: #0094ff;
+        color: snow;
+    }
 </style>
 @foreach (var shape in Model.ReviewQuote.Shapes)
 {
     @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
 }
+@await Html.PartialAsync("~/Views/Shared/_PartialNewShapePopUp.cshtml", new ReviewShape());
+
+<a id="BackButton" class="btn btn-md btn-link" data-toggle="modal" data-target="#NewShape">New Shape</a>
 <form method="post">
     <div class="card container">
         <div class="card-header quote-header">

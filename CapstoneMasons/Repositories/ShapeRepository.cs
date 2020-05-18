@@ -68,6 +68,25 @@ namespace CapstoneMasons.Repositories
             return Task.FromResult<bool>(result);
         }
 
+        //public Task<bool> UpdateShapeLegAsync(Leg oldS,Leg newS)
+        //{
+        //    bool result = false;
+        //    if (oldL != null && newL!= null)
+        //    {
+        //        oldS.BarSize = newS.BarSize;
+        //        oldS.LegCount = newS.LegCount;
+        //        oldS.Legs.Clear();
+        //        foreach (Leg l in newS.Legs)
+        //            oldS.Legs.Add(l);
+        //        oldS.Qty = newS.Qty;
+        //        oldS.NumCompleted = newS.NumCompleted;
+        //        context.Shapes.Update(oldS);
+        //        context.SaveChanges();
+        //        result = true;
+        //    }
+        //    return Task.FromResult<bool>(result);
+        //}
+
         public Task<IQueryable<Shape>> GetAllShapesAsync()
         {
             return Task.FromResult<IQueryable<Shape>>(context.Shapes.AsQueryable<Shape>());
@@ -96,9 +115,24 @@ namespace CapstoneMasons.Repositories
             {
                 oldS.BarSize = newS.BarSize;
                 oldS.LegCount = newS.LegCount;
-                oldS.Legs.Clear();
-                foreach (Leg l in newS.Legs)
-                    oldS.Legs.Add(l);
+
+                //oldS.Legs.Clear();
+                foreach (Leg l in oldS.Legs)
+                {
+                    if (l.LegID == 0)
+                        oldS.Legs.Add(l);
+                    else
+                    {
+                        var newL = newS.Legs.FirstOrDefault(leg => leg.SortOrder == l.SortOrder);
+                        l.Mandrel = newL.Mandrel;
+                        l.Length = newL.Length;
+                        l.IsRight = newL.IsRight;
+                        l.Degree = newL.Degree;
+                        l.SortOrder = newL.SortOrder;
+                        context.Legs.Update(l);
+                    }
+                }
+                    
                 oldS.Qty = newS.Qty;
                 oldS.NumCompleted = newS.NumCompleted;
                 context.Shapes.Update(oldS);
