@@ -1088,6 +1088,7 @@ namespace CapstoneMasons.Controllers
                 rL.Length = l.Length;
                 rL.Degree = l.Degree;
                 rL.IsRight = l.IsRight;
+                rL.SortOrder = l.SortOrder;
                 if (l.Mandrel != null)
                     rL.Mandrel = l.Mandrel.Name;
                 else
@@ -1940,7 +1941,8 @@ namespace CapstoneMasons.Controllers
                         Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
                         //LegID = oldShape.Legs[legIndex].LegID, this is not ok database gets new ids
                         IsRight = shape.Legs[legIndex].IsRight,
-                        Length = shape.Legs[legIndex].Length
+                        Length = shape.Legs[legIndex].Length,
+                        SortOrder = shape.Legs[legIndex].SortOrder
                     };
                     newShape.Legs.Add(newLeg);
                 }
@@ -1951,7 +1953,8 @@ namespace CapstoneMasons.Controllers
                         Degree = shape.Legs[legIndex].Degree,
                         Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
                         IsRight = shape.Legs[legIndex].IsRight,
-                        Length = shape.Legs[legIndex].Length
+                        Length = shape.Legs[legIndex].Length,
+                        SortOrder = shape.Legs[legIndex].SortOrder
                     });
                     //add new leg to repo
                 }
