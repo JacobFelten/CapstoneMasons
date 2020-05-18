@@ -357,7 +357,7 @@ namespace CapstoneMasons.Controllers
                     }
 
                 }
-                await repo.AddQuoteAsync(q);
+                
                 //var quotes = await repo.Quotes;
                 //int quoteId = quotes.Last().QuoteID + 1;
                 //q.QuoteID = quoteId;
@@ -377,7 +377,7 @@ namespace CapstoneMasons.Controllers
                         }
                     }
                 }
-
+                await repo.AddQuoteAsync(q);
                 if (invalidLeg)
                 {
                     ModelState.AddModelError(string.Empty, "A leg in shape "+ invalidShape.ToString()+ " and cannot be more than 240 inches");
