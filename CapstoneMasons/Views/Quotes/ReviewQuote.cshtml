@@ -49,6 +49,27 @@
     .quote-body {
         background-color: lightgray;
     }
+    .Edit {
+    }
+        .Edit:hover {
+            text-shadow: 0 0 5px HighlightText;
+            color: Highlight;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    .fa-edit {
+        font-size: 0.5em;
+        color: #F6C700 !important;
+        padding-left: 0;
+    }
+        .fa-edit:hover {
+            text-shadow: 0 0 5px Highlight;
+            color: yellowgreen;
+            cursor: pointer;
+            padding-left: 0;
+            font-size: 0.5em;
+            text-decoration: underline;
+        }
 </style>
 @foreach (var shape in Model.Shapes)
 {
@@ -135,11 +156,11 @@
         </form>
         @if (Model.NeededFormulas != null && Model.NeededFormulas.Count > 0)
         {
-            <div class="text-center">
+            <div class="text-center alert alert-warning alert-dismissible fade show" role="alert" style="padding-right: 20px;">
                 <h4>The following formulas are needed if the order is to be calculated with user entered formulas:</h4>
                 @foreach (Formula f in Model.NeededFormulas)
                 {
-                    <div class="text-center">Bar Size: @f.BarSize, Degree: @f.Degree&#176;, Mandrel: @f.Mandrel.Name</div>
+                    <div class="text-center"><strong>Bar Size: </strong>@f.BarSize, <strong>Degree:</strong> @f.Degree&#176;, <strong>Mandrel:</strong> @f.Mandrel.Name</div>
                 }
             </div>
         }
@@ -159,15 +180,22 @@
         {
             <div class="text-center">
                 <span class="font-weight-bold">#@rL.BarSize Remnants: </span>
-                @for (int i = 0; i < rL.Remnants.Count; i++)
+                @if (rL.Remnants.Count > 0)
                 {
-                    Remnant r = rL.Remnants[i];
-                    string comma = "";
-                    if (i < rL.Remnants.Count - 1)
+                    for (int i = 0; i < rL.Remnants.Count; i++)
                     {
-                        comma = ",";
+                        Remnant r = rL.Remnants[i];
+                        string comma = "";
+                        if (i < rL.Remnants.Count - 1)
+                        {
+                            comma = ",";
+                        }
+                        <span>(@r.Length.ToString(tostring)" x @r.Qty)@comma</span>
                     }
-                    <span>(@r.Length.ToString(tostring)" x @r.Qty)@comma</span>
+                }
+                else
+                {
+                    <span>None</span>
                 }
             </div>
         }
@@ -195,7 +223,7 @@
                         <script>
                             getShapeNames(@(rS.ShapeID));
                         </script>
-                        <a data-toggle="modal" data-target="#modalShapeEdit@(rS.ShapeID)"><i class="fas fa-edit" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: #F6C700;"></i></a>
+                        <a class="Edit" data-toggle="modal" data-target="#modalShapeEdit@(rS.ShapeID)">Edit <i class="fas fa-edit"></i></a>
                         <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.QuoteID" asp-route-returnUrl="ReviewQuote">Delete</a>
                     </h2>
                 </div>
@@ -254,20 +282,27 @@
                 </div>
                 <div class="text-center">
                     <span class="font-weight-bold">Remnants: </span>
-                    @for (int j = 0; j < rS.Remnants.Count; j++)
+                    @if (rS.Remnants.Count > 0)
                     {
-                        Remnant r = rS.Remnants[j];
-                        string comma = "";
-                        string used = "Will Be";
-                        if (j < rS.Remnants.Count - 1)
+                        for (int j = 0; j < rS.Remnants.Count; j++)
                         {
-                            comma = ",";
+                            Remnant r = rS.Remnants[j];
+                            string comma = "";
+                            string used = "Will Be";
+                            if (j < rS.Remnants.Count - 1)
+                            {
+                                comma = ",";
+                            }
+                            if (!r.UsedAgain)
+                            {
+                                used = "Not";
+                            }
+                            <span>(@r.Length.ToString(tostring)" x @r.Qty) @used Used Again<span>@comma</span></span>
                         }
-                        if (!r.UsedAgain)
-                        {
-                            used = "Not";
-                        }
-                        <span>(@r.Length.ToString(tostring)" x @r.Qty) @used Used Again<span>@comma</span></span>
+                    }
+                    else
+                    {
+                        <span>None</span>
                     }
                 </div>
             </div>

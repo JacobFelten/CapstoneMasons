@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CapstoneMasons.Migrations
 {
-    public partial class migration : Migration
+    public partial class SortOrder : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -262,6 +262,7 @@ namespace CapstoneMasons.Migrations
                 {
                     LegID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    SortOrder = table.Column<int>(nullable: false),
                     Length = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Degree = table.Column<int>(nullable: false),
                     MandrelID = table.Column<int>(nullable: true),
