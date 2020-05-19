@@ -534,5 +534,176 @@ namespace CaptstonexUnit
                     Assert.Equal(5, rQ.Shapes[2].Remnants[1].Qty);
                     Assert.False(rQ.Shapes[2].Remnants[1].UsedAgain);
         }
+
+        [Fact]
+        public async Task ReviewQuotePostTest()
+        {
+            //Arrange
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 1,
+                BarSize = 4,
+                Degree = 90,
+                Mandrel = mandrel1,
+                PinNumber = "16.5",
+                InGained = 1.5m,
+                LastChanged = DateTime.Now
+            });
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 2,
+                BarSize = 5,
+                Degree = 90,
+                Mandrel = mandrel2,
+                PinNumber = "15",
+                InGained = 2,
+                LastChanged = DateTime.Now
+            });
+            await repoQ.AddQuoteAsync(quote2);
+
+            //Act
+            ViewResult view = (ViewResult)await controllerQ.ReviewQuote(2, "Billy's Order", "987654", 69.4m, "false");
+            ReviewQuote rQ = (ReviewQuote)view.Model;
+
+            //Assert
+            Assert.Equal(2, rQ.QuoteID);
+
+            Assert.Equal("Billy's Order", rQ.Name);
+
+            Assert.Equal("123456", rQ.OrderNum);
+
+            Assert.Equal(469.4m, rQ.TotalCost);
+
+            Assert.Equal(2, rQ.BarsUsed.Count);
+            Assert.Equal(4, rQ.BarsUsed[0].BarSize);
+            Assert.Equal(14, rQ.BarsUsed[0].NumOfBars);
+            Assert.Equal(10, rQ.BarsUsed[0].BarCost);
+            Assert.Equal(40, rQ.BarsUsed[0].NumOfCuts);
+            Assert.Equal(0.25m, rQ.BarsUsed[0].CutCost);
+            Assert.Equal(80, rQ.BarsUsed[0].NumOfBends);
+            Assert.Equal(0.25m, rQ.BarsUsed[0].BendCost);
+            Assert.Equal(5, rQ.BarsUsed[1].BarSize);
+            Assert.Equal(15, rQ.BarsUsed[1].NumOfBars);
+            Assert.Equal(15, rQ.BarsUsed[1].BarCost);
+            Assert.Equal(90, rQ.BarsUsed[1].NumOfCuts);
+            Assert.Equal(0.33m, rQ.BarsUsed[1].CutCost);
+            Assert.Equal(90, rQ.BarsUsed[1].NumOfBends);
+            Assert.Equal(0.33m, rQ.BarsUsed[1].BendCost);
+
+            Assert.Equal(15, rQ.SetUpCharge);
+
+            Assert.Equal(2, rQ.FinalRemnants.Count);
+            Assert.Equal(4, rQ.FinalRemnants[0].BarSize);
+            Assert.Equal(2, rQ.FinalRemnants[0].Remnants.Count);
+            Assert.Equal(15, rQ.FinalRemnants[0].Remnants[0].Length);
+            Assert.Equal(13, rQ.FinalRemnants[0].Remnants[0].Qty);
+            Assert.False(rQ.FinalRemnants[0].Remnants[0].UsedAgain);
+            Assert.Equal(165, rQ.FinalRemnants[0].Remnants[1].Length);
+            Assert.Equal(1, rQ.FinalRemnants[0].Remnants[1].Qty);
+            Assert.False(rQ.FinalRemnants[0].Remnants[1].UsedAgain);
+            Assert.Equal(2, rQ.FinalRemnants[1].Remnants.Count);
+            Assert.Equal(8, rQ.FinalRemnants[1].Remnants[0].Length);
+            Assert.Equal(10, rQ.FinalRemnants[1].Remnants[0].Qty);
+            Assert.False(rQ.FinalRemnants[1].Remnants[0].UsedAgain);
+            Assert.Equal(20, rQ.FinalRemnants[1].Remnants[1].Length);
+            Assert.Equal(5, rQ.FinalRemnants[1].Remnants[1].Qty);
+            Assert.False(rQ.FinalRemnants[1].Remnants[1].UsedAgain);
+
+            Assert.Equal(3, rQ.Shapes.Count);
+            Assert.Equal(4, rQ.Shapes[0].ShapeID);
+            Assert.Equal(40, rQ.Shapes[0].Qty);
+            Assert.Equal(4, rQ.Shapes[0].BarSize);
+            Assert.Equal(14, rQ.Shapes[0].NumOfBars);
+            Assert.Equal(75, rQ.Shapes[0].CutLength);
+            Assert.Equal(2, rQ.Shapes[0].Instructions.Count);
+            Assert.Equal(3, rQ.Shapes[0].Instructions[0].CutQty);
+            Assert.Equal(240, rQ.Shapes[0].Instructions[0].PerLength);
+            Assert.Equal("Bar", rQ.Shapes[0].Instructions[0].PerType);
+            Assert.Equal(13, rQ.Shapes[0].Instructions[0].ForQty);
+            Assert.Equal(1, rQ.Shapes[0].Instructions[1].CutQty);
+            Assert.Equal(240, rQ.Shapes[0].Instructions[1].PerLength);
+            Assert.Equal("Bar", rQ.Shapes[0].Instructions[1].PerType);
+            Assert.Equal(1, rQ.Shapes[0].Instructions[1].ForQty);
+            Assert.Equal(3, rQ.Shapes[0].Legs.Count);
+            Assert.Equal(30, rQ.Shapes[0].Legs[0].Length);
+            Assert.Equal(90, rQ.Shapes[0].Legs[0].Degree);
+            Assert.Equal("Small", rQ.Shapes[0].Legs[0].Mandrel);
+            Assert.Equal("16.5", rQ.Shapes[0].Legs[0].PinNumber);
+            Assert.Equal(1.5m, rQ.Shapes[0].Legs[0].InGained);
+            Assert.Equal(18, rQ.Shapes[0].Legs[1].Length);
+            Assert.Equal(90, rQ.Shapes[0].Legs[1].Degree);
+            Assert.Equal("Small", rQ.Shapes[0].Legs[1].Mandrel);
+            Assert.Equal("16.5", rQ.Shapes[0].Legs[1].PinNumber);
+            Assert.Equal(1.5m, rQ.Shapes[0].Legs[1].InGained);
+            Assert.Equal(30, rQ.Shapes[0].Legs[2].Length);
+            Assert.Equal(0, rQ.Shapes[0].Legs[2].Degree);
+            Assert.Equal("", rQ.Shapes[0].Legs[2].Mandrel);
+            Assert.Equal("", rQ.Shapes[0].Legs[2].PinNumber);
+            Assert.Equal(0, rQ.Shapes[0].Legs[2].InGained);
+            Assert.Equal(2, rQ.Shapes[0].Remnants.Count);
+            Assert.Equal(15, rQ.Shapes[0].Remnants[0].Length);
+            Assert.Equal(13, rQ.Shapes[0].Remnants[0].Qty);
+            Assert.False(rQ.Shapes[0].Remnants[0].UsedAgain);
+            Assert.Equal(165, rQ.Shapes[0].Remnants[1].Length);
+            Assert.Equal(1, rQ.Shapes[0].Remnants[1].Qty);
+            Assert.False(rQ.Shapes[0].Remnants[1].UsedAgain);
+            Assert.Equal(2, rQ.Shapes[1].ShapeID);
+            Assert.Equal(30, rQ.Shapes[1].Qty);
+            Assert.Equal(5, rQ.Shapes[1].BarSize);
+            Assert.Equal(10, rQ.Shapes[1].NumOfBars);
+            Assert.Equal(70, rQ.Shapes[1].CutLength);
+            Assert.Single(rQ.Shapes[1].Instructions);
+            Assert.Equal(3, rQ.Shapes[1].Instructions[0].CutQty);
+            Assert.Equal(240, rQ.Shapes[1].Instructions[0].PerLength);
+            Assert.Equal("Bar", rQ.Shapes[1].Instructions[0].PerType);
+            Assert.Equal(10, rQ.Shapes[1].Instructions[0].ForQty);
+            Assert.Equal(2, rQ.Shapes[1].Legs.Count);
+            Assert.Equal(36, rQ.Shapes[1].Legs[0].Length);
+            Assert.Equal(90, rQ.Shapes[1].Legs[0].Degree);
+            Assert.Equal("Medium", rQ.Shapes[1].Legs[0].Mandrel);
+            Assert.Equal("15", rQ.Shapes[1].Legs[0].PinNumber);
+            Assert.Equal(2, rQ.Shapes[1].Legs[0].InGained);
+            Assert.Equal(36, rQ.Shapes[1].Legs[1].Length);
+            Assert.Equal(0, rQ.Shapes[1].Legs[1].Degree);
+            Assert.Equal("", rQ.Shapes[1].Legs[1].Mandrel);
+            Assert.Equal("", rQ.Shapes[1].Legs[1].PinNumber);
+            Assert.Equal(0, rQ.Shapes[1].Legs[1].InGained);
+            Assert.Single(rQ.Shapes[1].Remnants);
+            Assert.Equal(30, rQ.Shapes[1].Remnants[0].Length);
+            Assert.Equal(10, rQ.Shapes[1].Remnants[0].Qty);
+            Assert.True(rQ.Shapes[1].Remnants[0].UsedAgain);
+            Assert.Equal(3, rQ.Shapes[2].ShapeID);
+            Assert.Equal(60, rQ.Shapes[2].Qty);
+            Assert.Equal(5, rQ.Shapes[2].BarSize);
+            Assert.Equal(5, rQ.Shapes[2].NumOfBars);
+            Assert.Equal(22, rQ.Shapes[2].CutLength);
+            Assert.Equal(2, rQ.Shapes[2].Instructions.Count);
+            Assert.Equal(1, rQ.Shapes[2].Instructions[0].CutQty);
+            Assert.Equal(30, rQ.Shapes[2].Instructions[0].PerLength);
+            Assert.Equal("Remnant", rQ.Shapes[2].Instructions[0].PerType);
+            Assert.Equal(10, rQ.Shapes[2].Instructions[0].ForQty);
+            Assert.Equal(10, rQ.Shapes[2].Instructions[1].CutQty);
+            Assert.Equal(240, rQ.Shapes[2].Instructions[1].PerLength);
+            Assert.Equal("Bar", rQ.Shapes[2].Instructions[1].PerType);
+            Assert.Equal(5, rQ.Shapes[2].Instructions[1].ForQty);
+            Assert.Equal(2, rQ.Shapes[2].Legs.Count);
+            Assert.Equal(12, rQ.Shapes[2].Legs[0].Length);
+            Assert.Equal(90, rQ.Shapes[2].Legs[0].Degree);
+            Assert.Equal("Medium", rQ.Shapes[2].Legs[0].Mandrel);
+            Assert.Equal("15", rQ.Shapes[2].Legs[0].PinNumber);
+            Assert.Equal(2, rQ.Shapes[2].Legs[0].InGained);
+            Assert.Equal(12, rQ.Shapes[2].Legs[1].Length);
+            Assert.Equal(0, rQ.Shapes[2].Legs[1].Degree);
+            Assert.Equal("", rQ.Shapes[2].Legs[1].Mandrel);
+            Assert.Equal("", rQ.Shapes[2].Legs[1].PinNumber);
+            Assert.Equal(0, rQ.Shapes[2].Legs[1].InGained);
+            Assert.Equal(2, rQ.Shapes[2].Remnants.Count);
+            Assert.Equal(8, rQ.Shapes[2].Remnants[0].Length);
+            Assert.Equal(10, rQ.Shapes[2].Remnants[0].Qty);
+            Assert.False(rQ.Shapes[2].Remnants[0].UsedAgain);
+            Assert.Equal(20, rQ.Shapes[2].Remnants[1].Length);
+            Assert.Equal(5, rQ.Shapes[2].Remnants[1].Qty);
+            Assert.False(rQ.Shapes[2].Remnants[1].UsedAgain);
+        }
     }
 }
