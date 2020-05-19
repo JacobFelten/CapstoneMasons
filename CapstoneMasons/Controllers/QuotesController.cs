@@ -1936,7 +1936,6 @@ namespace CapstoneMasons.Controllers
                 {
                     Degree = shape.Legs[legIndex].Degree,
                     Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
-                    //LegID = oldShape.Legs[legIndex].LegID,
                     IsRight = shape.Legs[legIndex].IsRight,
                     Length = shape.Legs[legIndex].Length,
                     SortOrder = shape.Legs[legIndex].SortOrder
@@ -1944,7 +1943,15 @@ namespace CapstoneMasons.Controllers
                 newShape.Legs.Add(newLeg);
 
             }
-            await repoS.UpdateShapesAsync(oldShape, newShape);
+            if (shape.QuoteID == 0)
+            {
+                await repoS.AddShapeAsync(shape.QuoteID,newShape);
+            }
+            else
+            {
+                await repoS.UpdateShapesAsync(oldShape, newShape);
+            }
+            
             if (shape.ReviewOpen == true)
             {
                 return RedirectToAction("ReviewOpen", new { quoteID = shape.QuoteID });
