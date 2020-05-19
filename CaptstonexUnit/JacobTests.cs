@@ -48,6 +48,12 @@ namespace CaptstonexUnit
         private Cost cost12;
         private Cost cost13;
         private Cost cost14;
+        private Cost cost15;
+        private Cost cost16;
+        private Cost cost17;
+        private Cost cost18;
+        private Cost cost19;
+        private Cost cost20;
         private CreateShape cS;
 
         public JacobTests ()
@@ -76,8 +82,7 @@ namespace CaptstonexUnit
             repoQ = new FakeQuoteRepository();
             repoF = new FakeFormulaRepository();
             repoC = new FakeCostRepository();
-            repoS = new FakeShapeRepository();
-            controllerQ = new QuotesController(repoQ, repoF, repoC,repoS);
+            controllerQ = new QuotesController(repoQ, repoF, repoC, repoS);
             #region Mandrels
             mandrel1 = new Mandrel
             {
@@ -272,6 +277,50 @@ namespace CaptstonexUnit
                 LastChanged = new DateTime()
             };
             #endregion
+            #region Extra Costs
+            cost15 = new Cost
+            {
+                CostID = 15,
+                Name = KnownObjects.Bar3GlobalCost.Name,
+                Price = 10,
+                LastChanged = new DateTime()
+            };
+            cost16 = new Cost
+            {
+                CostID = 16,
+                Name = KnownObjects.Bar3CutCost.Name,
+                Price = 0.25m,
+                LastChanged = new DateTime()
+            };
+            cost17 = new Cost
+            {
+                CostID = 17,
+                Name = KnownObjects.Bar3BendCost.Name,
+                Price = 0.25m,
+                LastChanged = new DateTime()
+            };
+            cost18 = new Cost
+            {
+                CostID = 18,
+                Name = KnownObjects.Bar6GlobalCost.Name,
+                Price = 15,
+                LastChanged = new DateTime()
+            };
+            cost19 = new Cost
+            {
+                CostID = 19,
+                Name = KnownObjects.Bar6CutCost.Name,
+                Price = 0.33m,
+                LastChanged = new DateTime()
+            };
+            cost20 = new Cost
+            {
+                CostID = 20,
+                Name = KnownObjects.Bar6BendCost.Name,
+                Price = 0.33m,
+                LastChanged = new DateTime()
+            };
+            #endregion
             quote2 = new Quote
             {
                 QuoteID = 2,
@@ -291,6 +340,12 @@ namespace CaptstonexUnit
             repoC.AddCostAsync(cost5);
             repoC.AddCostAsync(cost6);
             repoC.AddCostAsync(cost7);
+            repoC.AddCostAsync(cost15);
+            repoC.AddCostAsync(cost16);
+            repoC.AddCostAsync(cost17);
+            repoC.AddCostAsync(cost18);
+            repoC.AddCostAsync(cost19);
+            repoC.AddCostAsync(cost20);
         }
 
         [Fact]
@@ -411,7 +466,7 @@ namespace CaptstonexUnit
                     Assert.Equal(1.5m, rQ.Shapes[0].Legs[1].InGained);
                     Assert.Equal(30, rQ.Shapes[0].Legs[2].Length);
                     Assert.Equal(0, rQ.Shapes[0].Legs[2].Degree);
-                    Assert.Null(rQ.Shapes[0].Legs[2].Mandrel);
+                    Assert.Equal("", rQ.Shapes[0].Legs[2].Mandrel);
                     Assert.Equal("", rQ.Shapes[0].Legs[2].PinNumber);
                     Assert.Equal(0, rQ.Shapes[0].Legs[2].InGained);
                 Assert.Equal(2, rQ.Shapes[0].Remnants.Count);
@@ -439,7 +494,7 @@ namespace CaptstonexUnit
                     Assert.Equal(2, rQ.Shapes[1].Legs[0].InGained);
                     Assert.Equal(36, rQ.Shapes[1].Legs[1].Length);
                     Assert.Equal(0, rQ.Shapes[1].Legs[1].Degree);
-                    Assert.Null(rQ.Shapes[1].Legs[1].Mandrel);
+                    Assert.Equal("", rQ.Shapes[1].Legs[1].Mandrel);
                     Assert.Equal("", rQ.Shapes[1].Legs[1].PinNumber);
                     Assert.Equal(0, rQ.Shapes[1].Legs[1].InGained);
                 Assert.Single(rQ.Shapes[1].Remnants);
@@ -468,7 +523,7 @@ namespace CaptstonexUnit
                     Assert.Equal(2, rQ.Shapes[2].Legs[0].InGained);
                     Assert.Equal(12, rQ.Shapes[2].Legs[1].Length);
                     Assert.Equal(0, rQ.Shapes[2].Legs[1].Degree);
-                    Assert.Null(rQ.Shapes[2].Legs[1].Mandrel);
+                    Assert.Equal("", rQ.Shapes[2].Legs[1].Mandrel);
                     Assert.Equal("", rQ.Shapes[2].Legs[1].PinNumber);
                     Assert.Equal(0, rQ.Shapes[2].Legs[1].InGained);
                 Assert.Equal(2, rQ.Shapes[2].Remnants.Count);
