@@ -1943,11 +1943,7 @@ namespace CapstoneMasons.Controllers
                 newShape.Legs.Add(newLeg);
 
             }
-            if (shape.QuoteID == 0)
-            {
-                await repoS.AddShapeAsync(shape.QuoteID,newShape);
-            }
-            else
+            if (shape.QuoteID >0 && shape.ShapeID >0)
             {
                 await repoS.UpdateShapesAsync(oldShape, newShape);
             }
@@ -1961,5 +1957,45 @@ namespace CapstoneMasons.Controllers
                 return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> NewShape(ReviewShape shape)
+        {
+            var newShape = new Shape()
+            {
+                ShapeID = shape.ShapeID,
+                BarSize = shape.BarSize,
+                Qty = shape.Qty,
+                NumCompleted = shape.Completed,
+                LegCount = shape.Legs.Count()
+            };
+
+
+            List<Leg> newLegs = new List<Leg>();
+            for (int legIndex = 0; legIndex < shape.Legs.Count; legIndex++)
+            {
+                var newLeg = new Leg()
+                {
+                    Degree = shape.Legs[legIndex].Degree,
+                    Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
+                    IsRight = shape.Legs[legIndex].IsRight,
+                    Length = shape.Legs[legIndex].Length,
+                    SortOrder = shape.Legs[legIndex].SortOrder
+                };
+                newShape.Legs.Add(newLeg);
+
+            }
+
+            if (shape.QuoteID > 0)
+                await repoS.AddShapeAsync(shape.QuoteID, newShape);
+            if (shape.ReviewOpen == true)
+            {
+                return RedirectToAction("ReviewOpen", new { quoteID = shape.QuoteID });
+            }
+            else
+            {
+                return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
+            }
+        }
+        
     }
 }

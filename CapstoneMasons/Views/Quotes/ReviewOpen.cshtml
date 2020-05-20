@@ -107,7 +107,7 @@
 {
     @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
 }
-@await Html.PartialAsync("~/Views/Shared/_PartialNewShapePopUp.cshtml", new ReviewShape() { ShapeID = Model.QuoteID})
+@await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape() { QuoteID = Model.ReviewQuote.QuoteID, ReviewOpen = true})
 
 
 <form method="post">
