@@ -34,16 +34,16 @@
         border-color: #ffc107 !important;
     }
     .fa-trash:hover {
-        text-shadow: 0 0 5px HighlightText;
+        text-shadow: 0 0 5px red;
         color: red !important;
         cursor: pointer;
         text-decoration: underline;
     }
     .delete {
-        color: HighlightText;
+        color: tomato !important;
     }
     .delete:hover {
-        text-shadow: 0 0 5px HighlightText;
+        text-shadow: 0 0 5px red;
         color: Highlight !important;
         cursor: pointer;
         text-decoration: underline;
@@ -83,7 +83,14 @@
                             <div class="panel-heading checkout-heading" id="panel-billing-heading">
                                 <h4 class="text-center panel-title checkout-acc-title">
                                     <a data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())" data-toggle="collapse">
-                                        @(KnownObjects.NumberPrefix[i]) Shape
+                                        @if (i < 13)
+                                        {
+                                            @(KnownObjects.NumberPrefix[i])
+                                        }
+                                        else
+                                        {
+                                            @((i + 1).ToString()+"th")
+                                        } Shape
                                         <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;line-height: unset;margin-top: 4px;"></i>
                                     </a>
                                     @if (Model.Shapes.Count != 1)
@@ -257,7 +264,7 @@
             <div class="card container text-center">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Review Quote</button>
-                    <input class="form-check-input" asp-for="UseFormulas" id="UseFormulas" style="margin-left: 20px; margin-top: 40px;">
+                    <input class="form-check-input hidden" asp-for="UseFormulas" id="useFormulas" style="margin-left: 20px; margin-top: 40px;">
                     <label class="form-check-label" for="defaultCheck1" style="margin-left: 40px; border-top-width: 10px; margin-top: 30px; font-size: large;">
                         Use Fomulas
                     </label>
