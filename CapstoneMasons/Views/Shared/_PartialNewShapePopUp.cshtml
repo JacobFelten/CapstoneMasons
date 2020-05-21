@@ -278,7 +278,52 @@
                                                 </label>
                                                 <input class="form-control" asp-for="Legs[0].Length" id="Shape@(Model.ShapeID).Leg1.lenght" />
                                             </div>
+                                            <div class="col-4 form-group" style="display:none">
+                                                <label>
+                                                    @(KnownObjects.NumberPrefix[0]) Leg Degree:
+                                                </label>
+                                                <input class="form-control" value="" min="0" max="180" type="number" step="any" asp-for="Legs[0].Degree" id="Shape@(Model.ShapeID).Leg@(0).degree" />
+                                            </div>
 
+                                            <div class="col-4 form-group" style="display:none">
+                                                <label>
+                                                        @(KnownObjects.NumberPrefix[0]) Leg Direction:
+                                                </label>
+                                                <div class="input-group" style="display:none">
+                                                    <div class="input-group-btn" data-toggle="buttons">
+                                                            <label class="btn btn-info" id="Legs0.IsLeft">
+                                                                <input type="radio" asp-for="Legs[0].IsRight" value="false" autocomplete="off" hidden>Left
+                                                            </label>
+                                                            <label class="btn btn-info" id="Legs0.IsRight">
+                                                                <input type="radio" asp-for="Legs[0].IsRight" value="true" autocomplete="off" hidden>Right
+                                                            </label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row" style="display: none">
+                                                <div class="col-12 text-center">Mandrel Size</div>
+                                                <div class="input-group justify-content-center" style="margin-left: 45px;">
+                                                    <div class="input-group-btn" data-toggle="buttons">
+                                                            <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg0.mandrelNone">
+                                                                <input type="radio" asp-for="Legs[0].Mandrel" value="None" autocomplete="off" hidden>None
+                                                            </label>
+
+                                                            <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg0.mandrelSmall">
+                                                                <input type="radio" asp-for="Legs[0].Mandrel" value="Small" autocomplete="off" hidden>Small
+                                                            </label>
+
+                                                            <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg0.mandrelMed">
+                                                                <input type="radio" asp-for="Legs[0].Mandrel" value="Medium" autocomplete="off" hidden>Medium
+                                                            </label>
+
+                                                            <label class="btn btn-secondary" id="Shapes[@(Model.ToString())].leg0.mandrelLarge">
+                                                                <input type="radio" asp-for="Legs[0].Mandrel" value="Large" autocomplete="off" hidden>Large
+                                                            </label>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         </div>
                                     </div>
