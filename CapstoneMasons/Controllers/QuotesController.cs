@@ -492,6 +492,33 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            for (int i = 0; i < q.Shapes.Count; i++)
+            {
+                Shape s = q.Shapes[i];
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+                string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
+                decimal cutLength = 0;
+                List<Formula> useFormulas = await CanUseFormulas(q);
+                if (useFormulas.Count == 0)
+                {
+                    cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    cutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
+                /*
+                if (cutLength > 240)
+                {
+                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    await repo.DeleteQuoteAsync(q);
+                    return View("Create", q);
+                }
+                */
+            }
+
             ReviewQuote rQ = await FillReviewQuote(q);
 
             ReviewOpen rO = new ReviewOpen 
