@@ -39,6 +39,18 @@ namespace CapstoneMasons.Controllers
                 if (q.Open == true)
                 {
                     ReviewQuote r = await FillReviewQuote(q);
+                    bool dinkinflika = false;
+                    foreach(Cost c in await repoC.BarCosts)
+                    {
+                        if ((DateTime.Now - c.LastChanged).TotalDays < 14)
+                        {
+                            dinkinflika = true;
+                        }
+                    }
+                    if((DateTime.Now - q.Costs[0].LastChanged).TotalDays >= 14 && dinkinflika)
+                    {
+                        r.Update = true;
+                    }
                     oq.ReviewQuotes.Add(r);
                     oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                 }

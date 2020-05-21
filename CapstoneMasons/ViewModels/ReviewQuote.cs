@@ -9,6 +9,7 @@ namespace CapstoneMasons.ViewModels
     public class ReviewQuote
     {
         public int QuoteID { get; set; }
+        public bool Update { get; set; }
         public string Author { get; set; }
         public DateTime DateQuoted { get; set; }
         public string Name { get; set; }

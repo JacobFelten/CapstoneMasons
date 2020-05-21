@@ -3,9 +3,6 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
-
 <div>
     <h2>Closed Quotes</h2>
 </div>
@@ -149,6 +146,7 @@
                 <td>
                     <div>
                         <div class="text-center">
+                            <h4>Order Number: @rq.OrderNum</h4>
                             <h3>@rq.Name</h3>
                             <h4>$@rq.TotalCost</h4>
                             <p style="font-size: 19px;">@rq.DateQuoted</p>
@@ -170,22 +168,6 @@
                                         <a class="btn btn-primary text-center" style="width: 150px;" asp-action="ReviewClosed" asp-route-quoteID=@rq.QuoteID>Details</a>
                                     </div>
                                 </div>
-                                @if (rq.PickedUp == true)
-                                {
-                                    <div class="row">
-                                        <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
-                                            The Customer has picked up their rebar.
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="row">
-                                        <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
-                                            The Customer has not picked up their rebar yet.
-                                        </div>
-                                    </div>
-                                }
                             </div>
                         </div>
                     </div>
