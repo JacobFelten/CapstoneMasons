@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using CapstoneMasons.Infrastructure;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace CaptstonexUnit
 {
-    public class JacobTests
+    public class ReviewQuoteTests
     {
         private ShapesController controllerS;
         private QuotesController controllerQ;
@@ -56,7 +57,7 @@ namespace CaptstonexUnit
         private Cost cost20;
         private CreateShape cS;
 
-        public JacobTests ()
+        public ReviewQuoteTests ()
         {
             repoS = new FakeShapeRepository();
             controllerS = new ShapesController(repoS);
@@ -574,6 +575,131 @@ namespace CaptstonexUnit
 
             Assert.Equal(400m, rQ.TotalCost);
 
+            Assert.Equal(0, rQ.SetUpCharge);
+            Assert.Equal(54.4m, rQ.Discount);
+        }
+
+        [Fact]
+        public async Task ReviewQuoteSetupTrueTest()
+        {
+            //Arrange
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 1,
+                BarSize = 4,
+                Degree = 90,
+                Mandrel = mandrel1,
+                PinNumber = "16.5",
+                InGained = 1.5m,
+                LastChanged = DateTime.Now
+            });
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 2,
+                BarSize = 5,
+                Degree = 90,
+                Mandrel = mandrel2,
+                PinNumber = "15",
+                InGained = 2,
+                LastChanged = DateTime.Now
+            });
+            await repoQ.AddQuoteAsync(quote2);
+
+            //Act
+            ViewResult view = (ViewResult)await controllerQ.ReviewQuote(2, "Billy's Order", "987654", 69.4m, "true");
+            ReviewQuote rQ = (ReviewQuote)view.Model;
+
+            //Assert
+            Assert.Equal(2, rQ.QuoteID);
+
+            Assert.Equal("Billy's Order", rQ.Name);
+
+            Assert.Equal("987654", rQ.OrderNum);
+
+            Assert.Equal(400m, rQ.TotalCost);
+
+            Assert.Equal(15, rQ.SetUpCharge);
+            Assert.Equal(69.4m, rQ.Discount);
+        }
+
+        [Fact]
+        public async Task DeleteShapeTest()
+        {
+            //Arrange
+            await repoQ.AddQuoteAsync(quote2);
+            (await repoS.Shapes).Add(shape2);
+
+            //Act
+            ViewResult view = (ViewResult)await controllerQ.DeleteShape(2, 2, "ReviewOpen");
+            DeleteShape dS = (DeleteShape)view.Model;
+
+            //Assert
+            Assert.Equal(quote2, dS.Quote);
+            Assert.Equal(shape2, dS.Shape);
+            Assert.Equal("ReviewOpen", dS.ReturnUrl);
+        }
+
+        [Fact]
+        public async Task DeleteShapePostTest()
+        {
+            //Arrange
+            DeleteShape dS = new DeleteShape
+            {
+                QuoteID = 2,
+                ShapeID = 2,
+                ReturnUrl = "ReviewOpen"
+            };
+            await repoQ.AddQuoteAsync(quote2);
+            (await repoS.Shapes).Add(shape2);
+            int shapeAmt = (await repoS.Shapes).Count;
+
+            //Act
+            await controllerQ.DeleteShape(dS);
+
+            //Assert
+            Assert.Equal(shapeAmt - 1, (await repoS.Shapes).Count);
+        }
+
+        [Fact]
+        public async Task ReviewOpenTest()
+        {
+            //Arrange
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 1,
+                BarSize = 4,
+                Degree = 90,
+                Mandrel = mandrel1,
+                PinNumber = "16.5",
+                InGained = 1.5m,
+                LastChanged = DateTime.Now
+            });
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 2,
+                BarSize = 5,
+                Degree = 90,
+                Mandrel = mandrel2,
+                PinNumber = "15",
+                InGained = 2,
+                LastChanged = DateTime.Now
+            });
+            await repoQ.AddQuoteAsync(quote2);
+
+            //Act
+            ViewResult view = (ViewResult)await controllerQ.ReviewOpen(quote2.QuoteID);
+            ReviewOpen rO = (ReviewOpen)view.Model;
+            ReviewQuote rQ = rO.ReviewQuote;
+
+            //Assert
+            Assert.Equal(2, rQ.QuoteID);
+
+            Assert.Equal("Bob's Concrete", rQ.Name);
+
+            Assert.Equal("123456", rQ.OrderNum);
+
+            Assert.Equal(469.4m, rQ.TotalCost);
+
             Assert.Equal(2, rQ.BarsUsed.Count);
             Assert.Equal(4, rQ.BarsUsed[0].BarSize);
             Assert.Equal(14, rQ.BarsUsed[0].NumOfBars);
@@ -590,8 +716,7 @@ namespace CaptstonexUnit
             Assert.Equal(90, rQ.BarsUsed[1].NumOfBends);
             Assert.Equal(0.33m, rQ.BarsUsed[1].BendCost);
 
-            Assert.Equal(0, rQ.SetUpCharge);
-            Assert.Equal(54.4m, rQ.Discount);
+            Assert.Equal(15, rQ.SetUpCharge);
 
             Assert.Equal(2, rQ.FinalRemnants.Count);
             Assert.Equal(4, rQ.FinalRemnants[0].BarSize);
@@ -708,7 +833,160 @@ namespace CaptstonexUnit
         }
 
         [Fact]
-        public async Task ReviewQuoteSetupTrueTest()
+        public async Task ReviewOpenPostTest()
+        {
+            //Arrange
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 1,
+                BarSize = 4,
+                Degree = 90,
+                Mandrel = mandrel1,
+                PinNumber = "16.5",
+                InGained = 1.5m,
+                LastChanged = DateTime.Now
+            });
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 2,
+                BarSize = 5,
+                Degree = 90,
+                Mandrel = mandrel2,
+                PinNumber = "15",
+                InGained = 2,
+                LastChanged = DateTime.Now
+            });
+            await repoQ.AddQuoteAsync(quote2);
+
+            ReviewOpen rO = new ReviewOpen
+            {
+                QuoteID = 2,
+                Name = "Billy's Order",
+                OrderNumber = "987654",
+                Discount = 69.4m,
+                Setup = "true",
+                Completed =  new int[3] { 20, 30, 40 }
+            };
+
+            (await repoS.Shapes).Add(shape2);
+            (await repoS.Shapes).Add(shape3);
+            (await repoS.Shapes).Add(shape4);
+
+            //Act
+            ViewResult view = (ViewResult)await controllerQ.ReviewOpen(rO, "true");
+            ReviewOpen rQ = (ReviewOpen)view.Model;
+
+            //Assert
+            Assert.Equal(2, rO.ReviewQuote.QuoteID);
+            Assert.Equal("Billy's Order", rO.ReviewQuote.Name);
+            Assert.Equal("987654", rO.ReviewQuote.OrderNum);
+            Assert.Equal(400m, rO.ReviewQuote.TotalCost);
+            Assert.Equal(15, rO.ReviewQuote.SetUpCharge);
+            Assert.Equal(69.4m, rO.ReviewQuote.Discount);
+            Assert.Equal(20, rO.ReviewQuote.Shapes[0].Completed);
+            Assert.Equal(30, rO.ReviewQuote.Shapes[1].Completed);
+            Assert.Equal(40, rO.ReviewQuote.Shapes[2].Completed);
+        }
+
+        [Fact]
+        public async Task UpdateQuotePricesTest()
+        {
+            //Arrange
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 1,
+                BarSize = 4,
+                Degree = 90,
+                Mandrel = mandrel1,
+                PinNumber = "16.5",
+                InGained = 1.5m,
+                LastChanged = DateTime.Now
+            });
+            await repoF.AddFormulaAsync(new Formula
+            {
+                FormulaID = 2,
+                BarSize = 5,
+                Degree = 90,
+                Mandrel = mandrel2,
+                PinNumber = "15",
+                InGained = 2,
+                LastChanged = DateTime.Now
+            });
+            await repoQ.AddQuoteAsync(quote2);
+            cost1.Price = 20;
+            cost2.Price = 0.5m;
+            cost3.Price = 0.5m;
+            cost4.Price = 30;
+            cost5.Price = 0.66m;
+            cost6.Price = 0.66m;
+            cost7.Price = 30;
+
+            //Act
+            ViewResult view = (ViewResult)await controllerQ.UpdateQuotePrices(quote2.QuoteID);
+            ReviewOpen rO = (ReviewOpen)view.Model;
+            Quote q = await repoQ.GetQuoteByIdAsync(rO.ReviewQuote.QuoteID);
+
+            //Assert
+            Assert.Equal(13, q.Costs.Count);
+            Assert.Equal(938.8m, rO.ReviewQuote.TotalCost);
+            Assert.Equal(20, rO.ReviewQuote.BarsUsed[0].BarCost);
+            Assert.Equal(0.5m, rO.ReviewQuote.BarsUsed[0].CutCost);
+            Assert.Equal(0.5m, rO.ReviewQuote.BarsUsed[0].BendCost);
+            Assert.Equal(30, rO.ReviewQuote.BarsUsed[1].BarCost);
+            Assert.Equal(0.66m, rO.ReviewQuote.BarsUsed[1].CutCost);
+            Assert.Equal(0.66m, rO.ReviewQuote.BarsUsed[1].BendCost);
+            Assert.Equal(30, rO.ReviewQuote.SetUpCharge);
+        }
+
+        [Fact]
+        public async Task CloseOpenQuoteTest()
+        {
+            //Arrange
+            quote2.Open = true;
+            await repoQ.AddQuoteAsync(quote2);
+
+            //Act
+            await controllerQ.CloseOpenQuote(2);
+
+            //Assert
+            Assert.False(quote2.Open);
+        }
+
+        [Fact]
+        public async Task DeleteQuoteTest()
+        {
+            //Arrange 
+            await repoQ.AddQuoteAsync(quote2);
+
+            //Act
+            ViewResult view = (ViewResult)await controllerQ.DeleteQuote(2, "Index");
+            DeleteQuote dQ = (DeleteQuote)view.Model;
+
+            //Assert
+            Assert.Equal(quote2, dQ.Quote);
+            Assert.Equal("Index", dQ.ReturnUrl);
+        }
+
+        [Fact]
+        public async Task DeleteQuotePostTest()
+        {
+            //Arrange
+            DeleteQuote dQ = new DeleteQuote
+            {
+                QuoteID = 2,
+                ReturnUrl = "OpenQuote"
+            };
+            await repoQ.AddQuoteAsync(quote2);
+
+            //Act
+            await controllerQ.DeleteQuote(dQ);
+
+            //Assert
+            Assert.Null(await repoQ.GetQuoteByIdAsync(2));
+        }
+
+        [Fact]
+        public async Task ReviewClosedTest()
         {
             //Arrange
             await repoF.AddFormulaAsync(new Formula
@@ -734,17 +1012,17 @@ namespace CaptstonexUnit
             await repoQ.AddQuoteAsync(quote2);
 
             //Act
-            ViewResult view = (ViewResult)await controllerQ.ReviewQuote(2, "Billy's Order", "987654", 69.4m, "true");
+            ViewResult view = (ViewResult)await controllerQ.ReviewClosed(quote2.QuoteID);
             ReviewQuote rQ = (ReviewQuote)view.Model;
 
             //Assert
             Assert.Equal(2, rQ.QuoteID);
 
-            Assert.Equal("Billy's Order", rQ.Name);
+            Assert.Equal("Bob's Concrete", rQ.Name);
 
-            Assert.Equal("987654", rQ.OrderNum);
+            Assert.Equal("123456", rQ.OrderNum);
 
-            Assert.Equal(400m, rQ.TotalCost);
+            Assert.Equal(469.4m, rQ.TotalCost);
 
             Assert.Equal(2, rQ.BarsUsed.Count);
             Assert.Equal(4, rQ.BarsUsed[0].BarSize);
@@ -763,7 +1041,6 @@ namespace CaptstonexUnit
             Assert.Equal(0.33m, rQ.BarsUsed[1].BendCost);
 
             Assert.Equal(15, rQ.SetUpCharge);
-            Assert.Equal(69.4m, rQ.Discount);
 
             Assert.Equal(2, rQ.FinalRemnants.Count);
             Assert.Equal(4, rQ.FinalRemnants[0].BarSize);
@@ -877,6 +1154,20 @@ namespace CaptstonexUnit
             Assert.Equal(20, rQ.Shapes[2].Remnants[1].Length);
             Assert.Equal(5, rQ.Shapes[2].Remnants[1].Qty);
             Assert.False(rQ.Shapes[2].Remnants[1].UsedAgain);
+        }
+
+        [Fact]
+        public async Task OpenClosedQuoteTest()
+        {
+            //Arrange
+            quote2.Open = false;
+            await repoQ.AddQuoteAsync(quote2);
+
+            //Act
+            await controllerQ.OpenClosedQuote(2);
+
+            //Assert
+            Assert.True(quote2.Open);
         }
     }
 }
