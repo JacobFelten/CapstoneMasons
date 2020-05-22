@@ -99,3 +99,25 @@ function addLegg() {
     document.getElementById('NewLeg').innerHTML = newLegDiv + legInput;
     document.getElementById('NewShape.LegCount').value = numbLegs;
 }
+
+function checkAllFormFields(formId) {
+    var fields =getAllLegValues();
+    var i, l = fields.length;
+    var fieldname;
+    for (i = 0; i < l; i++) {
+        fieldname = fields[i];
+        if (document.forms[formId][fieldname].value === "" || document.forms[formId][fieldname].value === "0") {
+            alert(fieldname + " can not be empty");//testing
+            return false;
+        }
+    }
+    return true;
+}
+
+function getAllLegValues(fields) {
+    return ["Qty", "BarSize", "Legs[0].Length"];//will add more fields as the shape increases
+}
+
+function checkLegLenghts(){
+    return confirm('Are you sure you want to add this shape?');
+}
