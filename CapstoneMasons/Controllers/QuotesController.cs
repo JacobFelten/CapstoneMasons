@@ -2005,6 +2005,25 @@ namespace CapstoneMasons.Controllers
                 return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
             }
         }
+
+        public async Task<bool> CheckIfValidShape(Quote q, Shape s)
+        {
+            s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+            decimal cutLength = 0;
+            List<Formula> useFormulas = await CanUseFormulas(q);
+            if (useFormulas.Count == 0)
+            {
+                cutLength = await CalculateShapeLengthAsync(s);
+            }
+            else
+            {
+                cutLength = Calculations.Total_Shape_Length(s);
+            }
+            if (cutLength > 240)
+                return false;
+            else
+                return true;
+        }
         
     }
 }
