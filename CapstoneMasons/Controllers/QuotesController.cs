@@ -419,9 +419,11 @@ namespace CapstoneMasons.Controllers
             for (int i = 0; i < q.Shapes.Count; i++)
             {
                 Shape s = q.Shapes[i];
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
                 decimal cutLength = 0;
-                if (q.UseFormulas)
+                List<Formula> useFormulas = await CanUseFormulas(q);
+                if (useFormulas.Count == 0)
                 {
                     cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
                 }
@@ -434,6 +436,7 @@ namespace CapstoneMasons.Controllers
                 if (cutLength > 240)
                 {
                     ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    await repo.DeleteQuoteAsync(q);
                     return View("Create", q);
                 }
             }
@@ -453,28 +456,14 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup, string useFormulas)
+        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", name);
             await repo.UpdateQuoteSimpleAsync(q, "OrderNum", orderNumber);
             await repo.UpdateQuoteSimpleAsync(q, "Discount", discount.ToString());
             await repo.UpdateQuoteSimpleAsync(q, "AddSetup", setup);
-            if (useFormulas == null)
-                useFormulas = "false";
-            var neededFormulas = new List<Formula>();
-            if (bool.Parse(useFormulas))
-            {
-                neededFormulas = (List<Formula>)await CanUseFormulas(q);
-                if (neededFormulas.Count == 0)
-                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
-            else
-            {
-                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
             var rQ = await FillReviewQuote(q);
-            rQ.NeededFormulas = neededFormulas;
             return View("ReviewQuote", rQ);
         }
 
@@ -503,6 +492,33 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            for (int i = 0; i < q.Shapes.Count; i++)
+            {
+                Shape s = q.Shapes[i];
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+                string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
+                decimal cutLength = 0;
+                List<Formula> useFormulas = await CanUseFormulas(q);
+                if (useFormulas.Count == 0)
+                {
+                    cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    cutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
+                /*
+                if (cutLength > 240)
+                {
+                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    await repo.DeleteQuoteAsync(q);
+                    return View("Create", q);
+                }
+                */
+            }
+
             ReviewQuote rQ = await FillReviewQuote(q);
 
             ReviewOpen rO = new ReviewOpen 
@@ -514,7 +530,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string useFormulas, string pickedUp)
+        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string pickedUp)
         {
             Quote q = await repo.GetQuoteByIdAsync(rO.QuoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", rO.Name);
@@ -524,21 +540,7 @@ namespace CapstoneMasons.Controllers
             if (pickedUp == null)
                 pickedUp = "false";
             await repo.UpdateQuoteSimpleAsync(q, "PickedUp", pickedUp);
-            if (useFormulas == null)
-                useFormulas = "false";
-            var neededFormulas = new List<Formula>();
-            if (bool.Parse(useFormulas))
-            {
-                neededFormulas = (List<Formula>)await CanUseFormulas(q);
-                if (neededFormulas.Count == 0)
-                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
-            else
-            {
-                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
             var rQ = await FillReviewQuote(q);
-            rQ.NeededFormulas = neededFormulas;
             rO.ReviewQuote = rQ;
 
             for (int i = 0; i < rQ.Shapes.Count; i++)
@@ -717,7 +719,14 @@ namespace CapstoneMasons.Controllers
             rQ.OrderNum = q.OrderNum; //done
             rQ.AddSetup = q.AddSetup;
             rQ.Discount = q.Discount;
+
+            rQ.NeededFormulas = await CanUseFormulas(q);
+            if (rQ.NeededFormulas.Count == 0 && !q.UseFormulas)
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", "true");
+            else if (rQ.NeededFormulas.Count > 0 && q.UseFormulas)
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", "false");
             rQ.UseFormulas = q.UseFormulas;
+
             rQ.PickedUp = q.PickedUp;
 
             //After filling the shapes with instructions the shapes are sorted by bar size
@@ -748,6 +757,7 @@ namespace CapstoneMasons.Controllers
             List<ReviewShape> rSList = new List<ReviewShape>();
             foreach (Shape s in q.Shapes)
             {
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 ReviewShape rS = new ReviewShape();
                 rS.QuoteID = q.QuoteID;
                 rS.ShapeID = s.ShapeID;
@@ -1080,7 +1090,6 @@ namespace CapstoneMasons.Controllers
         private async Task<List<ReviewLeg>> CreateLegsAsync(Shape s)
         {
             List<ReviewLeg> rLList = new List<ReviewLeg>();
-            s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
             foreach (Leg l in s.Legs)
             {
                 ReviewLeg rL = new ReviewLeg();
@@ -1995,6 +2004,25 @@ namespace CapstoneMasons.Controllers
             {
                 return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
             }
+        }
+
+        public async Task<bool> CheckIfValidShape(Quote q, Shape s)
+        {
+            s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+            decimal cutLength = 0;
+            List<Formula> useFormulas = await CanUseFormulas(q);
+            if (useFormulas.Count == 0)
+            {
+                cutLength = await CalculateShapeLengthAsync(s);
+            }
+            else
+            {
+                cutLength = Calculations.Total_Shape_Length(s);
+            }
+            if (cutLength > 240)
+                return false;
+            else
+                return true;
         }
         
     }
