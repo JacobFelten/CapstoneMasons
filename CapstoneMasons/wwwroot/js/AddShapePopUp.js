@@ -178,8 +178,9 @@ function checkingCutLenght() {
     };
 
     var quote = {};
-    quote.UseFormulas= true;
-        //Shapes: newShape
+    quote.UseFormulas= "true";
+    quote.Shapes = [];
+    quote.Shapes.push( newShape);
 
 
     var data = JSON.stringify(quote);

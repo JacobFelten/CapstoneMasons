@@ -2006,7 +2006,7 @@ namespace CapstoneMasons.Controllers
             }
         }
         [HttpPost]
-        public async Task<bool> CheckIfValidShape([FromBody] Quote q)
+        public async Task<bool> CheckIfValidShape( Quote q)
         {
             return false; //testing
 
