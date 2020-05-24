@@ -140,20 +140,16 @@ function checkLegLenghts(event) {
             return true;
         }
     }
-
-    if (numbLegs > 0 ) {//checking for cut lenght
+    $.when(checkingCutLenght()).done(function (response) {
+        if (response == true)
+            return true;
+    });
+    if (numbLegs > 0 && checkingCutLenght()) {//checking for cut lenght
         {
-            $.when(checkingCutLenght()).done(function (response) {
-                if (response == true)
-                    return true;
-            });
+            return true;
         }
     }
     return false;
-}
-
-function getMandrel() { //tbd
-    return "";//testing
 }
 
 function checkingCutLenght() {
@@ -188,7 +184,7 @@ function checkingCutLenght() {
     quote.q.Shapes = [];
     quote.q.Shapes.push(newShape);
 
-    $.ajax({
+    return $.ajax({
         type: "POST",
         data: quote,
         url: "/Quotes/CheckIfValidShape",
@@ -196,6 +192,7 @@ function checkingCutLenght() {
         success: function (response) {
             if (!response) {
                 alert("This shape cuts to more than 240 inches");
+                return true;
             } 
         }
     });
@@ -206,9 +203,9 @@ function submitForm(event) {
         if (checkFormFieldsEmpty()) {
             event.preventDefault();
         }
-        if (checkLegLenghts(event))
+        if (checkLegLenghts(event)) {
             event.preventDefault();
-
+        }
     } else event.preventDefault();
 
 }
