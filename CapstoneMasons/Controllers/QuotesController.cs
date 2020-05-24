@@ -2006,10 +2006,15 @@ namespace CapstoneMasons.Controllers
             }
         }
         [HttpPost]
-        public async Task<bool> CheckIfValidShape( Quote q)
+        public async Task<JsonResult> CheckIfValidShape(Quote q)
         {
-            return false; //testing
-
+            foreach (Leg l in q.Shapes[0].Legs)
+            {
+                if (l.Mandrel.Name != null)
+                {
+                    l.Mandrel = await repoF.GetMandrelByNameAsync(l.Mandrel.Name);
+                }
+            }
             q.Shapes[0].Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
             decimal cutLength = 0;
             List<Formula> useFormulas = await CanUseFormulas(q);
@@ -2022,9 +2027,9 @@ namespace CapstoneMasons.Controllers
                 cutLength = Calculations.Total_Shape_Length(q.Shapes[0]);
             }
             if (cutLength > 240)
-                return false;
+                return Json(false);
             else
-                return true;
+                return Json(true);
         }
         
     }
