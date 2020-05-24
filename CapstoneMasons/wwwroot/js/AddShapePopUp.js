@@ -140,10 +140,7 @@ function checkLegLenghts(event) {
             return true;
         }
     }
-    $.when(checkingCutLenght()).done(function (response) {
-        if (response == true)
-            return true;
-    });
+
     if (numbLegs > 0 && checkingCutLenght()) {//checking for cut lenght
         {
             return true;
@@ -200,10 +197,7 @@ function checkingCutLenght() {
 
 function submitForm(event) {
     if (confirm('Are you sure you want to add this shape?')) {
-        if (checkFormFieldsEmpty()) {
-            event.preventDefault();
-        }
-        if (checkLegLenghts(event)) {
+        if (checkFormFieldsEmpty() || checkLegLenghts(event)) {
             event.preventDefault();
         }
     } else event.preventDefault();
