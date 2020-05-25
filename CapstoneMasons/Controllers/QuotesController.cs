@@ -1995,7 +1995,7 @@ namespace CapstoneMasons.Controllers
             }
 
             if (shape.QuoteID > 0)
-                await repoS.AddShapeAsync(shape.QuoteID, newShape);
+                    await repoS.AddShapeAsync(shape.QuoteID, newShape);
             if (shape.ReviewOpen == true)
             {
                 return RedirectToAction("ReviewOpen", new { quoteID = shape.QuoteID });
@@ -2005,24 +2005,31 @@ namespace CapstoneMasons.Controllers
                 return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
             }
         }
-
-        public async Task<bool> CheckIfValidShape(Quote q, Shape s)
+        [HttpPost]
+        public async Task<JsonResult> CheckIfValidShape(Quote q)
         {
-            s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+            foreach (Leg l in q.Shapes[0].Legs)
+            {
+                if (l.Mandrel.Name != null)
+                {
+                    l.Mandrel = await repoF.GetMandrelByNameAsync(l.Mandrel.Name);
+                }
+            }
+            q.Shapes[0].Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
             decimal cutLength = 0;
             List<Formula> useFormulas = await CanUseFormulas(q);
             if (useFormulas.Count == 0)
             {
-                cutLength = await CalculateShapeLengthAsync(s);
+                cutLength = await CalculateShapeLengthAsync(q.Shapes[0]);
             }
             else
             {
-                cutLength = Calculations.Total_Shape_Length(s);
+                cutLength = Calculations.Total_Shape_Length(q.Shapes[0]);
             }
             if (cutLength > 240)
-                return false;
+                return Json(false);
             else
-                return true;
+                return Json(true);
         }
         
     }
