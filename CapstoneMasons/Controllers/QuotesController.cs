@@ -509,14 +509,11 @@ namespace CapstoneMasons.Controllers
                     //Do jeff stuff
                     //pass in bar size as bar type, pass in legs as crude legs
                 }
-                /*
                 if (cutLength > 240)
                 {
-                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
-                    await repo.DeleteQuoteAsync(q);
-                    return View("Create", q);
+                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches so it was deleted.");
+                    await repoS.DeleteShapeAsync(s);
                 }
-                */
             }
 
             ReviewQuote rQ = await FillReviewQuote(q);
