@@ -33,18 +33,32 @@
         background-color: #28a745 !important;
         border-color: #ffc107 !important;
     }
+    .fa-trash:hover {
+        text-shadow: 0 0 5px red;
+        color: red !important;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    .delete {
+        color: tomato !important;
+    }
+    .delete:hover {
+        text-shadow: 0 0 5px red;
+        color: Highlight !important;
+        cursor: pointer;
+        text-decoration: underline;
+    }
 </style>
 <script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="~/js/createQuote.js"></script>
 <h1 class="text-center">Create Quote - Continued</h1>
-
 <h4 class="text-center">Edit Shapes</h4>
 <hr />
 <div class="row">
     <div class="card container">
         <form asp-action="Create" asp-controller="Quotes" method="post">
             <div class="card-header quote-header">
-
+                <input value="@Model.Shapes.Count" id="Shapes.Count" hidden />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label>Quote Name:</label>
@@ -69,13 +83,20 @@
                             <div class="panel-heading checkout-heading" id="panel-billing-heading">
                                 <h4 class="text-center panel-title checkout-acc-title">
                                     <a data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())" data-toggle="collapse">
-                                        @(KnownObjects.NumberPrefix[i]) Shape
+                                        @if (i < 13)
+                                        {
+                                            @(KnownObjects.NumberPrefix[i])
+                                        }
+                                        else
+                                        {
+                                            @((i + 1).ToString()+"th")
+                                        } Shape
                                         <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;line-height: unset;margin-top: 4px;"></i>
                                     </a>
                                     @if (Model.Shapes.Count != 1)
                                     {
-                                        <a onclick="deleteShape(@(i+1))">
-                                            <i class="fas fa-trash float-left" style="text-shadow: 0 0 3px #000; font-size: 1.5em; color: Tomato;"></i>
+                                        <a onclick="deleteShape(@(i+1))" class="delete float-left">
+                                            Delete <i class="fas fa-trash btn" style="text-shadow: 0 0 3px #000; font-size: 0.5em; color: Tomato; padding-left: 0px;"></i>
                                         </a>
                                     }
 
@@ -88,26 +109,26 @@
                                         <div class="col-md-4 col-lg-4 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Rebar #: </label>
                                             @*<select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
-                        onchange="vaidateRebar(this.options[this.selectedIndex].text)">
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                    <option>6</option>
-                </select>*@
+                                                onchange="vaidateRebar(this.options[this.selectedIndex].text)">
+                                            <option>3</option>
+                                            <option>4</option>
+                                            <option>5</option>
+                                            <option>6</option>
+                                        </select>*@
 
                                             <!--custom radio buttons-->
                                             <div class="input-group">
                                                 <div class="input-group-btn" data-toggle="buttons">
-                                                    <label class="btn btn-primary active" id="Shapes[@(i.ToString())].bar3">
+                                                    <label class="btn btn-primary active" id="Shapes[@(i+1)].bar3">
                                                         <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="3" autocomplete="off" checked hidden>Bar #3
                                                     </label>
-                                                    <label class="btn btn-primary" id="Shapes[@(i.ToString())].bar4">
-                                                        <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="4" autocomplete="off" hidden hidd>Bar #4
+                                                    <label class="btn btn-primary" id="Shapes[@(i+1)].bar4">
+                                                        <input type="radio" name="Shapes[@(i)].BarSize" value="4" autocomplete="off" hidden hidd>Bar #4
                                                     </label>
-                                                    <label class="btn btn-primary" id="Shapes[@(i.ToString())].bar5">
+                                                    <label class="btn btn-primary" id="Shapes[@(i+1)].bar5">
                                                         <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="5" autocomplete="off" hidden>Bar #5
                                                     </label>
-                                                    <label class="btn btn-primary" id="Shapes[@(i.ToString())].bar6">
+                                                    <label class="btn btn-primary" id="Shapes[@(i+1)].bar6">
                                                         <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="6" autocomplete="off" hidden>Bar #6
                                                     </label>
                                                 </div>
@@ -122,7 +143,7 @@
                                         </div>
                                     </div>
                                     @for (int leg = 0; leg < Model.Shapes[i].Legs.Count; leg++)
-                                    {
+                                    {<input value="@Model.Shapes[i].Legs[leg].SortOrder" name="Shapes[@(i.ToString())].Legs[@leg].SortOrder" hidden />
                                         <div class="row" style="padding-left: 10px; padding-right: 10px;">
                                             <div class="col-4 form-group">
                                                 <label>
@@ -135,7 +156,7 @@
                                                         @((leg + 1).ToString()+"th")
                                                     } Leg Length (Inches):
                                                 </label>
-                                                <input class="form-control" type="number" value="@Model.Shapes[i].Legs[leg].Length" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght" />
+                                                <input class="form-control" type="number" min="1" step="any" value="@Model.Shapes[i].Legs[leg].Length" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght" />
                                             </div>
                                             @if (leg != Model.Shapes[i].Legs.Count - 1)
                                             {
@@ -149,31 +170,31 @@
                                                         {
                                                             @((leg + 1).ToString()+"th ")
                                                         }
-                                                    Leg Bend (Degrees):
-                                                </label>
+                                                        Leg Bend (Degrees):
+                                                    </label>
 
 
-                                                <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
-                                                       id="Shape@(i+1).Leg@(leg+1).degree" value="@Model.Shapes[i].Legs[leg].Degree"/>
-                                            </div>
-                                            <div class="col-5 form-group">
-                                                <label for="exampleFormControlSelect2">Mandrel: </label>
-                                                <div class="input-group-btn" data-toggle="buttons">
-                                                    <label class="btn btn-info active" id="Shapes[@(i)].Legs[@(leg)].mandrelNone">
-                                                        <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" value="None" autocomplete="off" checked hidden>None
-                                                    </label>
-                                                    <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelSmall">
-                                                        <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" value="Small" autocomplete="off" hidden>Small
-                                                    </label>
-                                                    <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelMed">
-                                                        <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" value="Medium" autocomplete="off" hidden>Medium
-                                                    </label>
-                                                    <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelLarge">
-                                                        <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" value="Large" autocomplete="off" hidden>Large
-                                                    </label>
+                                                    <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
+                                                           id="Shape@(i+1).Leg@(leg+1).degree" value="@Model.Shapes[i].Legs[leg].Degree" />
                                                 </div>
-                                            </div>
-                                        }
+                                                <div class="col-5 form-group">
+                                                    <label for="exampleFormControlSelect2">Mandrel: </label>
+                                                    <div class="input-group-btn" data-toggle="buttons">
+                                                        <label class="btn btn-info active" id="Shapes[@(i)].Legs[@(leg)].mandrelNone">
+                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" value="None" autocomplete="off" checked hidden>None
+                                                        </label>
+                                                        <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelSmall">
+                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" value="Small" autocomplete="off" hidden>Small
+                                                        </label>
+                                                        <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelMed">
+                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" value="Medium" autocomplete="off" hidden>Medium
+                                                        </label>
+                                                        <label class="btn btn-info" id="Shapes[@(Model.ToString())].leg@(leg+1).mandrelLarge">
+                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" value="Large" autocomplete="off" hidden>Large
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
                                         </div>
                                         @if (leg != Model.Shapes[i].Legs.Count - 1)
                                         {
@@ -190,11 +211,11 @@
                                                 </div>
                                             </div>
                                         }
-                                        @if (leg < Model.Shapes[i].Legs.Count-1)
+                                        @if (leg < Model.Shapes[i].Legs.Count - 1)
                                         {
                                             <hr style="background-color: #495057;">
                                         }
-                                        
+
                                     }
 
                                     <button hidden id="toggle-delivery" type="button" class="btn-checkout" data-toggle="collapse" data-parent="#checkout-accordion" href="#collapse-shape@((i+2).ToString())">Next Shape</button>
@@ -203,6 +224,9 @@
                         </div>
                     </div>
                 </div>
+                <script type="text/javascript">
+                    hideDeletedShapes();
+                </script>
             }
 
 
@@ -240,7 +264,7 @@
             <div class="card container text-center">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Review Quote</button>
-                    <input class="form-check-input" asp-for="@Model.UseFormulas" type="checkbox" value="@Model.UseFormulas" id="UseFormulas" style="margin-left: 20px; margin-top: 40px;">
+                    <input class="form-check-input hidden" asp-for="UseFormulas" id="useFormulas" style="margin-left: 20px; margin-top: 40px;">
                     <label class="form-check-label" for="defaultCheck1" style="margin-left: 40px; border-top-width: 10px; margin-top: 30px; font-size: large;">
                         Use Fomulas
                     </label>

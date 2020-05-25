@@ -73,7 +73,8 @@ namespace CapstoneMasons
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddDbContext<AppDbContext>(
                     options => options.UseSqlServer(
-                        Configuration["ConnectionStrings:localdb"]));
+                        Configuration["ConnectionStrings:localdb"])
+                        .EnableSensitiveDataLogging());
             services.AddMvc();
 
             //identity setthings

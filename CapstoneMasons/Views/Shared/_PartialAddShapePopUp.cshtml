@@ -1,0 +1,199 @@
+﻿@model ReviewShape
+
+<script type="text/javascript" src="~/js/openQuote.js"></script>
+<script type="text/javascript" src="~/js/AddShapePopUp.js"></script>
+<link rel="stylesheet" href="~/css/glyphicon.css" />
+
+<style>
+    .panel-heading a:after {
+        font-family: 'Glyphicons Halflings';
+        content: "\e114";
+        float: right;
+        color: grey;
+    }
+
+    .panel-heading a.collapsed:after {
+        content: "\e080";
+    }
+</style>
+
+<!-- Modal: ShapeEdit -->
+<div class="modal fade" id="NewShape" tabindex="-1" role="dialog" aria-labelledby="NewShapeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title" id="NewShapeHeader">New shape</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+            </div>
+            <div class="modal-body">
+                <form data-toggle="validator" asp-controller="Quotes" asp-action="NewShape" id="NewShapeForm">
+                    <input asp-for="ShapeID" value="@Model.ShapeID" hidden />
+                    <input asp-for="QuoteID" value="@Model.QuoteID" hidden />
+                    <input asp-for="NumOfBars" value="@Model.NumOfBars" hidden />
+                    <input asp-for="ReviewOpen" value="@Model.ReviewOpen" id="Shape.ReviewOpen" hidden />
+                    <input asp-for="ReviewQuote" value="@Model.ReviewQuote" id="Shape.ReviewQuote" hidden />
+                    <input asp-for="Completed" value="@Model.Completed" id="Shape.Comleted" hidden />
+                    <input asp-for="Completed" value="@Model.Completed" id="Shape.Comleted" hidden />
+                    <input asp-for="Completed" value="0" id="NewShape.LegCount" hidden />
+                    <!--using this to know where to redirect ()-->
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="Shape.Quantity">Quantity</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" asp-for="Qty">
+                    </div>
+
+                    <!--bar size radio buttons-->
+                    <div class="input-group justify-content-center">
+                        <div class="input-group-btn" data-toggle="buttons">
+                            @if (Model.BarSize == 3)
+                            {
+                                <label class="btn btn-secondary active" id="Shape.bar3">
+                                    <input type="radio" asp-for="BarSize" value="3" autocomplete="off" checked hidden>Bar #3
+                                </label>
+                            }
+                            else
+                            {
+                                <label class="btn btn-secondary" id="Shape.bar3">
+                                    <input type="radio" asp-for="BarSize" value="3" autocomplete="off" hidden>Bar #3
+                                </label>
+                            }
+                            @if (Model.BarSize == 4)
+                            {
+                                <label class="btn btn-secondary active" id="Shape.bar4">
+                                    <input type="radio" asp-for="BarSize" value="4" autocomplete="off" checked hidden>Bar #4
+                                </label>
+                            }
+                            else
+                            {
+                                <label class="btn btn-secondary" id="Shape.bar4">
+                                    <input type="radio" asp-for="BarSize" value="4" autocomplete="off" hidden hidd>Bar #4
+                                </label>
+                            }
+                            @if (Model.BarSize == 5)
+                            {
+                                <label class="btn btn-secondary active" id="Shape.bar5">
+                                    <input type="radio" asp-for="BarSize" value="5" autocomplete="off" checked hidden>Bar #5
+                                </label>
+                            }
+                            else
+                            {
+                                <label class="btn btn-secondary" id="Shape.bar5">
+                                    <input type="radio" asp-for="BarSize" value="5" autocomplete="off" hidden>Bar #5
+                                </label>
+                            }
+                            @if (Model.BarSize == 6)
+                            {
+                                <label class="btn btn-secondary active" id="Shape.bar6">
+                                    <input type="radio" asp-for="BarSize" value="6" autocomplete="off" checked hidden>Bar #6
+                                </label>
+                            }
+                            else
+                            {
+                                <label class="btn btn-secondary" id="Shape.bar6">
+                                    <input type="radio" asp-for="BarSize" value="6" autocomplete="off" hidden>Bar #6
+                                </label>
+                            }
+
+                        </div>
+                    </div>
+                    <!--custom radio buttons-->
+                    <hr>
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingLeg0">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLeg0" aria-expanded="false" aria-controls="collapseLeg0">
+
+                                        @(KnownObjects.NumberPrefix[0])Leg
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseLeg0" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLeg0">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-4 form-group">
+                                            <label>
+                                                @(KnownObjects.NumberPrefix[0]) Leg Length:
+                                            </label>
+                                            <input class="form-control" asp-for="Legs[0].Length" id="Shape.Leg0.lenght" />
+                                        </div>
+                                        <div class="col-4 form-group" style="display:none" id="Shape.Leg0.degreeLabel">
+                                            <label>
+                                                @(KnownObjects.NumberPrefix[0]) Leg Degree:
+                                            </label>
+                                            <input class="form-control" value="" min="0" max="180" type="number" step="any" asp-for="Legs[0].Degree" id="Shape.Leg0.degree" />
+                                        </div>
+
+                                        <div class="col-4 form-group" style="display:none" id="Shape.Leg0.directionLabel">
+                                            <label>
+                                                @(KnownObjects.NumberPrefix[0]) Leg Direction:
+                                            </label>
+                                            <div class="input-group" style="display:none" id="Shape.Leg0.direction">
+                                                <div class="input-group-btn" data-toggle="buttons">
+                                                    <label class="btn btn-info" id="Legs0.IsLeft">
+                                                        <input type="radio" asp-for="Legs[0].IsRight" value="false" autocomplete="off" hidden>Left
+                                                    </label>
+                                                    <label class="btn btn-info" id="Legs0.IsRight">
+                                                        <input type="radio" asp-for="Legs[0].IsRight" value="true" autocomplete="off" hidden>Right
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" style="display: none" id="Shape.Leg0.Mandrel">
+                                            <div class="col-12 text-center">Mandrel Size</div>
+                                            <div class="input-group justify-content-center" style="margin-left: 45px;">
+                                                <div class="input-group-btn" data-toggle="buttons">
+                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelNone">
+                                                        <input type="radio" asp-for="Legs[0].Mandrel" value="None" autocomplete="off" hidden>None
+                                                    </label>
+
+                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelSmall">
+                                                        <input type="radio" asp-for="Legs[0].Mandrel" value="Small" autocomplete="off" hidden>Small
+                                                    </label>
+
+                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelMed">
+                                                        <input type="radio" asp-for="Legs[0].Mandrel" value="Medium" autocomplete="off" hidden>Medium
+                                                    </label>
+
+                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelLarge">
+                                                        <input type="radio" asp-for="Legs[0].Mandrel" value="Large" autocomplete="off" hidden>Large
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div id="NewLeg"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="addLegg()">Add a Leg</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" form="NewShapeForm" name="submit" value="Submit" class="btn btn-primary"
+                        onclick="return confirm('Are you sure you want to add this shape?')">
+                    Save changes
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+@section script{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    
+}
