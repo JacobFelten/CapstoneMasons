@@ -22,7 +22,11 @@ namespace CapstoneMasons.Controllers
         public IActionResult Index()
         {
             ViewBag.ShowPopUp = false;
-            return View();
+            CreateQuote quote = new CreateQuote()
+            {
+                ShapesCount = 0
+            };
+            return View("Index", quote);
         }
 
         public IActionResult IndexPopUp(CreateQuote quote)

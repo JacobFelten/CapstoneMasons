@@ -12,6 +12,7 @@ using CapstoneMasons.Logic_Models;
 using CapstoneMasons.Infrastructure;
 using Microsoft.AspNetCore.Connections.Features;
 using Org.BouncyCastle.Asn1.X509;
+using Microsoft.Extensions.Primitives;
 
 namespace CapstoneMasons.Controllers
 {
@@ -578,7 +579,10 @@ namespace CapstoneMasons.Controllers
 
                 for (var j = 0; j < q.LegsInShapes[i]; j++)
                 {
-                    quote.Shapes[i].Legs.Add(new Leg() { });
+                    quote.Shapes[i].Legs.Add(new Leg()
+                    {
+                        SortOrder = j
+                    });
                 }
             }
 
@@ -591,18 +595,23 @@ namespace CapstoneMasons.Controllers
             if (ModelState.IsValid)
             {//Refactors  to Quote
                 q.UseFormulas = false;
-                for (var i = 0; i < q.Shapes.Count; i++)
+                for (var i = q.Shapes.Count-1; i > -1; i--)
                 {
+
                     if (q.Shapes[i].Qty == -9 && q.Shapes[i].Legs[0].Length == -9)
                     {
                         q.Shapes.RemoveAt(i);
                     }
-                    for (var j = 0; j < q.Shapes[i].Legs.Count-1; j++)
+                    else
                     {
-                        q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
+                        for (var j = 0; j < q.Shapes[i].Legs.Count - 1; j++)
+                        {
+                            q.Shapes[i].Legs[j].Mandrel = await repoF.GetMandrelByNameAsync(q.Shapes[i].Legs[j].Mandrel.Name);
+                        }
                     }
+
                 }
-                await repo.AddQuoteAsync(q);
+                
                 //var quotes = await repo.Quotes;
                 //int quoteId = quotes.Last().QuoteID + 1;
                 //q.QuoteID = quoteId;
@@ -618,15 +627,16 @@ namespace CapstoneMasons.Controllers
                         {
                             invalidLeg = true;
                             invalidShape = q.Shapes.IndexOf(s);
+                            invalidShape++;
                         }
                     }
                 }
-
                 if (invalidLeg)
                 {
                     ModelState.AddModelError(string.Empty, "A leg in shape "+ invalidShape.ToString()+ " and cannot be more than 240 inches");
                     return View("Create", q);
                 }
+                await repo.AddQuoteAsync(q);
                 return RedirectToAction("ReviewQuote", new { quoteID = q.QuoteID });
                 //return await ReviewQuote(q.QuoteID);
             }
@@ -660,6 +670,31 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            for (int i = 0; i < q.Shapes.Count; i++)
+            {
+                Shape s = q.Shapes[i];
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+                string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
+                decimal cutLength = 0;
+                List<Formula> useFormulas = await CanUseFormulas(q);
+                if (useFormulas.Count == 0)
+                {
+                    cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    cutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
+                if (cutLength > 240)
+                {
+                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    await repo.DeleteQuoteAsync(q);
+                    return View("Create", q);
+                }
+            }
+
             q.DateQuoted = TimeZoneInfo.ConvertTime(DateTime.Now,
                  TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
 
@@ -675,28 +710,14 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup, string useFormulas)
+        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", name);
             await repo.UpdateQuoteSimpleAsync(q, "OrderNum", orderNumber);
             await repo.UpdateQuoteSimpleAsync(q, "Discount", discount.ToString());
             await repo.UpdateQuoteSimpleAsync(q, "AddSetup", setup);
-            if (useFormulas == null)
-                useFormulas = "false";
-            var neededFormulas = new List<Formula>();
-            if (bool.Parse(useFormulas))
-            {
-                neededFormulas = (List<Formula>)await CanUseFormulas(q);
-                if (neededFormulas.Count == 0)
-                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
-            else
-            {
-                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
             var rQ = await FillReviewQuote(q);
-            rQ.NeededFormulas = neededFormulas;
             return View("ReviewQuote", rQ);
         }
 
@@ -725,6 +746,33 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            for (int i = 0; i < q.Shapes.Count; i++)
+            {
+                Shape s = q.Shapes[i];
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+                string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
+                decimal cutLength = 0;
+                List<Formula> useFormulas = await CanUseFormulas(q);
+                if (useFormulas.Count == 0)
+                {
+                    cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    cutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
+                /*
+                if (cutLength > 240)
+                {
+                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    await repo.DeleteQuoteAsync(q);
+                    return View("Create", q);
+                }
+                */
+            }
+
             ReviewQuote rQ = await FillReviewQuote(q);
 
             ReviewOpen rO = new ReviewOpen 
@@ -736,7 +784,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string useFormulas, string pickedUp)
+        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string pickedUp)
         {
             Quote q = await repo.GetQuoteByIdAsync(rO.QuoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", rO.Name);
@@ -746,21 +794,7 @@ namespace CapstoneMasons.Controllers
             if (pickedUp == null)
                 pickedUp = "false";
             await repo.UpdateQuoteSimpleAsync(q, "PickedUp", pickedUp);
-            if (useFormulas == null)
-                useFormulas = "false";
-            var neededFormulas = new List<Formula>();
-            if (bool.Parse(useFormulas))
-            {
-                neededFormulas = (List<Formula>)await CanUseFormulas(q);
-                if (neededFormulas.Count == 0)
-                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
-            else
-            {
-                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
             var rQ = await FillReviewQuote(q);
-            rQ.NeededFormulas = neededFormulas;
             rO.ReviewQuote = rQ;
 
             for (int i = 0; i < rQ.Shapes.Count; i++)
@@ -804,7 +838,7 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Open", "false");
-            return RedirectToAction("Index");
+            return RedirectToAction("ReviewClosed", new { quoteID = quoteID });
         }
 
         [HttpGet]
@@ -839,7 +873,7 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Open", "true");
-            return RedirectToAction("Closed");
+            return RedirectToAction("ReviewOpen", new { quoteID = quoteID });
         }
 
         #region So Jacob doesn't have to keep scrolling past these
@@ -939,7 +973,14 @@ namespace CapstoneMasons.Controllers
             rQ.OrderNum = q.OrderNum; //done
             rQ.AddSetup = q.AddSetup;
             rQ.Discount = q.Discount;
+
+            rQ.NeededFormulas = await CanUseFormulas(q);
+            if (rQ.NeededFormulas.Count == 0 && !q.UseFormulas)
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", "true");
+            else if (rQ.NeededFormulas.Count > 0 && q.UseFormulas)
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", "false");
             rQ.UseFormulas = q.UseFormulas;
+
             rQ.PickedUp = q.PickedUp;
 
             //After filling the shapes with instructions the shapes are sorted by bar size
@@ -970,6 +1011,7 @@ namespace CapstoneMasons.Controllers
             List<ReviewShape> rSList = new List<ReviewShape>();
             foreach (Shape s in q.Shapes)
             {
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 ReviewShape rS = new ReviewShape();
                 rS.QuoteID = q.QuoteID;
                 rS.ShapeID = s.ShapeID;
@@ -1564,17 +1606,22 @@ namespace CapstoneMasons.Controllers
         //[ValidateAntiForgeryToken]
         private async Task<Quote> UpdatePrices(Quote quote)
         {
+            for (int i = quote.Costs.Count - 1; i >= 0; i--)
+            {
+                await repoC.DeleteCostByIdAsync(quote.Costs[i].CostID);
+            }
             quote.Costs.Clear();
+
             var costsQuote = await repoC.BarCosts;//get costs from first quote? seeded?
             //var sumLegs = 0m;
             //var total = 0m;
 
-            foreach (Shape shape in quote.Shapes)
+            foreach (int barSize in KnownObjects.ValidRebarSizes)
             {
                 Cost bar = null;
                 Cost cut = null;
                 Cost bend = null;
-                switch(shape.BarSize)
+                switch(barSize)
                 {
                     case 3:
                         bar = costsQuote.FirstOrDefault(c => c.Name == KnownObjects.Bar3GlobalCost.Name);
@@ -1599,7 +1646,7 @@ namespace CapstoneMasons.Controllers
                 }
                 var barCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.BarCost,
+                    Name = barSize.ToString() + KnownObjects.BarCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == bar.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
@@ -1609,7 +1656,7 @@ namespace CapstoneMasons.Controllers
 
                 var cutCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.CutCost,
+                    Name = barSize.ToString() + KnownObjects.CutCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == cut.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
@@ -1620,7 +1667,7 @@ namespace CapstoneMasons.Controllers
 
                 var bendCost = new Cost
                 {
-                    Name = shape.BarSize.ToString() + KnownObjects.BendCost,
+                    Name = barSize.ToString() + KnownObjects.BendCost,
                     Price = costsQuote.FirstOrDefault(c => c.Name == bend.Name).Price,
                     LastChanged = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))
@@ -2140,7 +2187,7 @@ namespace CapstoneMasons.Controllers
                 ShapeID = shape.ShapeID,
                 BarSize = shape.BarSize,
                 Qty = shape.Qty,
-                NumCompleted = 0,
+                NumCompleted = shape.Completed,
                 LegCount = shape.Legs.Count()
             };
             
@@ -2148,32 +2195,22 @@ namespace CapstoneMasons.Controllers
             List<Leg> newLegs = new List<Leg>();
             for (int legIndex = 0; legIndex<shape.Legs.Count; legIndex++)
             {
-                if(oldShape.Legs[legIndex] != null)
+                var newLeg = new Leg()
                 {
-                    var newLeg = new Leg()
-                    {
-                        Degree = shape.Legs[legIndex].Degree,
-                        Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
-                        //LegID = oldShape.Legs[legIndex].LegID, this is not ok database gets new ids
-                        IsRight = shape.Legs[legIndex].IsRight,
-                        Length = shape.Legs[legIndex].Length
-                    };
-                    newShape.Legs.Add(newLeg);
-                }
-                else
-                {
-                    newShape.Legs.Add(new Leg() {
+                    Degree = shape.Legs[legIndex].Degree,
+                    Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
+                    IsRight = shape.Legs[legIndex].IsRight,
+                    Length = shape.Legs[legIndex].Length,
+                    SortOrder = shape.Legs[legIndex].SortOrder
+                };
+                newShape.Legs.Add(newLeg);
 
-                        Degree = shape.Legs[legIndex].Degree,
-                        Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
-                        IsRight = shape.Legs[legIndex].IsRight,
-                        Length = shape.Legs[legIndex].Length
-                    });
-                    //add new leg to repo
-                }
-                
             }
-            await repoS.UpdateShapesAsync(oldShape, newShape);
+            if (shape.QuoteID >0 && shape.ShapeID >0)
+            {
+                await repoS.UpdateShapesAsync(oldShape, newShape);
+            }
+            
             if (shape.ReviewOpen == true)
             {
                 return RedirectToAction("ReviewOpen", new { quoteID = shape.QuoteID });
@@ -2183,5 +2220,45 @@ namespace CapstoneMasons.Controllers
                 return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> NewShape(ReviewShape shape)
+        {
+            var newShape = new Shape()
+            {
+                ShapeID = shape.ShapeID,
+                BarSize = shape.BarSize,
+                Qty = shape.Qty,
+                NumCompleted = shape.Completed,
+                LegCount = shape.Legs.Count()
+            };
+
+
+            List<Leg> newLegs = new List<Leg>();
+            for (int legIndex = 0; legIndex < shape.Legs.Count; legIndex++)
+            {
+                var newLeg = new Leg()
+                {
+                    Degree = shape.Legs[legIndex].Degree,
+                    Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
+                    IsRight = shape.Legs[legIndex].IsRight,
+                    Length = shape.Legs[legIndex].Length,
+                    SortOrder = shape.Legs[legIndex].SortOrder
+                };
+                newShape.Legs.Add(newLeg);
+
+            }
+
+            if (shape.QuoteID > 0)
+                await repoS.AddShapeAsync(shape.QuoteID, newShape);
+            if (shape.ReviewOpen == true)
+            {
+                return RedirectToAction("ReviewOpen", new { quoteID = shape.QuoteID });
+            }
+            else
+            {
+                return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
+            }
+        }
+        
     }
 }
