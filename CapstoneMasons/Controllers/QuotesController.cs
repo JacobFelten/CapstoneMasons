@@ -39,15 +39,15 @@ namespace CapstoneMasons.Controllers
                 if (q.Open == true)
                 {
                     ReviewQuote r = await FillReviewQuote(q);
-                    bool dinkinflika = false;
+                    bool stillYoung = false;
                     foreach(Cost c in await repoC.BarCosts)
                     {
-                        if ((DateTime.Now - c.LastChanged).TotalDays < 14)
+                        if ((DateTime.Now - c.LastChanged).TotalDays < (DateTime.Now - q.Costs[0].LastChanged).TotalDays)
                         {
-                            dinkinflika = true;
+                            stillYoung = true;
                         }
                     }
-                    if((DateTime.Now - q.Costs[0].LastChanged).TotalDays >= 14 && dinkinflika)
+                    if((DateTime.Now - q.Costs[0].LastChanged).TotalDays >= 14 && stillYoung)
                     {
                         r.Update = true;
                     }
