@@ -29,7 +29,7 @@
             </div>
             <div class="modal-body">
                 <form data-toggle="validator" asp-controller="Quotes" asp-action="NewShape" id="NewShapeForm" name="NewShape"
-                      onchange="validLegCombination(this.id)" onsubmit="return submitForm(event)">
+                      onchange="validLegCombination(this.id)">
                     <input asp-for="ShapeID" value="@Model.ShapeID" hidden />
                     <input asp-for="QuoteID" value="@Model.QuoteID" hidden />
                     <input asp-for="NumOfBars" value="@Model.NumOfBars" hidden />
