@@ -107,7 +107,6 @@
 }
 @await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape() { QuoteID = Model.QuoteID, ReviewOpen = false })
 
-<a id="BackButton" class="btn btn-md btn-link" data-toggle="modal" data-target="#NewShape">New Shape</a>
 <div class="card container">
     <div class="card-header quote-header">
         <form method="post">
@@ -322,7 +321,7 @@
             </div>
         }
         <div class="text-center">
-            <a id="NewButton" class="btn btn-deep-purple" data-toggle="modal" data-target="#NewShape">Add a Shape</a>
+            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#NewShape">Add a Shape</a>
         </div>
     </div>
 </div>

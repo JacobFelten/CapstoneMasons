@@ -29,7 +29,7 @@
             </div>
             <div class="modal-body">
                 <form data-toggle="validator" asp-controller="Quotes" asp-action="NewShape" id="NewShapeForm" name="NewShape"
-                      onchange="validLegCombination(this.id)" onsubmit="return submitForm(event)">
+                      onchange="validLegCombination(this.id)">
                     <input asp-for="ShapeID" value="@Model.ShapeID" hidden />
                     <input asp-for="QuoteID" value="@Model.QuoteID" hidden />
                     <input asp-for="NumOfBars" value="@Model.NumOfBars" hidden />
@@ -37,7 +37,8 @@
                     <input asp-for="ReviewQuote" value="@Model.ReviewQuote" id="Shape.ReviewQuote" hidden />
                     <input asp-for="Completed" value="@Model.Completed" id="Shape.Comleted" hidden />
                     <input asp-for="Completed" value="@Model.Completed" id="Shape.Comleted" hidden />
-                    <input asp-for="Completed" value="0" id="NewShape.LegCount" hidden />
+                    <input value="0" id="NewShape.LegCount" hidden />
+                    <input value=false id="NewShape.Valid" hidden />
                     <!--using this to know where to redirect ()-->
 
                     <div class="input-group mb-3">
@@ -173,7 +174,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                     <div id="NewLeg"></div>
                 </form>
@@ -181,9 +182,9 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="addLegg()">Add a Leg</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" form="NewShapeForm" name="submit" value="Submit" class="btn btn-primary">
+                <a name="submit" class="btn btn-primary text-white" onclick="submitForm()">
                     Save changes
-                </button>
+                </a>
             </div>
         </div>
         <!-- /.modal-content -->

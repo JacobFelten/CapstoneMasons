@@ -108,10 +108,10 @@ function checkFormFieldsEmpty() {
         fieldname = fields[i];
         if (document.forms["NewShape"][fieldname].value === "" || document.forms["NewShape"][fieldname].value === "0") {
             alert(fieldname + " can not be empty");//testing
-            return true;
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 function validLegCombination(formID) {
@@ -130,23 +130,17 @@ function getAllFormValues() {
     return fields;
 }
 
-function checkLegLenghts(event) {
+function checkLegLenghts() {
     var numbLegs = document.getElementById('NewShape.LegCount').value;
-
+    var result;
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
         var LegsLenght = document.getElementById(`Shape.Leg${legIndex}.lenght`).value;
         if (LegsLenght > 240) {
             alert("The leg #" + (legIndex + 1) + " can not be more than 240");//testing
-            return true;
+            return false;
         }
     }
-
-    if (numbLegs > 0 && checkingCutLenght()) {//checking for cut lenght
-        {
-            return true;
-        }
-    }
-    return false;
+    return true; 
 }
 
 function checkingCutLenght() {
@@ -159,7 +153,7 @@ function checkingCutLenght() {
         LegCount: numbLegs,
         Qty: document.forms["NewShape"]["Qty"].value,
         NumCompleted: "",
-        Legs: []// var legs tbd
+        Legs: []
     };
 
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
@@ -181,7 +175,7 @@ function checkingCutLenght() {
     quote.q.Shapes = [];
     quote.q.Shapes.push(newShape);
 
-    return $.ajax({
+    $.ajax({
         type: "POST",
         data: quote,
         url: "/Quotes/CheckIfValidShape",
@@ -189,17 +183,20 @@ function checkingCutLenght() {
         success: function (response) {
             if (!response) {
                 alert("This shape cuts to more than 240 inches");
-                return true;
-            } 
+
+            } else {
+                $('#NewShapeForm').submit();
+            }
+            
         }
     });
+    return false;
 }
 
-function submitForm(event) {
-    if (confirm('Are you sure you want to add this shape?')) {
-        if (checkFormFieldsEmpty() || checkLegLenghts(event)) {
-            event.preventDefault();
-        }
-    } else event.preventDefault();
+function submitForm() {
 
+    if (checkFormFieldsEmpty() && checkLegLenghts()) {
+        if (confirm('Are you sure you want to add this shape?'))
+            checkingCutLenght();
+    }
 }
