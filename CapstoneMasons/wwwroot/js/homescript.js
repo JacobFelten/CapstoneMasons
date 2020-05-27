@@ -151,8 +151,8 @@ function getLegPrices() {
             document.getElementById("bar6cutID").value = response.bar6CutCost.costID;
             document.getElementById("bar6cut").value = response.bar6CutCost.price;
 
-            document.getElementById("setupGlobalID").value = response.bar6CutCost.costID;
-            document.getElementById("setupCharge").value = response.bar6CutCost.price;
+            document.getElementById("setupGlobalID").value = response.setupCharge.costID;
+            document.getElementById("setupCharge").value = response.setupCharge.price;
         },
         error: function () {
             alert("Error Getting Prices");
