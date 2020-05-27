@@ -99,3 +99,104 @@ function addLegg() {
     document.getElementById('NewLeg').innerHTML = newLegDiv + legInput;
     document.getElementById('NewShape.LegCount').value = numbLegs;
 }
+
+function checkFormFieldsEmpty() {
+    var fields =getAllFormValues();
+    var i, l = fields.length;
+    var fieldname;
+    for (i = 0; i < l; i++) {
+        fieldname = fields[i];
+        if (document.forms["NewShape"][fieldname].value === "" || document.forms["NewShape"][fieldname].value === "0") {
+            alert(fieldname + " can not be empty");//testing
+            return false;
+        }
+    }
+    return true;
+}
+
+function validLegCombination(formID) {
+
+}
+
+function getAllFormValues() {
+    var fields = ["Qty", "BarSize", "Legs[0].Length"];//will add more fields as the shape increases
+    var numbLegs = document.getElementById('NewShape.LegCount').value;
+    if (numbLegs >0) {
+        for (var legIndex = 1; legIndex <= numbLegs; ++legIndex) {
+            fields.push(`Legs[${(legIndex - 1)}].Degree`,`Legs[${(legIndex - 1)}].IsRight`, `Legs[${(legIndex - 1)}].Mandrel`,`Legs[${legIndex}].Length`);
+        }
+    }
+
+    return fields;
+}
+
+function checkLegLenghts() {
+    var numbLegs = document.getElementById('NewShape.LegCount').value;
+    var result;
+    for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
+        var LegsLenght = document.getElementById(`Shape.Leg${legIndex}.lenght`).value;
+        if (LegsLenght > 240) {
+            alert("The leg #" + (legIndex + 1) + " can not be more than 240");//testing
+            return false;
+        }
+    }
+    return true; 
+}
+
+function checkingCutLenght() {
+    fields = getAllFormValues();
+    var numbLegs = document.getElementById('NewShape.LegCount').value;
+
+    var newShape = {
+        ShapeID: "0",
+        BarSize: document.forms["NewShape"]["BarSize"].value,
+        LegCount: numbLegs,
+        Qty: document.forms["NewShape"]["Qty"].value,
+        NumCompleted: "",
+        Legs: []
+    };
+
+    for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
+        var leg = {
+            Length: document.getElementById(`Shape.Leg${legIndex}.lenght`).value,
+            SortOrder: (legIndex + 1),
+            Degree: document.getElementById(`Shape.Leg${legIndex}.degree`).value,
+            Mandrel: { Name: document.forms["NewShape"][`Legs[${(legIndex)}].Mandrel`].value },
+            IsRight: document.forms["NewShape"][`Legs[${(legIndex)}].IsRight`].value
+        };
+        newShape.Legs.push(leg);
+    }
+
+
+    var quote = {
+        q: {}
+    };
+    quote.q.UseFormulas = "true";
+    quote.q.Shapes = [];
+    quote.q.Shapes.push(newShape);
+
+    $.ajax({
+        type: "POST",
+        data: quote,
+        url: "/Quotes/CheckIfValidShape",
+        dataType: 'json',
+        success: function (response) {
+            if (!response) {
+                alert("This shape cuts to more than 240 inches");
+
+            } else {
+                $('#NewShapeForm').submit();
+            }
+            
+        }
+    });
+    return false;
+}
+
+function submitForm() {
+
+    if (checkFormFieldsEmpty() && checkLegLenghts()) {
+        if (confirm('Are you sure you want to add this shape?'))
+            checkingCutLenght();
+    }
+}

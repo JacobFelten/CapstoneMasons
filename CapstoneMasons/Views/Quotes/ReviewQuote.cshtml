@@ -68,7 +68,7 @@
     }
 
         .fa-edit:hover {
-            text-shadow: 0 0 5px Highlight;
+            text-shadow: 0 0 5px black;
             color: yellowgreen !important;
             cursor: pointer;
             padding-left: 0;
@@ -83,14 +83,30 @@
         .fa-trash:hover {
             color: red;
         }
+
+    .delete {
+        color: tomato !important;
+    }
+
+        .delete:hover {
+            text-shadow: 0 0 5px black;
+            color: red !important;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+    #NewButton {
+        padding: 15px; /* Some padding */
+        background-color: #0094ff;
+        color: snow;
+    }
 </style>
 @foreach (var shape in Model.Shapes)
 {
     @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
 }
-@await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape());
+@await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape() { QuoteID = Model.QuoteID, ReviewOpen = false })
 
-<a id="BackButton" class="btn btn-md btn-link" data-toggle="modal" data-target="#NewShape">New Shape</a>
 <div class="card container">
     <div class="card-header quote-header">
         <form method="post">
@@ -221,7 +237,7 @@
                             getShapeNames(@(rS.ShapeID));
                         </script>
                         <a class="Edit" data-toggle="modal" data-target="#modalShapeEdit@(rS.ShapeID)">Edit <i class="fas fa-edit"></i></a>
-                        <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.QuoteID" asp-route-returnUrl="ReviewQuote">Delete<i class="fas fa-trash"></i></a>
+                        <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.QuoteID" asp-route-returnUrl="ReviewQuote" class="delete">Delete<i class="fas fa-trash"></i></a>
                     </h2>
                 </div>
                 <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString(tostring)"</div>
@@ -304,5 +320,8 @@
                 </div>
             </div>
         }
+        <div class="text-center">
+            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#NewShape">Add a Shape</a>
+        </div>
     </div>
 </div>
