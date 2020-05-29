@@ -114,8 +114,46 @@ function checkFormFieldsEmpty() {
     return true;
 }
 
-function validLegCombination(formID) {
+function validLegCombination() {
+    var form = "NewShape";
+    var barSize = document.forms[form]["BarSize"].value;
+    var numbLegs = document.getElementById(`${form}.LegCount`).value;
+    for (var i = 0; i < numbLegs; i++) {
+        var mandrel = document.forms[form][`Legs[${i}].Mandrel`].value;
+        if (mandrel === "" && barSize !== "") {
+            switch (barSize) {
+                case "4":
+                    document.getElementById(`Legs[${numbLegs}].Mandrel.None`).disabled = true;
+                    break;
+                case "5":
+                    document.getElementById(`Legs[${numbLegs}].Mandrel.None`).disabled = true;
+                    document.getElementById(`Legs[${numbLegs}].Mandrel.Small`).disabled = true;
+                    break;
+                case "6":
+                    document.getElementById(`Legs[${numbLegs}].Mandrel.None`).disabled = true;
+                    document.getElementById(`Legs[${numbLegs}].Mandrel.Small`).disabled = true;
+                    document.getElementById(`Legs[${numbLegs}].Mandrel.Medium`).disabled = true;
+                    break;
+            }
+        } else if (mandrel !== "" && barSize === "") {
+            switch (mandrel) {
+                case "None":
 
+                    break;
+                case "Small":
+
+                    break;
+                case "Medium":
+
+                    break;
+                case "Large":
+
+                    break;
+            }
+        } else {
+
+        }
+    }
 }
 
 function getAllFormValues() {
