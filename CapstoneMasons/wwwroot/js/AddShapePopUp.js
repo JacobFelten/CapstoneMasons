@@ -71,19 +71,18 @@ function addLegg() {
                                         <div class="input-group justify-content-center" style="margin-left: 45px;">
                                             <div class="input-group-btn" data-toggle="buttons">
                                                 <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelNone">
-                                                    <input type="radio" name="Legs[${numbLegs}].Mandrel" value="None" autocomplete="off" hidden>None
-                                                    </label>
-
+                                                    <input type="radio" name="Legs[${numbLegs}].Mandrel" id="Legs[${numbLegs}].Mandrel.None" value="None" autocomplete="off" hidden>None
+                                                 </label>   
                                                     <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelSmall">
-                                                        <input type="radio" name="Legs[${numbLegs}].Mandrel" value="Small" autocomplete="off" hidden>Small
+                                                        <input type="radio" name="Legs[${numbLegs}].Mandrel" id="Legs[${numbLegs}].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
                                                     </label>
 
-                                                        <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelMed">
-                                                            <input type="radio" name="Legs[${numbLegs}].Mandrel" value="Medium" autocomplete="off" hidden>Medium
+                                                        <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelMedium">
+                                                            <input type="radio" name="Legs[${numbLegs}].Mandrel" id="Legs[${numbLegs}].Mandrel.Medium" value="Medium" autocomplete="off" hidden>Medium
                                                     </label>
 
                                                             <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelLarge">
-                                                                <input type="radio" name="Legs[${numbLegs}].Mandrel" value="Large" autocomplete="off" hidden>Large
+                                                                <input type="radio" name="Legs[${numbLegs}].Mandrel" value="Large" id="Legs[${numbLegs}].Mandrel.Large" autocomplete="off" hidden>Large
                                                     </label>
                                                 </div>
                                             </div>
@@ -98,6 +97,7 @@ function addLegg() {
     var newLegDiv = document.getElementById('NewLeg').innerHTML;
     document.getElementById('NewLeg').innerHTML = newLegDiv + legInput;
     document.getElementById('NewShape.LegCount').value = numbLegs;
+    validLegCombination();
 }
 
 function checkFormFieldsEmpty() {
@@ -120,38 +120,57 @@ function validLegCombination() {
     var numbLegs = document.getElementById(`${form}.LegCount`).value;
     for (var i = 0; i < numbLegs; i++) {
         var mandrel = document.forms[form][`Legs[${i}].Mandrel`].value;
-        if (mandrel === "" && barSize !== "") {
-            switch (barSize) {
-                case "4":
-                    document.getElementById(`Legs[${numbLegs}].Mandrel.None`).disabled = true;
-                    break;
-                case "5":
-                    document.getElementById(`Legs[${numbLegs}].Mandrel.None`).disabled = true;
-                    document.getElementById(`Legs[${numbLegs}].Mandrel.Small`).disabled = true;
-                    break;
-                case "6":
-                    document.getElementById(`Legs[${numbLegs}].Mandrel.None`).disabled = true;
-                    document.getElementById(`Legs[${numbLegs}].Mandrel.Small`).disabled = true;
-                    document.getElementById(`Legs[${numbLegs}].Mandrel.Medium`).disabled = true;
-                    break;
-            }
-        } else if (mandrel !== "" && barSize === "") {
-            switch (mandrel) {
-                case "None":
+        var mandrelItem = `Legs[${i}].Mandrel.`;
+        switch (barSize) {
+            case "3":
+                document.getElementById(mandrelItem + "None").disabled = false;
+                $(`#Shapes.leg${i}.mandrelNone`).popover("dispose");
+                document.getElementById(mandrelItem + "Small").disabled = false;
+                $("#" + "Shapes.leg0.mandrelSmall").popover("dispose");
+                document.getElementById(mandrelItem + "Medium").disabled = false;
+                $("#" + "Shapes.leg0.mandrelMed").popover("dispose");
+                break;
+            case "4":
+                document.getElementById(mandrelItem + "None").disabled = true;
+                document.getElementById(mandrelItem + "None").checked = false;
+                document.getElementById(`Shapes.leg${i}.mandrelNone`).classList.remove("active");
+                $(`#Shapes.leg${i}.mandrelNone`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
 
-                    break;
-                case "Small":
+                document.getElementById(mandrelItem + "Small").disabled = false;
+                $(`#Shapes.leg${i}.mandrelSmall`).popover("dispose");
+                document.getElementById(mandrelItem + "Medium").disabled = false;
+                $(`#Shapes.leg${i}.mandrelMed`).popover("dispose");
+                break;
+            case "5":
+                document.getElementById(`Legs[${i}].Mandrel.None`).disabled = true;
+                document.getElementById(`Legs[${i}].Mandrel.None`).checked = false;
+                document.getElementById(`Shapes.leg${i}.mandrelNone`).classList.remove("active");
+                $(`#Shapes.leg${i}.mandrelNone`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
 
-                    break;
-                case "Medium":
+                document.getElementById(`Legs[${i}].Mandrel.Small`).disabled = true;
+                document.getElementById(`Legs[${i}].Mandrel.Small`).checked = false;
+                document.getElementById(`Shapes.leg${i}.mandrelSmall`).classList.remove("active");
+                $(`#Shapes.leg${i}.mandrelSmall`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
 
-                    break;
-                case "Large":
+                document.getElementById(`Legs[${i}].Mandrel.Medium`).disabled = false;
+                $(`#Shapes.leg${i}.mandrelMed`).popover("dispose");
+                break;
+            case "6":
+                document.getElementById(`Legs[${i}].Mandrel.None`).disabled = true;
+                document.getElementById(`Legs[${i}].Mandrel.None`).checked = false;
+                document.getElementById(`Shapes.leg${i}.mandrelNone`).classList.remove("active");
+                $(`#Shapes.leg${i}.mandrelNone`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
 
-                    break;
-            }
-        } else {
+                document.getElementById(`Legs[${i}].Mandrel.Small`).disabled = true;
+                document.getElementById(`Legs[${i}].Mandrel.Small`).checked = false;
+                document.getElementById(`Shapes.leg${i}.mandrelSmall`).classList.remove("active");
+                $(`#Shapes.leg${i}.mandrelSmall`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
 
+                document.getElementById(`Legs[${i}].Mandrel.Medium`).disabled = true;
+                document.getElementById(`Legs[${i}].Mandrel.Medium`).checked = false;
+                document.getElementById(`Shapes.leg${i}.mandrelMedium`).classList.remove("active");
+                $(`#Shapes.leg${i}.mandrelMed`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
+                break;
         }
     }
 }

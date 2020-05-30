@@ -28,8 +28,7 @@
 
             </div>
             <div class="modal-body">
-                <form data-toggle="validator" asp-controller="Quotes" asp-action="NewShape" id="NewShapeForm" onchange="validLegCombination();" name="NewShape"
-                      onchange="">
+                <form data-toggle="validator" asp-controller="Quotes" asp-action="NewShape" id="NewShapeForm" name="NewShape">
                     <input asp-for="ShapeID" value="@Model.ShapeID" hidden />
                     <input asp-for="QuoteID" value="@Model.QuoteID" hidden />
                     <input asp-for="NumOfBars" value="@Model.NumOfBars" hidden />
@@ -49,7 +48,7 @@
                     </div>
 
                     <!--bar size radio buttons-->
-                    <div class="input-group justify-content-center" id="">
+                    <div class="input-group justify-content-center" onchange="validLegCombination();">
                         <div class="input-group-btn" data-toggle="buttons">
                             @if (Model.BarSize == 3)
                             {
@@ -159,7 +158,7 @@
                                                         <input type="radio" asp-for="Legs[0].Mandrel" id="Legs[0].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
                                                     </label>
 
-                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelMed">
+                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelMedium">
                                                         <input type="radio" asp-for="Legs[0].Mandrel" value="Medium" id="Legs[0].Mandrel.Medium" autocomplete="off" hidden>Medium
                                                     </label>
 
