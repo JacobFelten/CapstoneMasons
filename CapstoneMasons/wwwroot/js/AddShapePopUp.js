@@ -23,14 +23,15 @@ function addLegg() {
     numbLegs++;
     legInput = `
 <hr/>
-        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel-group" id="accordionLeg${numbLegs}" role="tablist" aria-multiselectable="true">
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingLeg${numbLegs}">
                     <h4 class="panel-title">
-                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLeg${numbLegs}" aria-expanded="false" aria-controls="collapseLeg${numbLegs}">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion${numbLegs}" href="#collapseLeg${numbLegs}" aria-expanded="false" aria-controls="collapseLeg${numbLegs}">
 
                             ${legName} Leg
                                     </a>
+                                                <i class="fas fa-trash-alt float-right hidden" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;margin-top: 5px;margin-right: 15px;" onclick="deleteLeg()"></i>
                     </h4>
                 </div>
                 <div id="collapseLeg${numbLegs}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLeg${numbLegs}}">
