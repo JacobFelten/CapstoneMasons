@@ -1,11 +1,11 @@
 ﻿
 
-function addLegg() {
-    var numbLegs = document.getElementById('NewShape.LegCount').value;
-    document.getElementById(`Shape.Leg${numbLegs}.degreeLabel`).style.display = "unset";
-    document.getElementById(`Shape.Leg${numbLegs}.directionLabel`).style.display = "unset"; 
-    document.getElementById(`Shape.Leg${numbLegs}.direction`).style.display = "unset";
-    document.getElementById(`Shape.Leg${numbLegs}.Mandrel`).style.display = "unset";
+function addLegg(form) {
+    var numbLegs = document.getElementById(`${form}.LegCount`).value;
+    document.getElementById(`${form}.leg[${numbLegs}].degreeLabel`).style.display = "unset";
+    document.getElementById(`${form}.leg[${numbLegs}].directionLabel`).style.display = "unset"; 
+    document.getElementById(`${form}.leg[${numbLegs}].direction`).style.display = "unset";
+    document.getElementById(`${form}.leg[${numbLegs}].Mandrel`).style.display = "unset";
     var legName = "";
     switch (numbLegs) {
         case "0":
@@ -23,43 +23,43 @@ function addLegg() {
     numbLegs++;
     legInput = `
 <hr/>
-        <div class="panel-group" id="accordionLeg${numbLegs}" role="tablist" aria-multiselectable="true">
+        <div class="panel-group" id="${form}.leg[${numbLegs}].accordion" role="tablist" aria-multiselectable="true">
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingLeg${numbLegs}">
                     <h4 class="panel-title">
-                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion${numbLegs}" href="#collapseLeg${numbLegs}" aria-expanded="false" aria-controls="collapseLeg${numbLegs}">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLeg${numbLegs}" aria-expanded="false" aria-controls="collapseLeg${numbLegs}">
 
                             ${legName} Leg
                                     </a>
-                                                <i class="fas fa-trash-alt float-right hidden" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;margin-top: 5px;margin-right: 15px;" onclick="deleteLeg()"></i>
+                                                <i class="fas fa-trash-alt float-right hidden" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;margin-top: 5px;margin-right: 15px;" onclick="deleteLeg("${form}.leg[${numbLegs}].accordion");"></i>
                     </h4>
                 </div>
-                <div id="collapseLeg${numbLegs}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLeg${numbLegs}}">
+                <div id="collapseLeg${numbLegs}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLeg${numbLegs}">
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-4 form-group">
                                 <label>
                                     ${legName} Leg Length:
                                             </label>
-                                <input class="form-control" name="Legs[${numbLegs}].Length" id="Shape.Leg${numbLegs}.lenght" />
+                                <input class="form-control" name="Legs[${numbLegs}].Length" id="NewShape.leg[${numbLegs}].lenght" />
                             </div>
-                            <div class="col-4 form-group" style="display:none" id="Shape.Leg${numbLegs}.degreeLabel">
+                            <div class="col-4 form-group" style="display:none" id="NewShape.leg[${numbLegs}].degreeLabel">
                                 <label>
                                     ${legName} Leg Degree:
                                             </label>
-                                <input class="form-control" value="" min="0" max="180" type="number" step="any" name="Legs[${numbLegs}].Degree" id="Shape.Leg${numbLegs}.degree" />
+                                <input class="form-control" value="" min="0" max="180" type="number" step="any" name="Legs[${numbLegs}].Degree" id="NewShape.leg[${numbLegs}].degree" />
                             </div>
 
-                            <div class="col-4 form-group" style="display:none" id="Shape.Leg${numbLegs}.directionLabel">
+                            <div class="col-4 form-group" style="display:none" id="NewShape.leg[${numbLegs}].directionLabel">
                                 <label>
                                     ${legName} Leg Direction:
                                             </label>
-                                <div class="input-group" style="display:none" id="Shape.Leg${numbLegs}.direction">
+                                <div class="input-group" style="display:none" id="NewShape.leg[${numbLegs}].direction">
                                     <div class="input-group-btn" data-toggle="buttons">
-                                        <label class="btn btn-info" id="Legs0.IsLeft">
+                                        <label class="btn btn-info" id="NewShape.leg[${numbLegs}].IsLeft">
                                             <input type="radio" name="Legs[${numbLegs}].IsRight" value="false" autocomplete="off" hidden>Left
                                                     </label>
-                                            <label class="btn btn-info" id="Legs0.IsRight">
+                                            <label class="btn btn-info" id="NewShape.leg[${numbLegs}].IsRight">
                                                 <input type="radio" name="Legs[${numbLegs}].IsRight" value="true" autocomplete="off" hidden>Right
                                                     </label>
 
@@ -67,23 +67,23 @@ function addLegg() {
                                             </div>
                                     </div>
 
-                                    <div class="row" style="display: none" id="Shape.Leg${numbLegs}.Mandrel">
+                                    <div class="row" style="display: none" id="NewShape.leg[${numbLegs}].Mandrel">
                                         <div class="col-12 text-center">Mandrel Size</div>
                                         <div class="input-group justify-content-center" style="margin-left: 45px;">
                                             <div class="input-group-btn" data-toggle="buttons">
-                                                <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelNone">
-                                                    <input type="radio" name="Legs[${numbLegs}].Mandrel" id="Legs[${numbLegs}].Mandrel.None" value="None" autocomplete="off" hidden>None
+                                                <label class="btn btn-secondary" id="NewShape.leg[${numbLegs}].Mandrel.None.Label">
+                                                    <input type="radio" name="Legs[${numbLegs}].Mandrel" id="NewShape.leg[${numbLegs}].Mandrel.None" value="None" autocomplete="off" hidden>None
                                                  </label>   
-                                                    <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelSmall">
-                                                        <input type="radio" name="Legs[${numbLegs}].Mandrel" id="Legs[${numbLegs}].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
+                                                    <label class="btn btn-secondary" id="NewShape.leg[${numbLegs}].Mandrel.Small.Label">
+                                                        <input type="radio" name="Legs[${numbLegs}].Mandrel" id="NewShape.leg[${numbLegs}].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
                                                     </label>
 
-                                                        <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelMedium">
-                                                            <input type="radio" name="Legs[${numbLegs}].Mandrel" id="Legs[${numbLegs}].Mandrel.Medium" value="Medium" autocomplete="off" hidden>Medium
+                                                        <label class="btn btn-secondary" id="NewShape.leg[${numbLegs}].Mandrel.Medium.Label">
+                                                            <input type="radio" name="Legs[${numbLegs}].Mandrel" id="NewShape.leg[${numbLegs}].Mandrel.Medium" value="Medium" autocomplete="off" hidden>Medium
                                                     </label>
 
-                                                            <label class="btn btn-secondary" id="Shapes.leg${numbLegs}.mandrelLarge">
-                                                                <input type="radio" name="Legs[${numbLegs}].Mandrel" value="Large" id="Legs[${numbLegs}].Mandrel.Large" autocomplete="off" hidden>Large
+                                                            <label class="btn btn-secondary" id="NewShape.leg[${numbLegs}].Mandrel.Large.Label">
+                                                                <input type="radio" name="Legs[${numbLegs}].Mandrel" value="Large" id="NewShape.leg[${numbLegs}].Mandrel.Large" autocomplete="off" hidden>Large
                                                     </label>
                                                 </div>
                                             </div>
@@ -95,10 +95,10 @@ function addLegg() {
                                     </div>
 
                                 </div>`;
-    var newLegDiv = document.getElementById('NewLeg').innerHTML;
-    document.getElementById('NewLeg').innerHTML = newLegDiv + legInput;
-    document.getElementById('NewShape.LegCount').value = numbLegs;
-    validLegCombination();
+    var newLegDiv = document.getElementById(form+'.NewLeg').innerHTML;
+    document.getElementById(form+'.NewLeg').innerHTML = newLegDiv + legInput;
+    document.getElementById(form+'.LegCount').value = numbLegs;
+    validLegCombination(form);
 }
 
 function checkFormFieldsEmpty() {
@@ -115,62 +115,61 @@ function checkFormFieldsEmpty() {
     return true;
 }
 
-function validLegCombination() {
-    var form = "NewShape";
+function validLegCombination(form) {
     var barSize = document.forms[form]["BarSize"].value;
     var numbLegs = document.getElementById(`${form}.LegCount`).value;
     for (var i = 0; i < numbLegs; i++) {
-        var mandrel = document.forms[form][`Legs[${i}].Mandrel`].value;
-        var mandrelItem = `Legs[${i}].Mandrel.`;
+        var mandrelItem = `${form}.leg[${i}].Mandrel.`;
         switch (barSize) {
             case "3":
-                document.getElementById(mandrelItem + "None").disabled = false;
-                $(`#Shapes.leg${i}.mandrelNone`).popover("dispose");
+                document.getElementById(mandrelItem + "None").disabled = false;//every mandrel is available
+                $("#"+mandrelItem+"None.Label").popover("dispose");
                 document.getElementById(mandrelItem + "Small").disabled = false;
-                $("#" + "Shapes.leg0.mandrelSmall").popover("dispose");
+                $("#" + mandrelItem +"Small.Label").popover("dispose");
                 document.getElementById(mandrelItem + "Medium").disabled = false;
-                $("#" + "Shapes.leg0.mandrelMed").popover("dispose");
+                $("#" + mandrelItem + "Small.Label").popover("dispose");
                 break;
             case "4":
                 document.getElementById(mandrelItem + "None").disabled = true;
                 document.getElementById(mandrelItem + "None").checked = false;
-                document.getElementById(`Shapes.leg${i}.mandrelNone`).classList.remove("active");
-                $(`#Shapes.leg${i}.mandrelNone`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
+                document.getElementById(mandrelItem + "None.Label").classList.remove("active");
+                $("#" + mandrelItem + "None.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
 
                 document.getElementById(mandrelItem + "Small").disabled = false;
-                $(`#Shapes.leg${i}.mandrelSmall`).popover("dispose");
+                $("#" + mandrelItem + "Small.Label").popover("dispose");
+
                 document.getElementById(mandrelItem + "Medium").disabled = false;
-                $(`#Shapes.leg${i}.mandrelMed`).popover("dispose");
+                $("#" + mandrelItem + "Medium.Label").popover("dispose");
                 break;
             case "5":
-                document.getElementById(`Legs[${i}].Mandrel.None`).disabled = true;
-                document.getElementById(`Legs[${i}].Mandrel.None`).checked = false;
-                document.getElementById(`Shapes.leg${i}.mandrelNone`).classList.remove("active");
-                $(`#Shapes.leg${i}.mandrelNone`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
+                document.getElementById(mandrelItem + "None").disabled = true;
+                document.getElementById(mandrelItem + "None").checked = false;
+                document.getElementById(mandrelItem + "None.Label").classList.remove("active");
+                $("#" + mandrelItem + "None.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
 
-                document.getElementById(`Legs[${i}].Mandrel.Small`).disabled = true;
-                document.getElementById(`Legs[${i}].Mandrel.Small`).checked = false;
-                document.getElementById(`Shapes.leg${i}.mandrelSmall`).classList.remove("active");
-                $(`#Shapes.leg${i}.mandrelSmall`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
+                document.getElementById(mandrelItem + "Small").disabled = true;
+                document.getElementById(mandrelItem + "Small").checked = false;
+                document.getElementById(mandrelItem + "Small.Label").classList.remove("active");
+                $("#" + mandrelItem + "Small.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
 
-                document.getElementById(`Legs[${i}].Mandrel.Medium`).disabled = false;
-                $(`#Shapes.leg${i}.mandrelMed`).popover("dispose");
+                document.getElementById(mandrelItem + "Medium").disabled = false;
+                $("#" + mandrelItem + "Medium.Label").popover("dispose");
                 break;
             case "6":
-                document.getElementById(`Legs[${i}].Mandrel.None`).disabled = true;
-                document.getElementById(`Legs[${i}].Mandrel.None`).checked = false;
-                document.getElementById(`Shapes.leg${i}.mandrelNone`).classList.remove("active");
-                $(`#Shapes.leg${i}.mandrelNone`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
+                document.getElementById(mandrelItem + "None").disabled = true;
+                document.getElementById(mandrelItem + "None").checked = false;
+                document.getElementById(mandrelItem + "None.Label").classList.remove("active");
+                $("#" + mandrelItem + "None.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
 
-                document.getElementById(`Legs[${i}].Mandrel.Small`).disabled = true;
-                document.getElementById(`Legs[${i}].Mandrel.Small`).checked = false;
-                document.getElementById(`Shapes.leg${i}.mandrelSmall`).classList.remove("active");
-                $(`#Shapes.leg${i}.mandrelSmall`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
+                document.getElementById(mandrelItem + "Small").disabled = true;
+                document.getElementById(mandrelItem + "Small").checked = false;
+                document.getElementById(mandrelItem + "Small.Label").classList.remove("active");
+                $("#" + mandrelItem + "Small.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
 
-                document.getElementById(`Legs[${i}].Mandrel.Medium`).disabled = true;
-                document.getElementById(`Legs[${i}].Mandrel.Medium`).checked = false;
-                document.getElementById(`Shapes.leg${i}.mandrelMedium`).classList.remove("active");
-                $(`#Shapes.leg${i}.mandrelMed`).popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover" });
+                document.getElementById(mandrelItem + "Medium").disabled = true;
+                document.getElementById(mandrelItem + "Medium").checked = false;
+                document.getElementById(mandrelItem + "Medium.Label").classList.remove("active");
+                $("#" + mandrelItem + "Medium.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
                 break;
         }
     }
@@ -192,7 +191,7 @@ function checkLegLenghts() {
     var numbLegs = document.getElementById('NewShape.LegCount').value;
     var result;
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
-        var LegsLenght = document.getElementById(`Shape.Leg${legIndex}.lenght`).value;
+        var LegsLenght = document.getElementById(`NewShape.leg[${legIndex}].lenght`).value;
         if (LegsLenght > 240) {
             alert("The leg #" + (legIndex + 1) + " can not be more than 240");//testing
             return false;
@@ -216,9 +215,9 @@ function checkingCutLenght() {
 
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
         var leg = {
-            Length: document.getElementById(`Shape.Leg${legIndex}.lenght`).value,
+            Length: document.getElementById(`NewShape.leg[${legIndex}].lenght`).value,
             SortOrder: (legIndex + 1),
-            Degree: document.getElementById(`Shape.Leg${legIndex}.degree`).value,
+            Degree: document.getElementById(`NewShape.leg[${legIndex}].degree`).value,
             Mandrel: { Name: document.forms["NewShape"][`Legs[${(legIndex)}].Mandrel`].value },
             IsRight: document.forms["NewShape"][`Legs[${(legIndex)}].IsRight`].value
         };
@@ -257,4 +256,8 @@ function submitForm() {
         if (confirm('Are you sure you want to add this shape?'))
             checkingCutLenght();
     }
+}
+
+function deleteLeg(id) {
+
 }

@@ -1,7 +1,6 @@
 ﻿@model ReviewShape
 
 <script type="text/javascript" src="~/js/openQuote.js"></script>
-<script type="text/javascript" src="~/js/AddShapePopUp.js"></script>
 <link rel="stylesheet" href="~/css/glyphicon.css" />
 
 <style>
@@ -48,7 +47,7 @@
                     </div>
 
                     <!--bar size radio buttons-->
-                    <div class="input-group justify-content-center" onchange="validLegCombination();">
+                    <div class="input-group justify-content-center" onchange=validLegCombination("NewShape");>
                         <div class="input-group-btn" data-toggle="buttons">
                             @if (Model.BarSize == 3)
                             {
@@ -105,7 +104,7 @@
                     <hr>
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingLeg0">
+                            <div class="panel-heading" role="tab" id="NewShape.leg[0].heading">
                                 <h4 class="panel-title">
                                     <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLeg0" aria-expanded="false" aria-controls="collapseLeg0">
 
@@ -113,32 +112,32 @@
                                     </a>
                                 </h4>
                             </div>
-                            <div id="collapseLeg0" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLeg0">
+                            <div id="collapseLeg0" class="panel-collapse collapse" role="tabpanel" aria-labelledby="NewShape.leg[0].heading">
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-4 form-group">
                                             <label>
                                                 @(KnownObjects.NumberPrefix[0]) Leg Length:
                                             </label>
-                                            <input class="form-control" asp-for="Legs[0].Length" id="Shape.Leg0.lenght" />
+                                            <input class="form-control" asp-for="Legs[0].Length" id="NewShape.leg[0].lenght" />
                                         </div>
-                                        <div class="col-4 form-group" style="display:none" id="Shape.Leg0.degreeLabel">
+                                        <div class="col-4 form-group" style="display:none" id="NewShape.leg[0].degreeLabel">
                                             <label>
                                                 @(KnownObjects.NumberPrefix[0]) Leg Degree:
                                             </label>
-                                            <input class="form-control" value="" min="0" max="180" type="number" step="any" asp-for="Legs[0].Degree" id="Shape.Leg0.degree" />
+                                            <input class="form-control" value="" min="0" max="180" type="number" step="any" asp-for="Legs[0].Degree" id="NewShape.leg[0].degree" />
                                         </div>
 
-                                        <div class="col-4 form-group" style="display:none" id="Shape.Leg0.directionLabel">
+                                        <div class="col-4 form-group" style="display:none" id="NewShape.leg[0].directionLabel">
                                             <label>
                                                 @(KnownObjects.NumberPrefix[0]) Leg Direction:
                                             </label>
-                                            <div class="input-group" style="display:none" id="Shape.Leg0.direction">
+                                            <div class="input-group" style="display:none" id="NewShape.leg[0].direction">
                                                 <div class="input-group-btn" data-toggle="buttons">
-                                                    <label class="btn btn-info" id="Legs0.IsLeft">
+                                                    <label class="btn btn-info" id="NewShape.leg[0].IsLeft">
                                                         <input type="radio" asp-for="Legs[0].IsRight" value="false" autocomplete="off" hidden>Left
                                                     </label>
-                                                    <label class="btn btn-info" id="Legs0.IsRight">
+                                                    <label class="btn btn-info" id="NewShape.leg[0].IsRight">
                                                         <input type="radio" asp-for="Legs[0].IsRight" value="true" autocomplete="off" hidden>Right
                                                     </label>
 
@@ -146,24 +145,24 @@
                                             </div>
                                         </div>
 
-                                        <div class="row" style="display: none" id="Shape.Leg0.Mandrel">
+                                        <div class="row" style="display: none" id="NewShape.leg[0].Mandrel">
                                             <div class="col-12 text-center">Mandrel Size</div>
                                             <div class="input-group justify-content-center" style="margin-left: 45px;">
                                                 <div class="input-group-btn" data-toggle="buttons">
-                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelNone">
-                                                        <input type="radio" asp-for="Legs[0].Mandrel" id="Legs[0].Mandrel.None" value="None" autocomplete="off" hidden>None
+                                                    <label class="btn btn-secondary" id="NewShape.leg[0].Mandrel.None.Label">
+                                                        <input type="radio" asp-for="Legs[0].Mandrel" id="NewShape.leg[0].Mandrel.None" value="None" autocomplete="off" hidden>None
                                                     </label>
 
-                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelSmall">
-                                                        <input type="radio" asp-for="Legs[0].Mandrel" id="Legs[0].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
+                                                    <label class="btn btn-secondary" id="NewShape.leg[0].Mandrel.Small.Label">
+                                                        <input type="radio" asp-for="Legs[0].Mandrel" id="NewShape.leg[0].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
                                                     </label>
 
-                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelMedium">
-                                                        <input type="radio" asp-for="Legs[0].Mandrel" value="Medium" id="Legs[0].Mandrel.Medium" autocomplete="off" hidden>Medium
+                                                    <label class="btn btn-secondary" id="NewShape.leg[0].Mandrel.Medium.Label">
+                                                        <input type="radio" asp-for="Legs[0].Mandrel" value="Medium" id="NewShape.leg[0].Mandrel.Medium" autocomplete="off" hidden>Medium
                                                     </label>
 
-                                                    <label class="btn btn-secondary" id="Shapes.leg0.mandrelLarge">
-                                                        <input type="radio" asp-for="Legs[0].Mandrel" value="Large" id="Legs[0].Mandrel.Large" autocomplete="off" hidden>Large
+                                                    <label class="btn btn-secondary" id="NewShape.leg[0].Mandrel.Large.Label">
+                                                        <input type="radio" asp-for="Legs[0].Mandrel" value="Large" id="NewShape.leg[0].Mandrel.Large" autocomplete="off" hidden>Large
                                                     </label>
                                                 </div>
                                             </div>
@@ -175,11 +174,11 @@
                         </div>
 
                     </div>
-                    <div id="NewLeg"></div>
+                    <div id="NewShape.NewLeg"></div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="addLegg()">Add a Leg</button>
+                <button type="button" class="btn btn-secondary" onclick="addLegg('NewShape')">Add a Leg</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <a name="submit" class="btn btn-primary text-white" onclick="submitForm()">
                     Save changes
@@ -195,5 +194,5 @@
 @section script{
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    
+
 }
