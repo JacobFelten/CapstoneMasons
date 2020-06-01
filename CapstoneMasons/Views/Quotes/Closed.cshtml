@@ -1,7 +1,7 @@
 ﻿@model OpenQuote
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Closed Quotes";
 }
 
 <div>
@@ -15,7 +15,28 @@
     </div>
     <form asp-action="SearchClosed" asp-controller="Quotes" method="post">
         <div class="float-left" style="padding-top: 6px;">
-            <input asp-for="SearchBar" style="border-radius: 5px; width: 350px; height: 35px;" placeholder="Search" />
+            <input name="SearchBar" style="width: 150px; height: 35px;" placeholder="Search" value="@Model.SearchBar" />
+        </div>
+        <div class="float-left" style="padding-top: 6px; padding-left: 8px;">
+            <select asp-for="SearchBarSpecific" style="width: 150px; height: 35px;">
+                @switch (Model.Sort)
+                {
+                    case "Name":
+                        <option value="Name" selected>Name</option>
+                        <option value="Order Num">Order Number</option>
+                        break;
+
+                    case "Order Num":
+                        <option value="Name">Name</option>
+                        <option value="Order Num" selected>Order Number</option>
+                        break;
+
+                    default:
+                        <option value="Name" selected>Name</option>
+                        <option value="Order Num">Order Number</option>
+                        break;
+                }
+            </select>
         </div>
         <div class="float-right" style="padding-right: 0px; width: 161px; padding-left: 0px;">
             <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px; margin-left: 6px ;margin-right: 6px; left: auto;" type="submit">Search</button>
@@ -24,28 +45,52 @@
             <select asp-for="Sort" style="width: 200px; height: 35px;">
                 @switch (Model.Sort)
                 {
+                    case "AtoZ":
+                        <option value="AtoZ" selected>Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        break;
+
+                    case "Cheapest":
+                        <option value="AtoZ">Alphabetical</option>
+                        <option value="Cheapest" selected>Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        break;
+
+                    case "Most Expensive":
+                        <option value="AtoZ">Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive" selected>Most Expensive</option>
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        break;
+
                     case "Newest":
+                        <option value="AtoZ">Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
                         <option value="Newest" selected>Newest to Oldest</option>
                         <option value="Oldest">Oldest to Newest</option>
-                        <option value="AtoZ">Alphabetical</option>
                         break;
 
                     case "Oldest":
+                        <option value="AtoZ">Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
                         <option value="Newest">Newest to Oldest</option>
                         <option value="Oldest" selected>Oldest to Newest</option>
-                        <option value="AtoZ">Alphabetical</option>
-                        break;
-
-                    case "AtoZ":
-                        <option value="Newest">Newest to Oldest</option>
-                        <option value="Oldest">Oldest to Newest</option>
-                        <option value="AtoZ" selected>Alphabetical</option>
                         break;
 
                     default:
+                        <option value="AtoZ" selected>Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
                         <option value="Newest">Newest to Oldest</option>
                         <option value="Oldest">Oldest to Newest</option>
-                        <option value="AtoZ" selected>Alphabetical</option>
                         break;
                 }
             </select>
@@ -102,6 +147,7 @@
                 <td>
                     <div>
                         <div class="text-center">
+                            <h4>Order Number: @rq.OrderNum</h4>
                             <h3>@rq.Name</h3>
                             <h4>$@rq.TotalCost</h4>
                             <p style="font-size: 19px;">@rq.DateQuoted</p>
@@ -123,22 +169,6 @@
                                         <a class="btn btn-primary text-center" style="width: 150px;" asp-action="ReviewClosed" asp-route-quoteID=@rq.QuoteID>Details</a>
                                     </div>
                                 </div>
-                                @if (rq.PickedUp == true)
-                                {
-                                    <div class="row">
-                                        <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
-                                            The Customer has picked up their rebar.
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="row">
-                                        <div class="text-center col-12 font-weight-bold" style="font-size: 20px; padding-top: 5px">
-                                            The Customer has not picked up their rebar yet.
-                                        </div>
-                                    </div>
-                                }
                             </div>
                         </div>
                     </div>

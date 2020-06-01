@@ -9,6 +9,7 @@ namespace CapstoneMasons.ViewModels
     public class ReviewQuote
     {
         public int QuoteID { get; set; }
+        public bool Update { get; set; }
         public string Author { get; set; }
         public DateTime DateQuoted { get; set; }
         public string Name { get; set; }
@@ -16,6 +17,7 @@ namespace CapstoneMasons.ViewModels
         public bool? AddSetup { get; set; }
         public bool UseFormulas { get; set; }
         public bool PickedUp { get; set; }
+        public decimal QtyLeft { get; set; }
         public List<Formula> NeededFormulas { get; set; }
         public decimal Discount { get; set; }
         public decimal TotalCost { get; set; }
