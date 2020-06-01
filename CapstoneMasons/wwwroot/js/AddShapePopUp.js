@@ -110,6 +110,9 @@ function checkFormFieldsEmpty(form) {
         if (document.forms[form][fieldname].value === "" || document.forms[form][fieldname].value === "0") {
             alert(fieldname + " can not be empty");//testing
             return false;
+        } else if (document.forms[form][fieldname].value <= -1) {
+            alert(fieldname + " can not be negative");//testing
+            return false;
         }
     }
     return true;
@@ -193,7 +196,11 @@ function checkLegLenghts(form) {
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
         var LegsLenght = document.getElementById(form+`.leg[${legIndex}].lenght`).value;
         if (LegsLenght > 240) {
-            alert("The leg #" + (legIndex + 1) + " can not be more than 240");//testing
+            alert("The leg #" + (legIndex + 1) + " can not be more than 240");//catching longer than vali
+            return false;
+        } else if (LegsLenght < 0)
+        {
+            alert("The leg #" + (legIndex + 1) + " can not be negative");//catching smaller than valid
             return false;
         }
     }
