@@ -242,7 +242,7 @@ function checkingCutLenght(form) {
                 alert("This shape cuts to more than 240 inches");
 
             } else {
-                $('#'+form+'.form').submit();
+                document.forms[form].submit();
             }
             
         }
