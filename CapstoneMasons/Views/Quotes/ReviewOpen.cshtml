@@ -20,8 +20,11 @@
 </script>
 <script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
 <link rel="stylesheet" href="~/css/fontawesome.css">
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="~/js/AddShapePopUp.js"></script>
 <script>
     var legs = [];
+
 </script>
 
 <style>
@@ -57,11 +60,11 @@
     }
 
     #NewButton {
-
         padding: 15px; /* Some padding */
         background-color: #0094ff;
         color: snow;
     }
+
     .Edit {
         color: #007bff !important;
     }
@@ -72,11 +75,13 @@
             cursor: pointer;
             text-decoration: underline !important;
         }
+
     .fa-edit {
         font-size: 0.9em;
         color: #F6C700 !important;
         padding-left: 0;
     }
+
         .fa-edit:hover {
             text-shadow: 0 0 5px black;
             color: yellowgreen !important;
@@ -85,9 +90,11 @@
             font-size: 0.9em;
             text-decoration: underline !important;
         }
+
     .fa-trash {
         color: tomato !important;
     }
+
         .fa-trash:hover {
             color: red;
         }
@@ -106,9 +113,11 @@
 @foreach (var shape in Model.ReviewQuote.Shapes)
 {
     @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
+    <script type="text/javascript">
+        validLegCombination('Shape[@(shape.ShapeID)]');
+    </script>
 }
-@await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape() { QuoteID = Model.ReviewQuote.QuoteID, ReviewOpen = true})
-
+@await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape() { QuoteID = Model.ReviewQuote.QuoteID, ReviewOpen = true })
 
 <form method="post">
     <div class="card container">
@@ -359,10 +368,9 @@
                     </div>
                 </div>
             }
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#NewShape">Add a Shape</a>
-        </div>            
+            <div class="text-center">
+                <a class="btn btn-primary text-white" data-toggle="modal" data-target="#NewShape">Add a Shape</a>
+            </div>
         </div>
     </div>
     <div class="text-center text-white bottom-btn">
