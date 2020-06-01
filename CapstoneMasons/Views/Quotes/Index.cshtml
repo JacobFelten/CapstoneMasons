@@ -1,7 +1,7 @@
 ﻿@model OpenQuote
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Open Quotes/Orders";
 }
 
 <div>
@@ -14,8 +14,29 @@
         <a class="btn btn-primary" style="height: 35px;padding-bottom: 5px;padding-top: 6px;margin-top: 0px;top: 6px;margin-left: 0px;bottom: auto;" data-toggle="modal" data-target="#createQuote">Create New</a>
     </div>
     <form asp-action="SearchOpen" asp-controller="Quotes" method="post">
-        <div class="float-left">
-            <input name="SearchBar" style="width: 150px; height: 35px; margin-top: 7px;" placeholder="Search" />
+        <div class="float-left" style="padding-top: 6px;">
+            <input name="SearchBar" style="width: 150px; height: 35px;" placeholder="Search" value="@Model.SearchBar"/>
+        </div>
+        <div class="float-left" style="padding-top: 6px; padding-left: 8px;">
+            <select asp-for="SearchBarSpecific" style="width: 150px; height: 35px;">
+                @switch (Model.Sort)
+                {
+                    case "Name":
+                        <option value="Name" selected>Name</option>
+                        <option value="Order Num">Order Number</option>
+                        break;
+
+                    case "Order Num":
+                        <option value="Name">Name</option>
+                        <option value="Order Num" selected>Order Number</option>
+                        break;
+
+                    default:
+                        <option value="Name" selected>Name</option>
+                        <option value="Order Num">Order Number</option>
+                        break;
+                }
+            </select>
         </div>
         <div class="float-right" style="padding-right: 0px; width: 161px; padding-left: 0px;">
             <button class="btn btn-info" style="width: 150px; height: 35px; padding-bottom: 5px; padding-top: 5px; margin-left: 6px ;margin-right: 6px; left: auto;" type="submit">Search</button>
@@ -24,28 +45,52 @@
             <select asp-for="Sort" style="width: 200px; height: 35px;">
                 @switch (Model.Sort)
                 {
+                    case "AtoZ":
+                        <option value="AtoZ" selected>Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        break;
+
+                    case "Cheapest":
+                        <option value="AtoZ">Alphabetical</option>
+                        <option value="Cheapest" selected>Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        break;
+
+                    case "Most Expensive":
+                        <option value="AtoZ">Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive" selected>Most Expensive</option>
+                        <option value="Newest">Newest to Oldest</option>
+                        <option value="Oldest">Oldest to Newest</option>
+                        break;
+
                     case "Newest":
+                        <option value="AtoZ">Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
                         <option value="Newest" selected>Newest to Oldest</option>
                         <option value="Oldest">Oldest to Newest</option>
-                        <option value="AtoZ">Alphabetical</option>
                         break;
 
                     case "Oldest":
+                        <option value="AtoZ">Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
                         <option value="Newest">Newest to Oldest</option>
                         <option value="Oldest" selected>Oldest to Newest</option>
-                        <option value="AtoZ">Alphabetical</option>
-                        break;
-
-                    case "AtoZ":
-                        <option value="Newest">Newest to Oldest</option>
-                        <option value="Oldest">Oldest to Newest</option>
-                        <option value="AtoZ" selected>Alphabetical</option>
                         break;
 
                     default:
+                        <option value="AtoZ" selected>Alphabetical</option>
+                        <option value="Cheapest">Cheapest</option>
+                        <option value="Most Expensive">Most Expensive</option>
                         <option value="Newest">Newest to Oldest</option>
                         <option value="Oldest">Oldest to Newest</option>
-                        <option value="AtoZ" selected>Alphabetical</option>
                         break;
                 }
             </select>
@@ -102,8 +147,13 @@
                 <td>
                     <div>
                         <div class="text-center">
-                            <h3>@rq.Name</h3>
+                            <h4>Order Number: @rq.OrderNum</h4>
+                            <h3>Name: @rq.Name</h3>
                             <h4>$@rq.TotalCost</h4>
+                            @if (rq.Update == true)
+                            {
+                                <p style="font-size: 21px; color: red;">The prices in this Quote/Order have not been updated in at least 2 weeks.</p>
+                            }
                             <p style="font-size: 19px;">@rq.DateQuoted</p>
                         </div>
                         <div class="row">
