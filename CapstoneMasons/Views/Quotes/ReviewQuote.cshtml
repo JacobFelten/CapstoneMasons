@@ -106,7 +106,7 @@
     @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
 }
 @await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape() { QuoteID = Model.QuoteID, ReviewOpen = false })
-
+@await Html.PartialAsync("~/Views/Shared/_PartialLegendPopUp.cshtml")
 <div class="card container">
     <div class="card-header quote-header">
         <form method="post">

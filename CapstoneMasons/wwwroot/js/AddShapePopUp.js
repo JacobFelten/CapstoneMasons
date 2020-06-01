@@ -6,6 +6,7 @@ function addLegg(form) {
     document.getElementById(`${form}.leg[${numbLegs}].directionLabel`).style.display = "unset"; 
     document.getElementById(`${form}.leg[${numbLegs}].direction`).style.display = "unset";
     document.getElementById(`${form}.leg[${numbLegs}].Mandrel`).style.display = "unset";
+    document.getElementById(`${form}.leg[${numbLegs}].delete`).style.display = "none";
     var legName = "";
     switch (numbLegs) {
         case "0":
@@ -31,7 +32,7 @@ function addLegg(form) {
 
                             ${legName} Leg
                                     </a>
-                                                <i class="fas fa-trash-alt float-right hidden" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;margin-top: 5px;margin-right: 15px;" onclick="deleteLeg("${form}.leg[${numbLegs}].accordion");"></i>
+                                                <i id="NewShape.leg[${numbLegs}].delete" class="fas fa-trash-alt float-right hidden" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;margin-top: 5px;margin-right: 15px;" onclick="deleteLeg('${form}.leg[${numbLegs}].accordion','NewShape')"></i>
                     </h4>
                 </div>
                 <div id="collapseLeg${numbLegs}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLeg${numbLegs}">
@@ -265,6 +266,14 @@ function submitForm(form) {
     }
 }
 
-function deleteLeg(id) {
-
+function deleteLeg(legAccordionID,form) { //deleting a leg and hidding previous properties
+    document.getElementById(legAccordionID).remove();
+    var numbLegs = document.getElementById(`${form}.LegCount`).value;
+    
+    document.getElementById(`${form}.leg[${numbLegs-1}].degreeLabel`).style.display = "none";
+    document.getElementById(`${form}.leg[${numbLegs-1}].directionLabel`).style.display = "none";
+    document.getElementById(`${form}.leg[${numbLegs-1}].direction`).style.display = "none";
+    document.getElementById(`${form}.leg[${numbLegs - 1}].Mandrel`).style.display = "none";
+    document.getElementById(`${form}.leg[${numbLegs-1}].delete`).style.display = "unset";
+    document.getElementById(`${form}.LegCount`).value = numbLegs-1;
 }
