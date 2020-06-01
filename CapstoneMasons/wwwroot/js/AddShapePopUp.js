@@ -101,13 +101,13 @@ function addLegg(form) {
     validLegCombination(form);
 }
 
-function checkFormFieldsEmpty() {
-    var fields =getAllFormValues();
+function checkFormFieldsEmpty(form) {
+    var fields =getAllFormValues(form);
     var i, l = fields.length;
     var fieldname;
     for (i = 0; i < l; i++) {
         fieldname = fields[i];
-        if (document.forms["NewShape"][fieldname].value === "" || document.forms["NewShape"][fieldname].value === "0") {
+        if (document.forms[form][fieldname].value === "" || document.forms[form][fieldname].value === "0") {
             alert(fieldname + " can not be empty");//testing
             return false;
         }
@@ -175,9 +175,9 @@ function validLegCombination(form) {
     }
 }
 
-function getAllFormValues() {
+function getAllFormValues(form) {
     var fields = ["Qty", "BarSize", "Legs[0].Length"];//will add more fields as the shape increases
-    var numbLegs = document.getElementById('NewShape.LegCount').value;
+    var numbLegs = document.getElementById(form+'.LegCount').value;
     if (numbLegs >0) {
         for (var legIndex = 1; legIndex <= numbLegs; ++legIndex) {
             fields.push(`Legs[${(legIndex - 1)}].Degree`,`Legs[${(legIndex - 1)}].IsRight`, `Legs[${(legIndex - 1)}].Mandrel`,`Legs[${legIndex}].Length`);
@@ -187,11 +187,11 @@ function getAllFormValues() {
     return fields;
 }
 
-function checkLegLenghts() {
-    var numbLegs = document.getElementById('NewShape.LegCount').value;
+function checkLegLenghts(form) {
+    var numbLegs = document.getElementById(form+'.LegCount').value;
     var result;
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
-        var LegsLenght = document.getElementById(`NewShape.leg[${legIndex}].lenght`).value;
+        var LegsLenght = document.getElementById(form+`.leg[${legIndex}].lenght`).value;
         if (LegsLenght > 240) {
             alert("The leg #" + (legIndex + 1) + " can not be more than 240");//testing
             return false;
@@ -200,26 +200,26 @@ function checkLegLenghts() {
     return true; 
 }
 
-function checkingCutLenght() {
-    fields = getAllFormValues();
-    var numbLegs = document.getElementById('NewShape.LegCount').value;
+function checkingCutLenght(form) {
+    fields = getAllFormValues(form);
+    var numbLegs = document.getElementById(form+'.LegCount').value;
 
     var newShape = {
         ShapeID: "0",
-        BarSize: document.forms["NewShape"]["BarSize"].value,
+        BarSize: document.forms[form]["BarSize"].value,
         LegCount: numbLegs,
-        Qty: document.forms["NewShape"]["Qty"].value,
+        Qty: document.forms[form]["Qty"].value,
         NumCompleted: "",
         Legs: []
     };
 
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
         var leg = {
-            Length: document.getElementById(`NewShape.leg[${legIndex}].lenght`).value,
+            Length: document.getElementById(`${form}.leg[${legIndex}].lenght`).value,
             SortOrder: (legIndex + 1),
-            Degree: document.getElementById(`NewShape.leg[${legIndex}].degree`).value,
-            Mandrel: { Name: document.forms["NewShape"][`Legs[${(legIndex)}].Mandrel`].value },
-            IsRight: document.forms["NewShape"][`Legs[${(legIndex)}].IsRight`].value
+            Degree: document.getElementById(`${form}.leg[${legIndex}].degree`).value,
+            Mandrel: { Name: document.forms[form][`Legs[${(legIndex)}].Mandrel`].value },
+            IsRight: document.forms[form][`Legs[${(legIndex)}].IsRight`].value
         };
         newShape.Legs.push(leg);
     }
@@ -242,7 +242,7 @@ function checkingCutLenght() {
                 alert("This shape cuts to more than 240 inches");
 
             } else {
-                $('#NewShapeForm').submit();
+                $('#'+form+'.form').submit();
             }
             
         }
@@ -250,11 +250,11 @@ function checkingCutLenght() {
     return false;
 }
 
-function submitForm() {
+function submitForm(form) {
 
-    if (checkFormFieldsEmpty() && checkLegLenghts()) {
+    if (checkFormFieldsEmpty(form) && checkLegLenghts(form)) {
         if (confirm('Are you sure you want to add this shape?'))
-            checkingCutLenght();
+            checkingCutLenght(form);
     }
 }
 

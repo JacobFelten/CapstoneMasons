@@ -137,7 +137,7 @@
                                                             @((legIndex).ToString()+"th ")
                                                         } Leg Length:
                                                     </label>
-                                                    <input class="form-control" value="@Model.Legs[legIndex-1].Length" asp-for="Legs[legIndex-1].Length" id="Shape@(Model.ShapeID).Leg@(legIndex).lenght" />
+                                                    <input class="form-control" value="@Model.Legs[legIndex-1].Length" asp-for="Legs[legIndex-1].Length" id="Shape[@(Model.ShapeID)].leg[@(legIndex)].lenght" />
                                                 </div>
                                                 @if (legIndex < Model.Legs.Count)
                                                 {
@@ -264,9 +264,12 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="" hidden>Add a Leg</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" form="Shape@(Model.ShapeID).form" name="submit" value="Submit" class="btn btn-primary" 
-                            onclick="return confirm('Are you sure you want to change a shape? This cannot be undone')">Save changes
-                    </button>
+                    <a name="submit" class="btn btn-primary text-white" onclick="submitForm('submitForm('Shape[@(Model.ShapeID)]')')">
+                    Save changes
+                </a>
+                    <!--<button type="submit" form="Shape[@(Model.ShapeID)].form" name="submit" value="Submit" class="btn btn-primary"
+            onclick="return confirm('Are you sure you want to change a shape? This cannot be undone')">Save changes
+    </button>-->
                 </div>
         </div>
         <!-- /.modal-content -->

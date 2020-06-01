@@ -27,7 +27,7 @@
 
             </div>
             <div class="modal-body">
-                <form data-toggle="validator" asp-controller="Quotes" asp-action="NewShape" id="NewShapeForm" name="NewShape">
+                <form data-toggle="validator" asp-controller="Quotes" asp-action="NewShape" id="NewShape.Form" name="NewShape">
                     <input asp-for="ShapeID" value="@Model.ShapeID" hidden />
                     <input asp-for="QuoteID" value="@Model.QuoteID" hidden />
                     <input asp-for="NumOfBars" value="@Model.NumOfBars" hidden />
@@ -180,7 +180,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="addLegg('NewShape')">Add a Leg</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <a name="submit" class="btn btn-primary text-white" onclick="submitForm()">
+                <a name="submit" class="btn btn-primary text-white" onclick="submitForm('NewShape')">
                     Save changes
                 </a>
             </div>
