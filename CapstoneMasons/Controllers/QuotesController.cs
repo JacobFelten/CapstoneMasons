@@ -14,6 +14,12 @@ using Microsoft.AspNetCore.Connections.Features;
 using Org.BouncyCastle.Asn1.X509;
 using Microsoft.Extensions.Primitives;
 
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+using Microsoft.AspNetCore.Authorization;
+
+
 namespace CapstoneMasons.Controllers
 {
     public class QuotesController : Controller
@@ -40,6 +46,18 @@ namespace CapstoneMasons.Controllers
                 if (q.Open == true)
                 {
                     ReviewQuote r = await FillReviewQuote(q);
+                    bool stillYoung = false;
+                    foreach(Cost c in await repoC.BarCosts)
+                    {
+                        if ((DateTime.Now - c.LastChanged).TotalDays < (DateTime.Now - q.Costs[0].LastChanged).TotalDays)
+                        {
+                            stillYoung = true;
+                        }
+                    }
+                    if((DateTime.Now - q.Costs[0].LastChanged).TotalDays >= 14 && stillYoung)
+                    {
+                        r.Update = true;
+                    }
                     oq.ReviewQuotes.Add(r);
                     oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
                 }
@@ -78,11 +96,33 @@ namespace CapstoneMasons.Controllers
             {
                 List<ReviewQuote> rqList = new List<ReviewQuote>();
                 IOrderedEnumerable<ReviewQuote> reviewQuotes;
+                List<decimal> manpowerlist = new List<decimal>();
                 switch (oq.Sort2)
                 {
                     case "PickedUp":
                         switch (oq.Sort)
                         {
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Cheapest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Most Expensive":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
                             case "Newest":
                                 reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
                                 foreach (ReviewQuote rq in reviewQuotes)
@@ -97,18 +137,33 @@ namespace CapstoneMasons.Controllers
                                     rqList.Add(rq);
                                 }
                                 break;
-                            case "AtoZ":
-                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.Name);
-                                foreach (ReviewQuote rq in reviewQuotes)
-                                {
-                                    rqList.Add(rq);
-                                }
-                                break;
+                            
                         }
                         break;
                     case "NotPickedUp":
                         switch (oq.Sort)
                         {
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Cheapest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Most Expensive":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
                             case "Newest":
                                 reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
                                 foreach (ReviewQuote rq in reviewQuotes)
@@ -123,8 +178,96 @@ namespace CapstoneMasons.Controllers
                                     rqList.Add(rq);
                                 }
                                 break;
+                        }
+                        break;
+                    case "ClosestToCompletion":
+                        switch (oq.Sort)
+                        {
                             case "AtoZ":
-                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Cheapest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenBy(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Most Expensive":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenByDescending(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Newest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenBy(rq => rq.DateQuoted);
                                 foreach (ReviewQuote rq in reviewQuotes)
                                 {
                                     rqList.Add(rq);
@@ -132,11 +275,100 @@ namespace CapstoneMasons.Controllers
                                 break;
                         }
                         break;
-                    case "ClosestToCompletion":
-                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
-                        break;
                     case "FarthestToCompletion":
-                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        switch (oq.Sort)
+                        {
+                            case "AtoZ":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Cheapest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenBy(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Most Expensive":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenByDescending(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Newest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
                         break;
                 }
                 oq.ReviewQuotes = rqList;
@@ -145,33 +377,61 @@ namespace CapstoneMasons.Controllers
             {
                 switch (oq.Sort)
                 {
+                    case "AtoZ":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                    case "Cheapest":
+                        oq.ReviewQuotes.Sort((a, b) => a.TotalCost.CompareTo(b.TotalCost));
+                        break;
+                    case "Most Expensive":
+                        oq.ReviewQuotes.Sort((a, b) => b.TotalCost.CompareTo(a.TotalCost));
+                        break;
                     case "Newest":
                         oq.ReviewQuotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
                         break;
                     case "Oldest":
                         oq.ReviewQuotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
                         break;
-                    case "AtoZ":
-                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
-                        break;
                 }
             }
             if(oq.SearchBar != null)
             {
                 List<int> quoteIndex = new List<int>();
-                for(int i = 0; i < oq.ReviewQuotes.Count; i++)
+                switch (oq.SearchBarSpecific)
                 {
-                    string smagastooble = oq.ReviewQuotes[i].Name;
-                    smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
-                    if(!smagastooble.Contains(oq.SearchBar.ToLower().Trim().Replace("'", "")))
-                    {
-                        quoteIndex.Add(i);
-                    }
-                }
-                quoteIndex.Sort((a, b) => b.CompareTo(a));
-                foreach(int i in quoteIndex)
-                {
-                    oq.ReviewQuotes.RemoveAt(i);
+                    case "Name":
+                        for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                        {
+                            string smagastooble = oq.ReviewQuotes[i].Name;
+                            smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
+                            if (!smagastooble.Contains(oq.SearchBar.ToLower().Trim().Replace("'", "")))
+                            {
+                                quoteIndex.Add(i);
+                            }
+                        }
+                        quoteIndex.Sort((a, b) => b.CompareTo(a));
+                        foreach (int i in quoteIndex)
+                        {
+                            oq.ReviewQuotes.RemoveAt(i);
+                        }
+                        break;
+
+                    case "Order Num":
+                        for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                        {
+                            string smagastooble = oq.ReviewQuotes[i].OrderNum;
+                            smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
+                            if (!smagastooble.Contains(oq.SearchBar.ToLower().Trim().Replace("'", "")))
+                            {
+                                quoteIndex.Add(i);
+                            }
+                        }
+                        quoteIndex.Sort((a, b) => b.CompareTo(a));
+                        foreach (int i in quoteIndex)
+                        {
+                            oq.ReviewQuotes.RemoveAt(i);
+                        }
+                        break;
                 }
             }
             
@@ -193,25 +453,53 @@ namespace CapstoneMasons.Controllers
             {
                 List<ReviewQuote> rqList = new List<ReviewQuote>();
                 IOrderedEnumerable<ReviewQuote> reviewQuotes;
+                List<decimal> manpowerlist = new List<decimal>();
                 switch (oq.Sort2)
                 {
                     case "PickedUp":
                         switch (oq.Sort)
                         {
+                            case "AtoZ":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Cheapest":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Most Expensive":
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
                             case "Newest":
-                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
                                 foreach (ReviewQuote rq in reviewQuotes)
                                 {
                                     rqList.Add(rq);
                                 }
                                 break;
                             case "Oldest":
-                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
                                 foreach (ReviewQuote rq in reviewQuotes)
                                 {
                                     rqList.Add(rq);
                                 }
                                 break;
+
+                        }
+                        break;
+                    case "NotPickedUp":
+                        switch (oq.Sort)
+                        {
                             case "AtoZ":
                                 reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.Name);
                                 foreach (ReviewQuote rq in reviewQuotes)
@@ -219,27 +507,29 @@ namespace CapstoneMasons.Controllers
                                     rqList.Add(rq);
                                 }
                                 break;
-                        }
-                        break;
-                    case "NotPickedUp":
-                        switch (oq.Sort)
-                        {
+                            case "Cheapest":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Most Expensive":
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
                             case "Newest":
-                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
                                 foreach (ReviewQuote rq in reviewQuotes)
                                 {
                                     rqList.Add(rq);
                                 }
                                 break;
                             case "Oldest":
-                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenByDescending(rq => rq.DateQuoted);
-                                foreach (ReviewQuote rq in reviewQuotes)
-                                {
-                                    rqList.Add(rq);
-                                }
-                                break;
-                            case "AtoZ":
-                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.PickedUp).ThenBy(rq => rq.Name);
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.PickedUp).ThenBy(rq => rq.DateQuoted);
                                 foreach (ReviewQuote rq in reviewQuotes)
                                 {
                                     rqList.Add(rq);
@@ -248,41 +538,257 @@ namespace CapstoneMasons.Controllers
                         }
                         break;
                     case "ClosestToCompletion":
-                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        switch (oq.Sort)
+                        {
+                            case "AtoZ":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Cheapest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenBy(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Most Expensive":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenByDescending(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Newest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderBy(rq => rq.QtyLeft).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
                         break;
                     case "FarthestToCompletion":
-                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        switch (oq.Sort)
+                        {
+                            case "AtoZ":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenBy(rq => rq.Name);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Cheapest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenBy(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Most Expensive":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenByDescending(rq => rq.TotalCost);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Newest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenByDescending(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                            case "Oldest":
+                                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                                {
+                                    int wanted = 0;
+                                    int made = 0;
+                                    for (int j = 0; j < oq.ReviewQuotes[i].Shapes.Count; j++)
+                                    {
+                                        wanted += oq.ReviewQuotes[i].Shapes[j].Qty;
+                                        made += oq.ReviewQuotes[i].Shapes[j].Completed;
+                                    }
+                                    oq.ReviewQuotes[i].QtyLeft = wanted - made;
+                                }
+                                reviewQuotes = oq.ReviewQuotes.OrderByDescending(rq => rq.QtyLeft).ThenBy(rq => rq.DateQuoted);
+                                foreach (ReviewQuote rq in reviewQuotes)
+                                {
+                                    rqList.Add(rq);
+                                }
+                                break;
+                        }
                         break;
                 }
+                oq.ReviewQuotes = rqList;
             }
-            switch (oq.Sort)
+            else
             {
-                case "Newest":
-                    oq.ReviewQuotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
-                    break;
-                case "Oldest":
-                    oq.ReviewQuotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
-                    break;
-                case "AtoZ":
-                    oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
-                    break;
+                switch (oq.Sort)
+                {
+                    case "AtoZ":
+                        oq.ReviewQuotes.Sort((a, b) => a.Name.CompareTo(b.Name));
+                        break;
+                    case "Cheapest":
+                        oq.ReviewQuotes.Sort((a, b) => a.TotalCost.CompareTo(b.TotalCost));
+                        break;
+                    case "Most Expensive":
+                        oq.ReviewQuotes.Sort((a, b) => b.TotalCost.CompareTo(a.TotalCost));
+                        break;
+                    case "Newest":
+                        oq.ReviewQuotes.Sort((a, b) => b.DateQuoted.CompareTo(a.DateQuoted));
+                        break;
+                    case "Oldest":
+                        oq.ReviewQuotes.Sort((a, b) => a.DateQuoted.CompareTo(b.DateQuoted));
+                        break;
+                }
             }
             if (oq.SearchBar != null)
             {
                 List<int> quoteIndex = new List<int>();
-                for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                switch (oq.SearchBarSpecific)
                 {
-                    string smagastooble = oq.ReviewQuotes[i].Name;
-                    smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
-                    if (!smagastooble.Contains(oq.SearchBar.ToLower().Trim().Replace("'", "")))
-                    {
-                        quoteIndex.Add(i);
-                    }
-                }
-                quoteIndex.Sort((a, b) => b.CompareTo(a));
-                foreach (int i in quoteIndex)
-                {
-                    oq.ReviewQuotes.RemoveAt(i);
+                    case "Name":
+                        for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                        {
+                            string smagastooble = oq.ReviewQuotes[i].Name;
+                            smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
+                            if (!smagastooble.Contains(oq.SearchBar.ToLower().Trim().Replace("'", "")))
+                            {
+                                quoteIndex.Add(i);
+                            }
+                        }
+                        quoteIndex.Sort((a, b) => b.CompareTo(a));
+                        foreach (int i in quoteIndex)
+                        {
+                            oq.ReviewQuotes.RemoveAt(i);
+                        }
+                        break;
+
+                    case "Order Num":
+                        for (int i = 0; i < oq.ReviewQuotes.Count; i++)
+                        {
+                            string smagastooble = oq.ReviewQuotes[i].OrderNum;
+                            smagastooble = smagastooble.ToLower().Trim().Replace("'", "");
+                            if (!smagastooble.Contains(oq.SearchBar.ToLower().Trim().Replace("'", "")))
+                            {
+                                quoteIndex.Add(i);
+                            }
+                        }
+                        quoteIndex.Sort((a, b) => b.CompareTo(a));
+                        foreach (int i in quoteIndex)
+                        {
+                            oq.ReviewQuotes.RemoveAt(i);
+                        }
+                        break;
                 }
             }
 
@@ -357,7 +863,7 @@ namespace CapstoneMasons.Controllers
                     }
 
                 }
-                await repo.AddQuoteAsync(q);
+                
                 //var quotes = await repo.Quotes;
                 //int quoteId = quotes.Last().QuoteID + 1;
                 //q.QuoteID = quoteId;
@@ -377,12 +883,12 @@ namespace CapstoneMasons.Controllers
                         }
                     }
                 }
-
                 if (invalidLeg)
                 {
                     ModelState.AddModelError(string.Empty, "A leg in shape "+ invalidShape.ToString()+ " and cannot be more than 240 inches");
                     return View("Create", q);
                 }
+                await repo.AddQuoteAsync(q);
                 return RedirectToAction("ReviewQuote", new { quoteID = q.QuoteID });
                 //return await ReviewQuote(q.QuoteID);
             }
@@ -416,13 +922,15 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            List<Formula> useFormulas = await CanUseFormulas(q);
+
             for (int i = 0; i < q.Shapes.Count; i++)
             {
                 Shape s = q.Shapes[i];
                 s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
                 decimal cutLength = 0;
-                if (q.UseFormulas)
+                if (useFormulas.Count == 0)
                 {
                     cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
                 }
@@ -435,8 +943,15 @@ namespace CapstoneMasons.Controllers
                 if (cutLength > 240)
                 {
                     ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches.");
+                    await repo.DeleteQuoteAsync(q);
                     return View("Create", q);
                 }
+            }
+
+            string errorMessage = GenerateInvalidFormulaErrorMessage(useFormulas);
+            if (errorMessage != "")
+            {
+                ModelState.AddModelError(string.Empty, errorMessage);
             }
 
             q.DateQuoted = TimeZoneInfo.ConvertTime(DateTime.Now,
@@ -454,28 +969,14 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup, string useFormulas)
+        public async Task<IActionResult> ReviewQuote(int quoteID, string name, string orderNumber, decimal discount, string setup)
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", name);
             await repo.UpdateQuoteSimpleAsync(q, "OrderNum", orderNumber);
             await repo.UpdateQuoteSimpleAsync(q, "Discount", discount.ToString());
             await repo.UpdateQuoteSimpleAsync(q, "AddSetup", setup);
-            if (useFormulas == null)
-                useFormulas = "false";
-            var neededFormulas = new List<Formula>();
-            if (bool.Parse(useFormulas))
-            {
-                neededFormulas = (List<Formula>)await CanUseFormulas(q);
-                if (neededFormulas.Count == 0)
-                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
-            else
-            {
-                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
             var rQ = await FillReviewQuote(q);
-            rQ.NeededFormulas = neededFormulas;
             return View("ReviewQuote", rQ);
         }
 
@@ -504,6 +1005,38 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            List<Formula> useFormulas = await CanUseFormulas(q);
+
+            for (int i = 0; i < q.Shapes.Count; i++)
+            {
+                Shape s = q.Shapes[i];
+                s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+                string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
+                decimal cutLength = 0;
+                
+                if (useFormulas.Count == 0)
+                {
+                    cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
+                }
+                else
+                {
+                    cutLength = Calculations.Total_Shape_Length(s);
+                    //Do jeff stuff
+                    //pass in bar size as bar type, pass in legs as crude legs
+                }
+                if (cutLength > 240)
+                {
+                    ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches so it was deleted.");
+                    await repoS.DeleteShapeAsync(s);
+                }
+            }
+
+            string errorMessage = GenerateInvalidFormulaErrorMessage(useFormulas);
+            if (errorMessage != "")
+            {
+                ModelState.AddModelError(string.Empty, errorMessage);
+            }
+
             ReviewQuote rQ = await FillReviewQuote(q);
 
             ReviewOpen rO = new ReviewOpen 
@@ -515,7 +1048,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string useFormulas, string pickedUp)
+        public async Task<IActionResult> ReviewOpen(ReviewOpen rO, string pickedUp)
         {
             Quote q = await repo.GetQuoteByIdAsync(rO.QuoteID);
             await repo.UpdateQuoteSimpleAsync(q, "Name", rO.Name);
@@ -525,21 +1058,7 @@ namespace CapstoneMasons.Controllers
             if (pickedUp == null)
                 pickedUp = "false";
             await repo.UpdateQuoteSimpleAsync(q, "PickedUp", pickedUp);
-            if (useFormulas == null)
-                useFormulas = "false";
-            var neededFormulas = new List<Formula>();
-            if (bool.Parse(useFormulas))
-            {
-                neededFormulas = (List<Formula>)await CanUseFormulas(q);
-                if (neededFormulas.Count == 0)
-                    await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
-            else
-            {
-                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", useFormulas);
-            }
             var rQ = await FillReviewQuote(q);
-            rQ.NeededFormulas = neededFormulas;
             rO.ReviewQuote = rQ;
 
             for (int i = 0; i < rQ.Shapes.Count; i++)
@@ -587,6 +1106,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> DeleteQuote(int quoteID, string returnUrl)
         {
             DeleteQuote dQ = new DeleteQuote
@@ -598,6 +1118,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> DeleteQuote(DeleteQuote dQ)
         {
             dQ.Quote = await repo.GetQuoteByIdAsync(dQ.QuoteID);
@@ -718,7 +1239,14 @@ namespace CapstoneMasons.Controllers
             rQ.OrderNum = q.OrderNum; //done
             rQ.AddSetup = q.AddSetup;
             rQ.Discount = q.Discount;
+
+            rQ.NeededFormulas = await CanUseFormulas(q);
+            if (rQ.NeededFormulas.Count == 0 && !q.UseFormulas)
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", "true");
+            else if (rQ.NeededFormulas.Count > 0 && q.UseFormulas)
+                await repo.UpdateQuoteSimpleAsync(q, "UseFormulas", "false");
             rQ.UseFormulas = q.UseFormulas;
+
             rQ.PickedUp = q.PickedUp;
 
             //After filling the shapes with instructions the shapes are sorted by bar size
@@ -1082,7 +1610,6 @@ namespace CapstoneMasons.Controllers
         private async Task<List<ReviewLeg>> CreateLegsAsync(Shape s)
         {
             List<ReviewLeg> rLList = new List<ReviewLeg>();
-
             foreach (Leg l in s.Legs)
             {
                 ReviewLeg rL = new ReviewLeg();
@@ -1339,6 +1866,75 @@ namespace CapstoneMasons.Controllers
                 }
             }
             return result;
+        }
+
+        private bool VaildFormula(Formula f)
+        {
+            string m = f.Mandrel.Name;
+            switch (f.BarSize)
+            {
+                case 3:
+                    return true;
+                case 4:
+                    {
+                        if (m == KnownObjects.NoneMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.SmallMandrel.Name)
+                            return true;
+                        if (m == KnownObjects.MediumMandrel.Name)
+                            return true;
+                        if (m == KnownObjects.LargeMandrel.Name)
+                            return true;
+                        else
+                            return false;
+                    }
+                case 5:
+                    {
+                        if (m == KnownObjects.NoneMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.SmallMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.MediumMandrel.Name)
+                            return true;
+                        if (m == KnownObjects.LargeMandrel.Name)
+                            return true;
+                        else
+                            return false;
+                    }
+                case 6:
+                    {
+                        if (m == KnownObjects.NoneMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.SmallMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.MediumMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.LargeMandrel.Name)
+                            return true;
+                        else
+                            return false;
+                    }
+                default:
+                    return false;
+            }
+        }
+
+        private string GenerateInvalidFormulaErrorMessage(List<Formula> fList)
+        {
+            List<Formula> errors = new List<Formula>();
+            foreach (Formula f in fList)
+                if (!VaildFormula(f))
+                    errors.Add(f);
+
+            if (errors.Count > 0)
+            {
+                string message = "WARNING: The following bends will be impossible to create formulas for due to the mandrels being to large for the bar size. ";
+                foreach (Formula f in errors)
+                    message += "(Bar Size: " + f.BarSize + ", Degree: " + f.Degree + ", Mandrel: " + f.Mandrel.Name + ") ";
+                return message;
+            }
+            else
+                return "";
         }
 
         //[HttpPost]
@@ -1934,32 +2530,22 @@ namespace CapstoneMasons.Controllers
             List<Leg> newLegs = new List<Leg>();
             for (int legIndex = 0; legIndex<shape.Legs.Count; legIndex++)
             {
-                if(oldShape.Legs[legIndex] != null)
+                var newLeg = new Leg()
                 {
-                    var newLeg = new Leg()
-                    {
-                        Degree = shape.Legs[legIndex].Degree,
-                        Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
-                        //LegID = oldShape.Legs[legIndex].LegID, this is not ok database gets new ids
-                        IsRight = shape.Legs[legIndex].IsRight,
-                        Length = shape.Legs[legIndex].Length
-                    };
-                    newShape.Legs.Add(newLeg);
-                }
-                else
-                {
-                    newShape.Legs.Add(new Leg() {
+                    Degree = shape.Legs[legIndex].Degree,
+                    Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
+                    IsRight = shape.Legs[legIndex].IsRight,
+                    Length = shape.Legs[legIndex].Length,
+                    SortOrder = shape.Legs[legIndex].SortOrder
+                };
+                newShape.Legs.Add(newLeg);
 
-                        Degree = shape.Legs[legIndex].Degree,
-                        Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
-                        IsRight = shape.Legs[legIndex].IsRight,
-                        Length = shape.Legs[legIndex].Length
-                    });
-                    //add new leg to repo
-                }
-                
             }
-            await repoS.UpdateShapesAsync(oldShape, newShape);
+            if (shape.QuoteID >0 && shape.ShapeID >0)
+            {
+                await repoS.UpdateShapesAsync(oldShape, newShape);
+            }
+            
             if (shape.ReviewOpen == true)
             {
                 return RedirectToAction("ReviewOpen", new { quoteID = shape.QuoteID });
@@ -1969,5 +2555,71 @@ namespace CapstoneMasons.Controllers
                 return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> NewShape(ReviewShape shape)
+        {
+            var newShape = new Shape()
+            {
+                ShapeID = shape.ShapeID,
+                BarSize = shape.BarSize,
+                Qty = shape.Qty,
+                NumCompleted = shape.Completed,
+                LegCount = shape.Legs.Count()
+            };
+
+
+            List<Leg> newLegs = new List<Leg>();
+            for (int legIndex = 0; legIndex < shape.Legs.Count; legIndex++)
+            {
+                var newLeg = new Leg()
+                {
+                    Degree = shape.Legs[legIndex].Degree,
+                    Mandrel = await repoF.GetMandrelByNameAsync(shape.Legs[legIndex].Mandrel),
+                    IsRight = shape.Legs[legIndex].IsRight,
+                    Length = shape.Legs[legIndex].Length,
+                    SortOrder = shape.Legs[legIndex].SortOrder
+                };
+                newShape.Legs.Add(newLeg);
+
+            }
+
+            if (shape.QuoteID > 0)
+                    await repoS.AddShapeAsync(shape.QuoteID, newShape);
+            if (shape.ReviewOpen == true)
+            {
+                return RedirectToAction("ReviewOpen", new { quoteID = shape.QuoteID });
+            }
+            else
+            {
+                return RedirectToAction("ReviewQuote", new { quoteID = shape.QuoteID });
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> CheckIfValidShape(Quote q)
+        {
+            foreach (Leg l in q.Shapes[0].Legs)
+            {
+                if (l.Mandrel.Name != null)
+                {
+                    l.Mandrel = await repoF.GetMandrelByNameAsync(l.Mandrel.Name);
+                }
+            }
+            q.Shapes[0].Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
+            decimal cutLength = 0;
+            List<Formula> useFormulas = await CanUseFormulas(q);
+            if (useFormulas.Count == 0)
+            {
+                cutLength = await CalculateShapeLengthAsync(q.Shapes[0]);
+            }
+            else
+            {
+                cutLength = Calculations.Total_Shape_Length(q.Shapes[0]);
+            }
+            if (cutLength > 240)
+                return Json(false);
+            else
+                return Json(true);
+        }
+        
     }
 }

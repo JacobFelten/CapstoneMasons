@@ -29,30 +29,50 @@
     .quote-body {
         background-color: lightgray;
     }
+
     label.btn.btn-primary.active {
         background-color: #28a745 !important;
         border-color: #ffc107 !important;
     }
+
     .fa-trash:hover {
-        text-shadow: 0 0 5px HighlightText;
+        text-shadow: 0 0 5px red;
         color: red !important;
         cursor: pointer;
         text-decoration: underline;
     }
+
     .delete {
-        color: HighlightText;
+        color: tomato !important;
     }
-    .delete:hover {
-        text-shadow: 0 0 5px HighlightText;
-        color: Highlight !important;
-        cursor: pointer;
-        text-decoration: underline;
+
+        .delete:hover {
+            text-shadow: 0 0 5px red;
+            color: Highlight !important;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+    #info {
+        position: fixed; /* Fixed/sticky position */
+        top: 50px; /* Place the button at the top of the page */
+        right: 15px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        padding: 15px; /* Some padding */
+        background-color: #0094ff;
+        color: snow;
     }
+
+        #info:hover {
+            background-color: #00ffff; /* Add a dark-grey background on hover */
+        }
 </style>
 <script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="~/js/createQuote.js"></script>
+@await Html.PartialAsync("~/Views/Shared/_PartialLegendPopUp.cshtml")
+
 <h1 class="text-center">Create Quote - Continued</h1>
-<h4 class="text-center">Edit Shapes</h4>
+<h4 class="text-center text-white">Edit Shapes</h4>
 <hr />
 <div class="row">
     <div class="card container">
@@ -83,7 +103,14 @@
                             <div class="panel-heading checkout-heading" id="panel-billing-heading">
                                 <h4 class="text-center panel-title checkout-acc-title">
                                     <a data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())" data-toggle="collapse">
-                                        @(KnownObjects.NumberPrefix[i]) Shape
+                                        @if (i < 13)
+                                        {
+                                            @(KnownObjects.NumberPrefix[i])
+                                        }
+                                        else
+                                        {
+                                            @((i + 1).ToString()+"th")
+                                        } Shape
                                         <i class="fas fa-chevron-down float-right" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;line-height: unset;margin-top: 4px;"></i>
                                     </a>
                                     @if (Model.Shapes.Count != 1)
@@ -102,12 +129,12 @@
                                         <div class="col-md-4 col-lg-4 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Rebar #: </label>
                                             @*<select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
-                                                onchange="vaidateRebar(this.options[this.selectedIndex].text)">
-                                            <option>3</option>
-                                            <option>4</option>
-                                            <option>5</option>
-                                            <option>6</option>
-                                        </select>*@
+                                                        onchange="vaidateRebar(this.options[this.selectedIndex].text)">
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                    <option>6</option>
+                                                </select>*@
 
                                             <!--custom radio buttons-->
                                             <div class="input-group">
@@ -257,8 +284,8 @@
             <div class="card container text-center">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Review Quote</button>
-                    <input class="form-check-input" asp-for="UseFormulas" id="UseFormulas" style="margin-left: 20px; margin-top: 40px;">
-                    <label class="form-check-label" for="defaultCheck1" style="margin-left: 40px; border-top-width: 10px; margin-top: 30px; font-size: large;">
+                    <input class="form-check-input hidden" asp-for="UseFormulas" id="useFormulas" style="margin-left: 20px; margin-top: 40px;" hidden>
+                    <label class="form-check-label" for="defaultCheck1" style="margin-left: 40px; border-top-width: 10px; margin-top: 30px; font-size: large;" hidden>
                         Use Fomulas
                     </label>
                 </div>

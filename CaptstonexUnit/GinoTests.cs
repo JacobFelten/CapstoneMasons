@@ -168,7 +168,7 @@ namespace CaptstonexUnit
             });
             repoC = new FakeCostRepository(); //Added by Jacob
             repoF = new FakeFormulaRepository();
-            controllerQ = new QuotesController(repoQ, repoF, repoC); //Added by Jacob
+            controllerQ = new QuotesController(repoQ, repoF, repoC, null); //Added by Jacob
             #region Mandrels
             mandrel1 = new Mandrel
             {

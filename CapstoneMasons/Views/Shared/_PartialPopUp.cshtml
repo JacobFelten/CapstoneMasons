@@ -50,13 +50,17 @@
                     <span asp-validation-for="ShapesCount" class="text-danger"></span>
                     <div class="md-form mb-5">
                         <i class="fas fa-shapes prefix grey-text"></i>
-                        <input asp-for="ShapesCount" type="number" value="0" min="1" id="ShapesCount" class="form-control validate"
+                        <input asp-for="ShapesCount" type="number" value="@Model.ShapesCount" min="1" id="ShapesCount" class="form-control validate"
                                onchange="addFields(this.value)" oninput="addFields(this.value)">
                         <label asp-for="ShapesCount" data-error="invalid" data-success="valid" for="ShapesCount">Number of shapes</label>
                     </div>
                     <span asp-validation-for="LegsInShapes" class="text-danger"></span>
                     <div class="md-form col-mb-1" id="shapes">
                     </div>
+                    <script type="text/javascript">
+                        var shapesCount = document.getElementById("ShapesCount").value;
+                        addFields(shapesCount);
+                    </script>
                     <div class="panel-group" id="bar-prices-accordion">
                         <div class="panel panel-default checkout-panel" id="bar-prices">
                             <div class="panel-heading" id="bar-prices-heading" data-toggle="collapse" data-parent="#bar-prices-accordion" href="#collapse-bar-prices" role="button"
@@ -191,8 +195,8 @@
                     <input value="" id="minOrderGlobalID" hidden />
                     <input value="" id="minimumOrderCost" hidden />
                     <!-- Use Functions this took 2 hours to do-->
-                    <span asp-validation-for="UseFormulas" class="text-danger"></span>
-                    <fieldset class="form-check col">
+                    <span asp-validation-for="UseFormulas" class="text-danger" hidden></span>
+                    <fieldset class="form-check col" hidden>
                         <input asp-for="UseFormulas" class="form-check-input align-content-center" type="checkbox" id="checkbox1" checked="checked">
                         <label asp-for="UseFormulas" class="form-check-label align-content-center0" for="checkbox1">Use Formulas</label>
                     </fieldset>

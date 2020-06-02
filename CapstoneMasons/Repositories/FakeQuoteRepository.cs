@@ -113,6 +113,18 @@ namespace CapstoneMasons.Repositories
                 case nameof(Quote.OrderNum):
                     q.OrderNum = value;
                     break;
+                case nameof(Quote.Discount):
+                    q.Discount = decimal.Parse(value);
+                    break;
+                case nameof(Quote.AddSetup):
+                    if (value == "null")
+                        q.AddSetup = null;
+                    else
+                        q.AddSetup = bool.Parse(value);
+                    break;
+                case nameof(Quote.UseFormulas):
+                    q.UseFormulas = bool.Parse(value);
+                    break;
                 case nameof(Quote.PickedUp):
                     q.PickedUp = bool.Parse(value);
                     break;
