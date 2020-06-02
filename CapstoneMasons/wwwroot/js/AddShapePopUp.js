@@ -6,6 +6,7 @@ function addLegg(form) {
     document.getElementById(`${form}.leg[${numbLegs}].directionLabel`).style.display = "unset"; 
     document.getElementById(`${form}.leg[${numbLegs}].direction`).style.display = "unset";
     document.getElementById(`${form}.leg[${numbLegs}].Mandrel`).style.display = "unset";
+    document.getElementById(`${form}.leg[${numbLegs}].delete`).style.display = "none";
     var legName = "";
     switch (numbLegs) {
         case "0":
@@ -31,7 +32,7 @@ function addLegg(form) {
 
                             ${legName} Leg
                                     </a>
-                                                <i class="fas fa-trash-alt float-right hidden" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;margin-top: 5px;margin-right: 15px;" onclick="deleteLeg("${form}.leg[${numbLegs}].accordion");"></i>
+                                                <i id="NewShape.leg[${numbLegs}].delete" class="fas fa-trash-alt float-right hidden" style="text-shadow: 0 0 3px #000;font-size: 1em;color: tomato;margin-top: 5px;margin-right: 15px;" onclick="deleteLeg('${form}.leg[${numbLegs}].accordion','NewShape')"></i>
                     </h4>
                 </div>
                 <div id="collapseLeg${numbLegs}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingLeg${numbLegs}">
@@ -194,7 +195,7 @@ function checkLegLenghts(form) {
     var numbLegs = document.getElementById(form+'.LegCount').value;
     var result;
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
-        var LegsLenght = document.getElementById(form+`.leg[${legIndex}].lenght`).value;
+        var LegsLenght = document.getElementById(`${form}.leg[${legIndex}].lenght`).value;
         if (LegsLenght > 240) {
             alert("The leg #" + (legIndex + 1) + " can not be more than 240");//catching longer than vali
             return false;
@@ -221,10 +222,10 @@ function checkingCutLenght(form) {
     };
 
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
-        var leg = {
-            Length: document.getElementById(`${form}.leg[${legIndex}].lenght`).value,
+        var leg = { //filling up a leg with all necessary
+            Length: document.forms[form][`Legs[${(legIndex)}].Length`].value,
             SortOrder: (legIndex + 1),
-            Degree: document.getElementById(`${form}.leg[${legIndex}].degree`).value,
+            Degree: document.forms[form][`Legs[${(legIndex)}].Degree`].value,
             Mandrel: { Name: document.forms[form][`Legs[${(legIndex)}].Mandrel`].value },
             IsRight: document.forms[form][`Legs[${(legIndex)}].IsRight`].value
         };
@@ -265,6 +266,14 @@ function submitForm(form) {
     }
 }
 
-function deleteLeg(id) {
-
+function deleteLeg(legAccordionID,form) { //deleting a leg and hidding previous properties
+    document.getElementById(legAccordionID).remove();
+    var numbLegs = document.getElementById(`${form}.LegCount`).value;
+    
+    document.getElementById(`${form}.leg[${numbLegs-1}].degreeLabel`).style.display = "none";
+    document.getElementById(`${form}.leg[${numbLegs-1}].directionLabel`).style.display = "none";
+    document.getElementById(`${form}.leg[${numbLegs-1}].direction`).style.display = "none";
+    document.getElementById(`${form}.leg[${numbLegs - 1}].Mandrel`).style.display = "none";
+    document.getElementById(`${form}.leg[${numbLegs-1}].delete`).style.display = "unset";
+    document.getElementById(`${form}.LegCount`).value = numbLegs-1;
 }

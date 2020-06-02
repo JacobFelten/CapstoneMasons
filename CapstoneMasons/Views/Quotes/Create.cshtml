@@ -29,30 +29,50 @@
     .quote-body {
         background-color: lightgray;
     }
+
     label.btn.btn-primary.active {
         background-color: #28a745 !important;
         border-color: #ffc107 !important;
     }
+
     .fa-trash:hover {
         text-shadow: 0 0 5px red;
         color: red !important;
         cursor: pointer;
         text-decoration: underline;
     }
+
     .delete {
         color: tomato !important;
     }
-    .delete:hover {
-        text-shadow: 0 0 5px red;
-        color: Highlight !important;
-        cursor: pointer;
-        text-decoration: underline;
+
+        .delete:hover {
+            text-shadow: 0 0 5px red;
+            color: Highlight !important;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+    #info {
+        position: fixed; /* Fixed/sticky position */
+        top: 50px; /* Place the button at the top of the page */
+        right: 15px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        padding: 15px; /* Some padding */
+        background-color: #0094ff;
+        color: snow;
     }
+
+        #info:hover {
+            background-color: #00ffff; /* Add a dark-grey background on hover */
+        }
 </style>
 <script src="~/js/gino's js/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="~/js/createQuote.js"></script>
+@await Html.PartialAsync("~/Views/Shared/_PartialLegendPopUp.cshtml")
+
 <h1 class="text-center">Create Quote - Continued</h1>
-<h4 class="text-center">Edit Shapes</h4>
+<h4 class="text-center text-white">Edit Shapes</h4>
 <hr />
 <div class="row">
     <div class="card container">
@@ -109,12 +129,12 @@
                                         <div class="col-md-4 col-lg-4 col-sm form-group">
                                             <label for="exampleFormControlSelect2">Rebar #: </label>
                                             @*<select multiple="multiple" class="form-control" id="RebarNum" asp-for="Shapes[i].BarSize"
-                                                onchange="vaidateRebar(this.options[this.selectedIndex].text)">
-                                            <option>3</option>
-                                            <option>4</option>
-                                            <option>5</option>
-                                            <option>6</option>
-                                        </select>*@
+                                                        onchange="vaidateRebar(this.options[this.selectedIndex].text)">
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                    <option>6</option>
+                                                </select>*@
 
                                             <!--custom radio buttons-->
                                             <div class="input-group">
