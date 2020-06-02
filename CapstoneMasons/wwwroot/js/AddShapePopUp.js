@@ -202,8 +202,8 @@ function checkLegs(form) {
         } else if (LegsLenght < 0) {
             alert("The leg #" + (legIndex + 1) + " can not be negative");//catching smaller than valid
             return false;
-        } else if (document.getElementById(`${form}.leg[${legIndex}].degree`).value > 180 || 
-            document.getElementById(`${form}.leg[${legIndex}].degree`).value <=0) {
+        } else if (legIndex < numbLegs && (document.getElementById(`${form}.leg[${legIndex}].degree`).value > 180 || 
+            document.getElementById(`${form}.leg[${legIndex}].degree`).value <=0)) {
             alert("Invalid degrees in leg #" + (legIndex + 1));//catching smaller than valid value
             return false;
         }
