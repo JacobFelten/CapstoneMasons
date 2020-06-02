@@ -195,7 +195,7 @@ function checkLegLenghts(form) {
     var numbLegs = document.getElementById(form+'.LegCount').value;
     var result;
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
-        var LegsLenght = document.getElementById(form+`.leg[${legIndex}].lenght`).value;
+        var LegsLenght = document.getElementById(`${form}.leg[${legIndex}].lenght`).value;
         if (LegsLenght > 240) {
             alert("The leg #" + (legIndex + 1) + " can not be more than 240");//catching longer than vali
             return false;
@@ -222,10 +222,10 @@ function checkingCutLenght(form) {
     };
 
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
-        var leg = {
-            Length: document.getElementById(`${form}.leg[${legIndex}].lenght`).value,
+        var leg = { //filling up a leg with all necessary
+            Length: document.forms[form][`Legs[${(legIndex)}].Length`].value,
             SortOrder: (legIndex + 1),
-            Degree: document.getElementById(`${form}.leg[${legIndex}].degree`).value,
+            Degree: document.forms[form][`Legs[${(legIndex)}].Degree`].value,
             Mandrel: { Name: document.forms[form][`Legs[${(legIndex)}].Mandrel`].value },
             IsRight: document.forms[form][`Legs[${(legIndex)}].IsRight`].value
         };

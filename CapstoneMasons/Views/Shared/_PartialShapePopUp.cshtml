@@ -137,7 +137,7 @@
                                                             @((legIndex).ToString()+"th ")
                                                         } Leg Length:
                                                     </label>
-                                                    <input class="form-control" value="@Model.Legs[legIndex-1].Length" asp-for="Legs[legIndex-1].Length" id="Shape[@(Model.ShapeID)].leg[@(legIndex)].lenght" />
+                                                    <input class="form-control" value="@Model.Legs[legIndex-1].Length" asp-for="Legs[legIndex-1].Length" id="Shape[@(Model.ShapeID)].leg[@(legIndex-1)].lenght" />
                                                 </div>
                                                 @if (legIndex < Model.Legs.Count)
                                                 {
@@ -152,7 +152,7 @@
                                                                 @((legIndex).ToString()+"th ")
                                                             } Leg Degree:
                                                         </label>
-                                                        <input class="form-control" value="@Model.Legs[legIndex-1].Degree" min="0" max="180" type="number" step="any" asp-for="Legs[legIndex-1].Degree" id="Shape@(Model.ShapeID).Leg@(legIndex).degree" />
+                                                        <input class="form-control" value="@Model.Legs[legIndex-1].Degree" min="0" max="180" type="number" step="any" asp-for="Legs[legIndex-1].Degree" id="Shape@(Model.ShapeID).leg[@(legIndex-1)].degree" />
                                                     </div>
 
                                                     <div class="col-4 form-group">
@@ -246,6 +246,12 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                }
+                                                else
+                                                {
+                                                    <input  asp-for="Legs[legIndex-1].Mandrel" value=""hidden/><!--empty inputs for last leg-->
+                                                    <input asp-for="Legs[legIndex-1].Degree" id="Shape[@(Model.ShapeID)].leg[@(legIndex-1)].degree" value="" hidden/>
+                                                    <input asp-for="Legs[legIndex-1].IsRight" value="" hidden/>
                                                 }
 
                                             </div>
