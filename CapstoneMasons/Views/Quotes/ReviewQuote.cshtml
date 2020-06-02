@@ -23,6 +23,7 @@
 <script>
     var legs = [];
 </script>
+<script type="text/javascript" src="~/js/AddShapePopUp.js"></script>
 
 <style>
     .line {
@@ -104,6 +105,9 @@
 @foreach (var shape in Model.Shapes)
 {
     @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
+    <script type="text/javascript">
+        validLegCombination('Shape[@(shape.ShapeID)]');
+    </script>
 }
 @await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape() { QuoteID = Model.QuoteID, ReviewOpen = false })
 @await Html.PartialAsync("~/Views/Shared/_PartialLegendPopUp.cshtml")
