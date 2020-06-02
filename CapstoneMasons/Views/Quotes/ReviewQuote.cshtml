@@ -110,6 +110,7 @@
 <div class="card container">
     <div class="card-header quote-header">
         <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" value="@Model.QuoteID" name="quoteID" />
             <h6>Quote Written By: @Model.Author</h6>
             <div class="form-group">
