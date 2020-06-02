@@ -14,6 +14,12 @@ using Microsoft.AspNetCore.Connections.Features;
 using Org.BouncyCastle.Asn1.X509;
 using Microsoft.Extensions.Primitives;
 
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+using Microsoft.AspNetCore.Authorization;
+
+
 namespace CapstoneMasons.Controllers
 {
     public class QuotesController : Controller
@@ -670,13 +676,14 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            List<Formula> useFormulas = await CanUseFormulas(q);
+
             for (int i = 0; i < q.Shapes.Count; i++)
             {
                 Shape s = q.Shapes[i];
                 s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
                 decimal cutLength = 0;
-                List<Formula> useFormulas = await CanUseFormulas(q);
                 if (useFormulas.Count == 0)
                 {
                     cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
@@ -693,6 +700,12 @@ namespace CapstoneMasons.Controllers
                     await repo.DeleteQuoteAsync(q);
                     return View("Create", q);
                 }
+            }
+
+            string errorMessage = GenerateInvalidFormulaErrorMessage(useFormulas);
+            if (errorMessage != "")
+            {
+                ModelState.AddModelError(string.Empty, errorMessage);
             }
 
             q.DateQuoted = TimeZoneInfo.ConvertTime(DateTime.Now,
@@ -746,13 +759,15 @@ namespace CapstoneMasons.Controllers
         {
             Quote q = await repo.GetQuoteByIdAsync(quoteID);
 
+            List<Formula> useFormulas = await CanUseFormulas(q);
+
             for (int i = 0; i < q.Shapes.Count; i++)
             {
                 Shape s = q.Shapes[i];
                 s.Legs.Sort((a, b) => a.SortOrder.CompareTo(b.SortOrder));
                 string shapeNum = i < KnownObjects.NumberPrefix.Count ? KnownObjects.NumberPrefix[i] : (i + 1).ToString();
                 decimal cutLength = 0;
-                List<Formula> useFormulas = await CanUseFormulas(q);
+                
                 if (useFormulas.Count == 0)
                 {
                     cutLength = await CalculateShapeLengthAsync(s); //Here's where Jeff jumps in
@@ -768,6 +783,12 @@ namespace CapstoneMasons.Controllers
                     ModelState.AddModelError(string.Empty, "The " + shapeNum + " shape cuts to longer than 240 inches so it was deleted.");
                     await repoS.DeleteShapeAsync(s);
                 }
+            }
+
+            string errorMessage = GenerateInvalidFormulaErrorMessage(useFormulas);
+            if (errorMessage != "")
+            {
+                ModelState.AddModelError(string.Empty, errorMessage);
             }
 
             ReviewQuote rQ = await FillReviewQuote(q);
@@ -839,6 +860,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> DeleteQuote(int quoteID, string returnUrl)
         {
             DeleteQuote dQ = new DeleteQuote
@@ -850,6 +872,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> DeleteQuote(DeleteQuote dQ)
         {
             dQ.Quote = await repo.GetQuoteByIdAsync(dQ.QuoteID);
@@ -1597,6 +1620,75 @@ namespace CapstoneMasons.Controllers
                 }
             }
             return result;
+        }
+
+        private bool VaildFormula(Formula f)
+        {
+            string m = f.Mandrel.Name;
+            switch (f.BarSize)
+            {
+                case 3:
+                    return true;
+                case 4:
+                    {
+                        if (m == KnownObjects.NoneMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.SmallMandrel.Name)
+                            return true;
+                        if (m == KnownObjects.MediumMandrel.Name)
+                            return true;
+                        if (m == KnownObjects.LargeMandrel.Name)
+                            return true;
+                        else
+                            return false;
+                    }
+                case 5:
+                    {
+                        if (m == KnownObjects.NoneMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.SmallMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.MediumMandrel.Name)
+                            return true;
+                        if (m == KnownObjects.LargeMandrel.Name)
+                            return true;
+                        else
+                            return false;
+                    }
+                case 6:
+                    {
+                        if (m == KnownObjects.NoneMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.SmallMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.MediumMandrel.Name)
+                            return false;
+                        if (m == KnownObjects.LargeMandrel.Name)
+                            return true;
+                        else
+                            return false;
+                    }
+                default:
+                    return false;
+            }
+        }
+
+        private string GenerateInvalidFormulaErrorMessage(List<Formula> fList)
+        {
+            List<Formula> errors = new List<Formula>();
+            foreach (Formula f in fList)
+                if (!VaildFormula(f))
+                    errors.Add(f);
+
+            if (errors.Count > 0)
+            {
+                string message = "WARNING: The following bends will be impossible to create formulas for due to the mandrels being to large for the bar size. ";
+                foreach (Formula f in errors)
+                    message += "(Bar Size: " + f.BarSize + ", Degree: " + f.Degree + ", Mandrel: " + f.Mandrel.Name + ") ";
+                return message;
+            }
+            else
+                return "";
         }
 
         //[HttpPost]
