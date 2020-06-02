@@ -9,6 +9,7 @@ using CapstoneMasons.Models;
 using CapstoneMasons.Repositories;
 using CapstoneMasons.ViewModels;
 using CapstoneMasons.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CapstoneMasons.Controllers
 {
@@ -207,6 +208,7 @@ namespace CapstoneMasons.Controllers
         }
 
         // GET: Formulas/Delete/5
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -224,6 +226,7 @@ namespace CapstoneMasons.Controllers
         }
 
         // POST: Formulas/Delete/5
+        [Authorize(Roles = "Admins")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

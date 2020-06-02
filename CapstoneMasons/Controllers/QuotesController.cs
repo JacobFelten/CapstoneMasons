@@ -13,8 +13,12 @@ using CapstoneMasons.Infrastructure;
 using Microsoft.AspNetCore.Connections.Features;
 using Org.BouncyCastle.Asn1.X509;
 using Microsoft.Extensions.Primitives;
+
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace CapstoneMasons.Controllers
 {
@@ -856,6 +860,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> DeleteQuote(int quoteID, string returnUrl)
         {
             DeleteQuote dQ = new DeleteQuote
@@ -867,6 +872,7 @@ namespace CapstoneMasons.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> DeleteQuote(DeleteQuote dQ)
         {
             dQ.Quote = await repo.GetQuoteByIdAsync(dQ.QuoteID);
