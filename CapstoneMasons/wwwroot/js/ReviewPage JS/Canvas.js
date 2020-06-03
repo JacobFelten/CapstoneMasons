@@ -212,20 +212,6 @@ if (canvas.getContext) {
                 }
             }
 
-            ////save the mins and maxes
-            //if (xcoords[j + 1 + addedPoints] < min_x) {
-            //    min_x = xcoords[j + 1 + addedPoints];
-            //} else if (xcoords[j + 1 + addedPoints] > max_x) {
-            //    max_x = xcoords[j + 1 + addedPoints];
-            //} else {//they are equal do nothing.
-            //}
-
-            //if (ycoords[j + 1 + addedPoints] < min_y) {
-            //    min_y = ycoords[j + 1 + addedPoints];
-            //} else if (ycoords[j + 1 + addedPoints] > max_y) {
-            //    max_y = ycoords[j + 1 + addedPoints];
-            //} else {//They are equal do nothing.
-            //}
 
             //make sure that curr_unit_val never gets bigger than 180 or smaller than -180
             while (curr_unit_val > 180 || curr_unit_val < -180)
@@ -269,10 +255,6 @@ if (canvas.getContext) {
             xcoords[0] = startx;
             ycoords[0] = starty;
 
-            //x0 = curr_x;
-            //save the new x coord
-            //y0 = curr_y;
-            //save the new y coord
             min_x = curr_x;
             min_y = curr_y;
             max_x = curr_x;
@@ -351,13 +333,9 @@ if (canvas.getContext) {
                     //increment j by 1
                     addedPoints = addedPoints + 1;
 
-                    //possibly useless actually
-                    //tempReverseAngle = curr_unit_val - (neg_pos)(180);
-
                     //draws the line from the temp point in the opposite direction than the last line
                     xcoords[j + 1 + addedPoints] = tempCoordx + Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
                     ycoords[j + 1 + addedPoints] = tempCoordy + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
-
 
                                 //Draw second part of the hook
                                 //context.lineTo(xcoords[j + 1 + addedPoints], ycoords[j + 1 + addedPoints]);
@@ -407,29 +385,13 @@ if (canvas.getContext) {
                 }
             }
 
-            
-            //if (xcoords[j + 1 + addedPoints] < min_x) {
-            //    min_x = xcoords[j + 1 + addedPoints];
-            //} else if (xcoords[j + 1 + addedPoints] > max_x) {
-            //    max_x = xcoords[j + 1 + addedPoints];
-            //} else {//they are equal do nothing.
-            //}
-
-            //if (ycoords[j + 1 + addedPoints] < min_y) {
-            //    min_y = ycoords[j + 1 + addedPoints];
-            //} else if (ycoords[j + 1 + addedPoints] > max_y) {
-            //    max_y = ycoords[j + 1 + addedPoints];
-            //} else {//They are equal do nothing.
-            //}
-
-
                     //Draw the lines from lineTo()
                     //context.stroke();
         }
     }//End of Legs in a single shape loop
 
-    console.log("Current Shape is on " + canvasID);
-    console.log("Middle of tiny shape currently lies on (" + (max_x + min_x) / 2 + "," + (max_y + min_y) / 2 + ")");
+    //console.log("Current Shape is on " + canvasID);
+    //console.log("Middle of tiny shape currently lies on (" + (max_x + min_x) / 2 + "," + (max_y + min_y) / 2 + ")");
 
 
 
@@ -570,8 +532,6 @@ if (canvas.getContext) {
                     //increment j by 1
                     addedPoints = addedPoints + 1;
 
-                    //possibly useless actually
-                    //tempReverseAngle = curr_unit_val - (neg_pos)(180);
 
                     //draws the line from the temp point in the opposite direction than the last line
                     temp_xcoords[j + 1 + addedPoints] = tempCoordx + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
@@ -616,20 +576,6 @@ if (canvas.getContext) {
                     } else {//They are equal do nothing.
                     }
                 }
-
-                //if (temp_xcoords[j + 1 + addedPoints] < min_x) {
-                //    min_x = temp_xcoords[j + 1 + addedPoints];
-                //} else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
-                //    max_x = temp_xcoords[j + 1 + addedPoints];
-                //} else {//they are equal do nothing.
-                //}
-
-                //if (temp_ycoords[j + 1 + addedPoints] < min_y) {
-                //    min_y = temp_ycoords[j + 1 + addedPoints];
-                //} else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
-                //    max_y = temp_ycoords[j + 1 + addedPoints];
-                //} else {//They are equal do nothing.
-                //}
 
             }
         }
@@ -737,9 +683,6 @@ if (canvas.getContext) {
                     //increment j by 1
                     addedPoints = addedPoints + 1;
 
-                    //possibly useless actually
-                    //tempReverseAngle = curr_unit_val - (neg_pos)(180);
-
                     //draws the line from the temp point in the opposite direction than the last line
                     temp_xcoords[j + 1 + addedPoints] = tempCoordx + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
                     temp_ycoords[j + 1 + addedPoints] = tempCoordy + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
@@ -785,21 +728,6 @@ if (canvas.getContext) {
 
                 }
 
-
-                //if (temp_xcoords[j + 1 + addedPoints] < min_x) {
-                //    min_x = temp_xcoords[j + 1 + addedPoints];
-                //} else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
-                //    max_x = temp_xcoords[j + 1 + addedPoints];
-                //} else {//they are equal do nothing.
-                //}
-
-                //if (temp_ycoords[j + 1 + addedPoints] < min_y) {
-                //    min_y = temp_ycoords[j + 1 + addedPoints];
-                //} else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
-                //    max_y = temp_ycoords[j + 1 + addedPoints];
-                //} else {//They are equal do nothing.
-                //}
-
             }
         }
 
@@ -814,77 +742,79 @@ if (canvas.getContext) {
         }
     }
 
-    //Now that shape has been scaled up find out where the APEX and OSSB points are
-    curr_unit_val = 0
+                    //Now that shape has been scaled up find out where the APEX and OSSB points are
+                    curr_unit_val = 0
 
-    //Save the Apex point values
-    for (var coord = 0; coord < Object.keys(xcoords).length - 2; coord++) {
-        apexX[coord] = xcoords[coord + 1];
-        apexY[coord] = ycoords[coord + 1];
-    }
+                    //Hibernating Code for Mandrel implementation
 
-    for (var j = 0; j < legs.length; j++) {
+                    ////Save the Apex point values
+                    //for (var coord = 0; coord < Object.keys(xcoords).length - 2; coord++) {
+                    //    apexX[coord] = xcoords[coord + 1];
+                    //    apexY[coord] = ycoords[coord + 1];
+                    //}
 
-        //as long as its not the last leg of the shape, save these temp variables
-        if (j != legs.length - 1)
-        { 
-            var Thickness_mm = (BarSize / 8) * 25.4;
-            var Radius_mm = legs[j].Mandrel * 25.4;
-            var comp_angle = 180 - legs[j].Degree;
-            var radian_angle = comp_angle * Math.PI / 180;
-            var OSSB = Math.tan(radian_angle / 2) * (Thickness_mm + Radius_mm);
-            OSSB = OSSB / 25.4;         //convert OSSB back into inches from millimeters
-            OSSB_length[j] = OSSB;
+                    //for (var j = 0; j < legs.length; j++) {
+
+                    //    //as long as its not the last leg of the shape, save these temp variables
+                    //    if (j != legs.length - 1)
+                    //    { 
+                    //        var Thickness_mm = (BarSize / 8) * 25.4;
+                    //        var Radius_mm = legs[j].Mandrel * 25.4;
+                    //        var comp_angle = 180 - legs[j].Degree;
+                    //        var radian_angle = comp_angle * Math.PI / 180;
+                    //        var OSSB = Math.tan(radian_angle / 2) * (Thickness_mm + Radius_mm);
+                    //        OSSB = OSSB / 25.4;         //convert OSSB back into inches from millimeters
+                    //        OSSB_length[j] = OSSB;
             
-        }
-        //if leg is the first leg
-        if (j == 0)
-        {
-            ossbX1[j] = xcoords[0] + legs[0].Length * scalar - OSSB_length[j] * scalar;
-            //save the OSSB point where the arcTo first begins
-            ossbY1[j] = ycoords[0];
-            //save the OSSB point where the arcTo first begins
-        }
-        //if the leg is the last leg
-        else if (j == legs.length - 1)
-        {
-            if (legs[j - 1].IsRight == true) {
-                neg_pos = 1;
-            }
-            else {
-                neg_pos = -1;
-            }
+                    //    }
+                    //    //if leg is the first leg
+                    //    if (j == 0)
+                    //    {
+                    //        ossbX1[j] = xcoords[0] + legs[0].Length * scalar - OSSB_length[j] * scalar;
+                    //        //save the OSSB point where the arcTo first begins
+                    //        ossbY1[j] = ycoords[0];
+                    //        //save the OSSB point where the arcTo first begins
+                    //    }
+                    //    //if the leg is the last leg
+                    //    else if (j == legs.length - 1)
+                    //    {
+                    //        if (legs[j - 1].IsRight == true) {
+                    //            neg_pos = 1;
+                    //        }
+                    //        else {
+                    //            neg_pos = -1;
+                    //        }
 
-            //save the previous OSSB point
-            ossbX2[j - 1] = xcoords[j] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j - 1];
-            ossbY2[j - 1] = ycoords[j] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j - 1];
+                    //        //save the previous OSSB point
+                    //        ossbX2[j - 1] = xcoords[j] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j - 1];
+                    //        ossbY2[j - 1] = ycoords[j] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j - 1];
 
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
-        }
-        //if leg is any leg between the first and last leg
-        else
-        {
-            if (legs[j - 1].IsRight == true)
-            {
-                neg_pos = 1;
-            }
-            else
-            {
-                neg_pos = -1;
-            }
+                    //        curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
+                    //    }
+                    //    //if leg is any leg between the first and last leg
+                    //    else
+                    //    {
+                    //        if (legs[j - 1].IsRight == true)
+                    //        {
+                    //            neg_pos = 1;
+                    //        }
+                    //        else
+                    //        {
+                    //            neg_pos = -1;
+                    //        }
 
-            //save the previous OSSB point
-            ossbX2[j - 1] = xcoords[j] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j - 1];
-            ossbY2[j - 1] = ycoords[j] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j - 1];
+                    //        //save the previous OSSB point
+                    //        ossbX2[j - 1] = xcoords[j] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j - 1];
+                    //        ossbY2[j - 1] = ycoords[j] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j - 1];
 
-            //save the next OSSB point
-            ossbX1[j] = xcoords[j] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length - scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j];
-            ossbY1[j] = ycoords[j] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length - scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j];
+                    //        //save the next OSSB point
+                    //        ossbX1[j] = xcoords[j] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length - scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j];
+                    //        ossbY1[j] = ycoords[j] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length - scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * OSSB_length[j];
 
-            curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
+                    //        curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
 
-        }
-    }
+                    //    }
+                    //}
 
 
 
@@ -934,27 +864,28 @@ if (canvas.getContext) {
     context.moveTo(xcoords[0], ycoords[0]);
 
 
-                        for (var coord = 1; coord < num_coords; coord++)
-                        {
-                            context.lineTo(xcoords[coord], ycoords[coord]);
-                            context.stroke();
-                        }
+    //Draw the big boi shape
+    for (var coord = 1; coord < num_coords; coord++)
+    {
+        context.lineTo(xcoords[coord], ycoords[coord]);
+        context.stroke();
+    }
 
 
-    //MANDREL_CODE
-    //loop through the OSSB and APEX points and draw the shape with mandrel
-    //for (var coord = 0; coord < num_coords - 1; coord++)
-    //{
-    //    context.lineTo(ossbX1[coord], ossbY1[coord]);
-    //    context.stroke();
-    //    context.arcTo(apexX[coord], apexY[coord], ossbX2[coord], ossbY2[coord], legs[coord].Mandrel * scalar);
-    //    context.stroke();
-    //}
-    ////draw the remaining portion of the last leg of the shape
-    //context.lineTo(xcoords[num_coords - 1], ycoords[num_coords - 1]);
+                            //MANDREL_CODE
+                            //loop through the OSSB and APEX points and draw the shape with mandrel
+                            //for (var coord = 0; coord < num_coords - 1; coord++)
+                            //{
+                            //    context.lineTo(ossbX1[coord], ossbY1[coord]);
+                            //    context.stroke();
+                            //    context.arcTo(apexX[coord], apexY[coord], ossbX2[coord], ossbY2[coord], legs[coord].Mandrel * scalar);
+                            //    context.stroke();
+                            //}
+                            ////draw the remaining portion of the last leg of the shape
+                            //context.lineTo(xcoords[num_coords - 1], ycoords[num_coords - 1]);
 
 
-    //context.stroke();
+                            //context.stroke();
 
 
     //Text control variables
@@ -966,30 +897,30 @@ if (canvas.getContext) {
     text_2digit_x_shift = 0;
     text_2digit_y_shift = 0;
 
-    //Getting the points of where text is on a shape
-    //var label_posX = {};
-    //var label_posY = {};
-    //for (var leg = 0; leg < num_coords - 1; leg++)
-    //{
-    //    //if first leg
-    //    if (leg == 0)
-    //    {
-    //        label_posX[leg] = (xcoords[leg] + ossbX1[leg]) / 2;
-    //        label_posY[leg] = (ycoords[leg] + ossbY1[leg]) / 2;
-    //    }
-    //    //if last leg
-    //    else if (leg == num_coords - 2)
-    //    {
-    //        label_posX[leg] = (ossbX2[leg - 1] + xcoords[num_coords - 1]) / 2;
-    //        label_posY[leg] = (ossbY2[leg - 1] + ycoords[num_coords - 1]) / 2;
-    //    }
-    //    //if any other leg between first and last
-    //    else
-    //    {
-    //        label_posX[leg] = (ossbX2[leg - 1] + ossbX1[leg]) / 2;
-    //        label_posY[leg] = (ossbY2[leg - 1] + ossbY1[leg]) / 2;
-    //    }
-    //}
+                                //Getting the points of where text is on a shape
+                                //var label_posX = {};
+                                //var label_posY = {};
+                                //for (var leg = 0; leg < num_coords - 1; leg++)
+                                //{
+                                //    //if first leg
+                                //    if (leg == 0)
+                                //    {
+                                //        label_posX[leg] = (xcoords[leg] + ossbX1[leg]) / 2;
+                                //        label_posY[leg] = (ycoords[leg] + ossbY1[leg]) / 2;
+                                //    }
+                                //    //if last leg
+                                //    else if (leg == num_coords - 2)
+                                //    {
+                                //        label_posX[leg] = (ossbX2[leg - 1] + xcoords[num_coords - 1]) / 2;
+                                //        label_posY[leg] = (ossbY2[leg - 1] + ycoords[num_coords - 1]) / 2;
+                                //    }
+                                //    //if any other leg between first and last
+                                //    else
+                                //    {
+                                //        label_posX[leg] = (ossbX2[leg - 1] + ossbX1[leg]) / 2;
+                                //        label_posY[leg] = (ossbY2[leg - 1] + ossbY1[leg]) / 2;
+                                //    }
+                                //}
 
 
 
@@ -1184,9 +1115,9 @@ if (canvas.getContext) {
     }
     context.stroke();
 
-    console.log("Middle of Big Boi shape on currently lies on (" + (max_x + min_x) / 2 + "," + (max_y + min_y) / 2 + ")");
-    console.log("Shape Total Crude Length: " + total_crude_length);
-    console.log("-------------------------------------------------------------------------------")
+    //console.log("Middle of Big Boi shape on currently lies on (" + (max_x + min_x) / 2 + "," + (max_y + min_y) / 2 + ")");
+    //console.log("Shape Total Crude Length: " + total_crude_length);
+    //console.log("-------------------------------------------------------------------------------")
 
     //End of if(canvas.getcontext) block
     }
