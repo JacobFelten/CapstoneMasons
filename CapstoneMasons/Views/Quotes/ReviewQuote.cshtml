@@ -1,7 +1,7 @@
 ﻿@model ReviewQuote
 
 @{
-    ViewData["Title"] = "ReviewQuote";
+    ViewData["Title"] = "Review Quote";
 
     string tostring = "0.";
     for (int i = 0; i < KnownObjects.Precision; i++)
@@ -23,6 +23,7 @@
 <script>
     var legs = [];
 </script>
+<script type="text/javascript" src="~/js/AddShapePopUp.js"></script>
 
 <style>
     .line {
@@ -68,7 +69,7 @@
     }
 
         .fa-edit:hover {
-            text-shadow: 0 0 5px Highlight;
+            text-shadow: 0 0 5px black;
             color: yellowgreen !important;
             cursor: pointer;
             padding-left: 0;
@@ -83,17 +84,37 @@
         .fa-trash:hover {
             color: red;
         }
+
+    .delete {
+        color: tomato !important;
+    }
+
+        .delete:hover {
+            text-shadow: 0 0 5px black;
+            color: red !important;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+    #NewButton {
+        padding: 15px; /* Some padding */
+        background-color: #0094ff;
+        color: snow;
+    }
 </style>
 @foreach (var shape in Model.Shapes)
 {
     @await Html.PartialAsync("~/Views/Shared/_PartialShapePopUp.cshtml", shape)
+    <script type="text/javascript">
+        validLegCombination('Shape[@(shape.ShapeID)]');
+    </script>
 }
-@await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape());
-
-<a id="BackButton" class="btn btn-md btn-link" data-toggle="modal" data-target="#NewShape">New Shape</a>
+@await Html.PartialAsync("~/Views/Shared/_PartialAddShapePopUp.cshtml", new ReviewShape() { QuoteID = Model.QuoteID, ReviewOpen = false })
+@await Html.PartialAsync("~/Views/Shared/_PartialLegendPopUp.cshtml")
 <div class="card container">
     <div class="card-header quote-header">
         <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" value="@Model.QuoteID" name="quoteID" />
             <h6>Quote Written By: @Model.Author</h6>
             <div class="form-group">
@@ -221,7 +242,7 @@
                             getShapeNames(@(rS.ShapeID));
                         </script>
                         <a class="Edit" data-toggle="modal" data-target="#modalShapeEdit@(rS.ShapeID)">Edit <i class="fas fa-edit"></i></a>
-                        <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.QuoteID" asp-route-returnUrl="ReviewQuote">Delete<i class="fas fa-trash"></i></a>
+                        <a asp-action="DeleteShape" asp-route-shapeID="@rS.ShapeID" asp-route-quoteID="@Model.QuoteID" asp-route-returnUrl="ReviewQuote" class="delete">Delete<i class="fas fa-trash"></i></a>
                     </h2>
                 </div>
                 <div class="text-center"><span class="font-weight-bold">Cut each piece at: </span>@rS.CutLength.ToString(tostring)"</div>
@@ -243,6 +264,25 @@
                             {
                                 isRight = "false";
                             }
+
+							decimal mandrel = 0;
+							if (@Model.Shapes[i].Legs[j].Mandrel == "None")
+							{
+								mandrel = 0.5m;
+							}
+							else if (@Model.Shapes[i].Legs[j].Mandrel == "Small")
+							{
+								mandrel = 1.00m;
+							}
+							else if (@Model.Shapes[i].Legs[j].Mandrel == "Medium")
+							{
+								mandrel = 1.5m;
+							}
+							else if (@Model.Shapes[i].Legs[j].Mandrel == "Large")
+							{
+								mandrel = 2.25m;
+							}
+
                             ReviewLeg rL = rS.Legs[j];
                             int num = j + 1;
                             <div class="leg">
@@ -257,7 +297,9 @@
                             var leg = {
                                 Length: @Model.Shapes[i].Legs[j].Length,
                                 Degree: @Model.Shapes[i].Legs[j].Degree,
-                                IsRight: @isRight
+                                IsRight: @isRight,
+								Mandrel: @mandrel,
+								Size: @Model.Shapes[i].BarSize
                             };
                             legs[@j] = leg;
                             </script>
@@ -304,5 +346,8 @@
                 </div>
             </div>
         }
+        <div class="text-center">
+            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#NewShape">Add a Shape</a>
+        </div>
     </div>
 </div>

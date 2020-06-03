@@ -1,0 +1,40 @@
+﻿<style>
+    #info {
+        position: fixed; /* Fixed/sticky position */
+        top: 50px; /* Place the button at the top of the page */
+        right: 15px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        padding: 15px; /* Some padding */
+        background-color: #0094ff;
+        color: snow;
+    }
+
+    #info:hover {
+        background-color: #00ffff; /* Add a dark-grey background on hover */
+    }
+</style>
+
+<a data-toggle="modal" data-target="#AngleLegend" id="info" class="btn btn-md btn-link">Angle Legend</a>
+
+<!-- Modal Legend-->
+<div class="modal fade" id="AngleLegend" tabindex="-1" role="dialog" aria-labelledby="AngleLegendLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="AngleLegendLabel">Angle Legend</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="~/img/45Degrees.png" style="height: 300px" alt="45 degrees" />
+                <img src="~/img/90Degrees.png" style="height: 300px" alt="90 degrees" />
+                <img src="~/img/135Degrees.png" style="height: 300px" alt="135 degrees" />
+                <img src="~/img/180Degrees.png" style="height: 300px" alt="135 degrees" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

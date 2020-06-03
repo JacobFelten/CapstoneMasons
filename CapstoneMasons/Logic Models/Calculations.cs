@@ -100,16 +100,38 @@ namespace CapstoneMasons.Logic_Models
             //for loop calculates the total bend deduction in the whole shape
             for (int angle = 0; angle < crude_legs.Count - 1; angle++)
             {
-                decimal comp_angle = 180 - crude_legs[angle].Degree;                    //get the complimentary angle
-                decimal radian_angle = comp_angle * Pi / 180;                           //get the angle in radians
-                decimal Thickness_mm = Thickness * (decimal)25.4;                       //convert Thickness to millimeters
-                decimal Radius_mm = crude_legs[angle].Mandrel.Radius * (decimal)25.4;   //convert Radius to millimeters
-                decimal OSSB = (decimal)Math.Tan((double)radian_angle / 2) * (Thickness_mm + Radius_mm);
-                //get the bend deduction in mm to be super accurate
-                decimal deduction_mm = (2 * OSSB) - (radian_angle * (Radius_mm + (K_Factor * Thickness_mm) ) );
+                //if the specific bend angle is a hook
+                if (crude_legs[angle].Degree == 180)
+                {
+                    decimal comp_angle = 90;
 
-                //convert the deduction back to inches and add them to the total
-                Total_BD += (deduction_mm / (decimal)25.4);
+                    decimal radian_angle = comp_angle * Pi / 180;                           //get the angle in radians
+                    decimal Thickness_mm = Thickness * (decimal)25.4;                       //convert Thickness to millimeters
+                    decimal Radius_mm = crude_legs[angle].Mandrel.Radius * (decimal)25.4;   //convert Radius to millimeters
+                    decimal OSSB = (decimal)Math.Tan((double)radian_angle / 2) * (Thickness_mm + Radius_mm);
+                    //get the bend deduction in mm to be super accurate
+                    decimal deduction_mm = (2 * OSSB) - (radian_angle * (Radius_mm + (K_Factor * Thickness_mm)));
+
+                    //since this bend is a hook it should be the same as two 90 Bend Deductions put together so the deduction_mm will have to be doubled
+                    //convert the deduction back to inches and add them to the total
+                    Total_BD += 2 * (deduction_mm / (decimal)25.4);
+
+                }
+
+                else
+                {
+                    decimal comp_angle = 180 - crude_legs[angle].Degree;                    //get the complimentary angle
+                    decimal radian_angle = comp_angle * Pi / 180;                           //get the angle in radians
+                    decimal Thickness_mm = Thickness * (decimal)25.4;                       //convert Thickness to millimeters
+                    decimal Radius_mm = crude_legs[angle].Mandrel.Radius * (decimal)25.4;   //convert Radius to millimeters
+                    decimal OSSB = (decimal)Math.Tan((double)radian_angle / 2) * (Thickness_mm + Radius_mm);
+                    //get the bend deduction in mm to be super accurate
+                    decimal deduction_mm = (2 * OSSB) - (radian_angle * (Radius_mm + (K_Factor * Thickness_mm)));
+
+                    //convert the deduction back to inches and add them to the total
+                    Total_BD += (deduction_mm / (decimal)25.4);
+                }
+
             }
 
             for(int leg = 0; leg < crude_legs.Count; leg++)

@@ -63,7 +63,7 @@ function deleteShape(ShapeNumb) {
     } 
 }
 
-function hideDeletedShapes() {//hide previously deleted shapes to "mitigate" bug
+function hideDeletedShapes() {//hide previously deleted shapes to "mitigate" bug when going back
 
     var numbShapes = document.getElementById(`Shapes.Count`);
     for (var ShapeNumb = 1; ShapeNumb < numbShapes; i++) {
