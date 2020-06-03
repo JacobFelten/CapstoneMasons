@@ -152,7 +152,7 @@
                                                                 @((legIndex).ToString()+"th ")
                                                             } Leg Degree:
                                                         </label>
-                                                        <input class="form-control" value="@Model.Legs[legIndex-1].Degree" min="0" max="180" type="number" step="any" asp-for="Legs[legIndex-1].Degree" id="Shape@(Model.ShapeID).leg[@(legIndex-1)].degree" />
+                                                        <input class="form-control" value="@Model.Legs[legIndex-1].Degree" min="0" max="180" type="number" step="any" asp-for="Legs[legIndex-1].Degree" id="Shape[@(Model.ShapeID)].leg[@(legIndex-1)].degree" />
                                                     </div>
 
                                                     <div class="col-4 form-group">
