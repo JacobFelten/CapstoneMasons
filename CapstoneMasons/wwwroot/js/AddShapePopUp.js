@@ -25,7 +25,7 @@ function addLegg(form) {
     legInput = `
 <hr/>
         <div class="panel-group" id="${form}.leg[${numbLegs}].accordion" role="tablist" aria-multiselectable="true">
-            <div class="panel panel-default">
+            <div class="panel panel-default"><input name="Legs[${numbLegs}].SortOrder" value="${numbLegs}" hidden/>
                 <div class="panel-heading" role="tab" id="headingLeg${numbLegs}">
                     <h4 class="panel-title">
                         <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseLeg${numbLegs}" aria-expanded="false" aria-controls="collapseLeg${numbLegs}">
@@ -191,7 +191,7 @@ function getAllFormValues(form) {
     return fields;
 }
 
-function checkLegLenghts(form) {
+function checkLegs(form) {
     var numbLegs = document.getElementById(form+'.LegCount').value;
     var result;
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
@@ -199,9 +199,12 @@ function checkLegLenghts(form) {
         if (LegsLenght > 240) {
             alert("The leg #" + (legIndex + 1) + " can not be more than 240");//catching longer than vali
             return false;
-        } else if (LegsLenght < 0)
-        {
+        } else if (LegsLenght < 0) {
             alert("The leg #" + (legIndex + 1) + " can not be negative");//catching smaller than valid
+            return false;
+        } else if (legIndex < numbLegs && (document.getElementById(`${form}.leg[${legIndex}].degree`).value > 180 || 
+            document.getElementById(`${form}.leg[${legIndex}].degree`).value <=0)) {
+            alert("Invalid degrees in leg #" + (legIndex + 1));//catching smaller than valid value
             return false;
         }
     }
@@ -260,7 +263,7 @@ function checkingCutLenght(form) {
 
 function submitForm(form) {
 
-    if (checkFormFieldsEmpty(form) && checkLegLenghts(form)) {
+    if (checkFormFieldsEmpty(form) && checkLegs(form)) {
         if (confirm('Are you sure you want to add this shape?'))
             checkingCutLenght(form);
     }
