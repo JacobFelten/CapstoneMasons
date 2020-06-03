@@ -14,7 +14,7 @@ namespace CaptstonexUnit
     public class GinoTests
     {
 
-        private ShapesController controllerS;
+        //private ShapesController controllerS;
         private QuotesController controllerQ;
         private FakeShapeRepository repoS;
         private FakeQuoteRepository repoQ;
@@ -54,7 +54,7 @@ namespace CaptstonexUnit
         public GinoTests()
         {
             repoS = new FakeShapeRepository();
-            controllerS = new ShapesController(repoS);
+            //controllerS = new ShapesController(repoS);
 
             quote = new Quote
             {
