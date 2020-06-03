@@ -42,6 +42,7 @@ if (canvas.getContext) {
     ArcMidy = {};
 
     HookIndexes = {};  //the indexes of legs that are hooks
+    var HOOKSCALAR = 10;
 
     //Variables for Shape creation
 
@@ -143,6 +144,20 @@ if (canvas.getContext) {
                 xcoords[j + 1 + addedPoints] = tempCoordx;
                 ycoords[j + 1 + addedPoints] = tempCoordy;
 
+                if (xcoords[j + 1 + addedPoints] < min_x) {
+                    min_x = xcoords[j + 1 + addedPoints];
+                } else if (xcoords[j + 1 + addedPoints] > max_x) {
+                    max_x = xcoords[j + 1 + addedPoints];
+                } else {//they are equal do nothing.
+                }
+
+                if (ycoords[j + 1 + addedPoints] < min_y) {
+                    min_y = ycoords[j + 1 + addedPoints];
+                } else if (ycoords[j + 1 + addedPoints] > max_y) {
+                    max_y = ycoords[j + 1 + addedPoints];
+                } else {//They are equal do nothing.
+                }
+
 
                 //INSIDE OF HERE SAVE THE CURRENT LEG INDEX THAT IS THE HOOK AND PUT IT INTO THE HOOK INDEX LIST using Object.keys(HookIndexes).length
                 //SAVE J as the leg being counted as the Hook and add it to the end of the indexes list
@@ -159,6 +174,20 @@ if (canvas.getContext) {
                 ycoords[j + 1 + addedPoints] = tempCoordy + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
 
                 curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360;
+
+                if (xcoords[j + 1 + addedPoints] < min_x) {
+                    min_x = xcoords[j + 1 + addedPoints];
+                } else if (xcoords[j + 1 + addedPoints] > max_x) {
+                    max_x = xcoords[j + 1 + addedPoints];
+                } else {//they are equal do nothing.
+                }
+
+                if (ycoords[j + 1 + addedPoints] < min_y) {
+                    min_y = ycoords[j + 1 + addedPoints];
+                } else if (ycoords[j + 1 + addedPoints] > max_y) {
+                    max_y = ycoords[j + 1 + addedPoints];
+                } else {//They are equal do nothing.
+                }
             }
             else {
 
@@ -167,22 +196,36 @@ if (canvas.getContext) {
                 ycoords[j + 1 + addedPoints] = ycoords[j + addedPoints] + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length;
 
                 curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
+
+                if (xcoords[j + 1 + addedPoints] < min_x) {
+                    min_x = xcoords[j + 1 + addedPoints];
+                } else if (xcoords[j + 1 + addedPoints] > max_x) {
+                    max_x = xcoords[j + 1 + addedPoints];
+                } else {//they are equal do nothing.
+                }
+
+                if (ycoords[j + 1 + addedPoints] < min_y) {
+                    min_y = ycoords[j + 1 + addedPoints];
+                } else if (ycoords[j + 1 + addedPoints] > max_y) {
+                    max_y = ycoords[j + 1 + addedPoints];
+                } else {//They are equal do nothing.
+                }
             }
 
-            //save the mins and maxes
-            if (xcoords[j + 1 + addedPoints] < min_x) {
-                min_x = xcoords[j + 1 + addedPoints];
-            } else if (xcoords[j + 1 + addedPoints] > max_x) {
-                max_x = xcoords[j + 1 + addedPoints];
-            } else {//they are equal do nothing.
-            }
+            ////save the mins and maxes
+            //if (xcoords[j + 1 + addedPoints] < min_x) {
+            //    min_x = xcoords[j + 1 + addedPoints];
+            //} else if (xcoords[j + 1 + addedPoints] > max_x) {
+            //    max_x = xcoords[j + 1 + addedPoints];
+            //} else {//they are equal do nothing.
+            //}
 
-            if (ycoords[j + 1 + addedPoints] < min_y) {
-                min_y = ycoords[j + 1 + addedPoints];
-            } else if (ycoords[j + 1 + addedPoints] > max_y) {
-                max_y = ycoords[j + 1 + addedPoints];
-            } else {//They are equal do nothing.
-            }
+            //if (ycoords[j + 1 + addedPoints] < min_y) {
+            //    min_y = ycoords[j + 1 + addedPoints];
+            //} else if (ycoords[j + 1 + addedPoints] > max_y) {
+            //    max_y = ycoords[j + 1 + addedPoints];
+            //} else {//They are equal do nothing.
+            //}
 
             //make sure that curr_unit_val never gets bigger than 180 or smaller than -180
             while (curr_unit_val > 180 || curr_unit_val < -180)
@@ -220,7 +263,7 @@ if (canvas.getContext) {
     //Redraw the shape after x0 and y0 has been repositioned
     addedPoints = 0;
 
-    for (var j = 0; j < legs.length + addedPoints; j++) {
+    for (var j = 0; j < legs.length; j++) {
         if (j == 0) {
 
             xcoords[0] = startx;
@@ -277,20 +320,32 @@ if (canvas.getContext) {
                 neg_pos = -1;
             }
 
-            //context.beginPath();
-            //context.moveTo(xcoords[j], ycoords[j]);
-
             //if degree of last leg is 180
             if (legs[j - 1].Degree == 180) {
 
-                if (j < legs.Length) {
+                if (j < legs.length) {
                     var tempCoordx, tempCoordy, tempReverseAngle;
-                    tempCoordx = xcoords[j + addedPoints] + Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * 10;
-                    tempCoordy = ycoords[j + addedPoints] + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * 10;
+                    tempCoordx = xcoords[j + addedPoints] + Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR;
+                    tempCoordy = ycoords[j + addedPoints] + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR;
 
                     xcoords[j + 1 + addedPoints] = tempCoordx;
                     ycoords[j + 1 + addedPoints] = tempCoordy;
 
+                    if (xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = xcoords[j + 1 + addedPoints];
+                    } else if (xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = ycoords[j + 1 + addedPoints];
+                    } else if (ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
+
+                                //Draw first part of the hook
                                 //context.lineTo(xcoords[j + 1 + addedPoints], ycoords[j + 1 + addedPoints]);
 
                     //increment j by 1
@@ -303,40 +358,72 @@ if (canvas.getContext) {
                     xcoords[j + 1 + addedPoints] = tempCoordx + Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
                     ycoords[j + 1 + addedPoints] = tempCoordy + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
 
+
+                                //Draw second part of the hook
                                 //context.lineTo(xcoords[j + 1 + addedPoints], ycoords[j + 1 + addedPoints]);
 
                     curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360;
+
+                    if (xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = xcoords[j + 1 + addedPoints];
+                    } else if (xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = ycoords[j + 1 + addedPoints];
+                    } else if (ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
                 }
             }
             else {
 
-                if (j < legs.Length) {
+                if (j < legs.length) {
                     //(xj+1,yj+1)
                     xcoords[j + 1 + addedPoints] = xcoords[j + addedPoints] + Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length;
                     ycoords[j + 1 + addedPoints] = ycoords[j + addedPoints] + Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree))) * legs[j].Length;
 
+                                //Draw the line
                                 //context.lineTo(xcoords[j + 1 + addedPoints], ycoords[j + 1 + addedPoints]);
 
                     curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
+
+                    if (xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = xcoords[j + 1 + addedPoints];
+                    } else if (xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = ycoords[j + 1 + addedPoints];
+                    } else if (ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
                 }
             }
 
             
-            if (xcoords[j + 1 + addedPoints] < min_x) {
-                min_x = xcoords[j + 1 + addedPoints];
-            } else if (xcoords[j + 1 + addedPoints] > max_x) {
-                max_x = xcoords[j + 1 + addedPoints];
-            } else {//they are equal do nothing.
-            }
+            //if (xcoords[j + 1 + addedPoints] < min_x) {
+            //    min_x = xcoords[j + 1 + addedPoints];
+            //} else if (xcoords[j + 1 + addedPoints] > max_x) {
+            //    max_x = xcoords[j + 1 + addedPoints];
+            //} else {//they are equal do nothing.
+            //}
 
-            if (ycoords[j + 1 + addedPoints] < min_y) {
-                min_y = ycoords[j + 1 + addedPoints];
-            } else if (ycoords[j + 1 + addedPoints] > max_y) {
-                max_y = ycoords[j + 1 + addedPoints];
-            } else {//They are equal do nothing.
-            }
+            //if (ycoords[j + 1 + addedPoints] < min_y) {
+            //    min_y = ycoords[j + 1 + addedPoints];
+            //} else if (ycoords[j + 1 + addedPoints] > max_y) {
+            //    max_y = ycoords[j + 1 + addedPoints];
+            //} else {//They are equal do nothing.
+            //}
 
 
+                    //Draw the lines from lineTo()
                     //context.stroke();
         }
     }//End of Legs in a single shape loop
@@ -358,14 +445,45 @@ if (canvas.getContext) {
 
 
     //TO HELP WITH THE HOOKS BEING NOTICABLE
-    var HOOKSCALAR = 10;
+    
     addedPoints = 0;
+    HOOKSCALAR = 2;
+    var MANDREL_SCALAR = 0;
 
     //while Too_big != 1 loop
     while (Too_Big != 1) {
         //make scalar a little bigger
+        addedPoints = 0;
         scalar = scalar + .1;
         curr_unit_val = 0;
+
+        if (scalar <= 2) {
+            //HOOKSCALAR huge
+            HOOKSCALAR = 12;
+        }
+        else if (scalar > 2 && scalar <= 4) {
+            //HOOKSCALAR bigger
+            HOOKSCALAR = 8;
+        }
+        else if (scalar > 4 && scalar <= 6) {
+            //HOOKSCALAR big
+            HOOKSCALAR = 6;
+        }
+        else if (scalar > 6 && scalar <= 8) {
+            //HOOKSCALAR small
+            HOOKSCALAR = 4;
+        }
+        else if (scalar > 8 && scalar <= 10) {
+            //HOOKSCALAR smallest
+            HOOKSCALAR = 3;
+        }
+        else if (scalar > 10 && scalar <= 30) {
+            //HOOKSCALAR smaller than microorganisms
+            HOOKSCALAR = 2;
+        }
+        else if (scalar > 30) {
+            HOOKSCALAR = 1;
+        }
 
         //Recalculate the shape coordinates based on scalar
         for (var j = 0; j < legs.length; j++) {
@@ -407,12 +525,47 @@ if (canvas.getContext) {
                 //if degree of the last leg is 180 then find flipped point position, else do nothing different
                 if (legs[j - 1].Degree == 180) {
 
+                    //if none mandrel
+                    if (legs[j - 1].Mandrel == .5) {
+                        //don't change the hook distance
+                        MANDREL_SCALAR = 1.1;
+                    }
+                    //if small mandrel
+                    else if (legs[j - 1].Mandrel == 1) {
+                        //shorten it by a little more than what it would be
+                        MANDREL_SCALAR = .6;
+                    }
+                    //if medium
+                    else if (legs[j - 1].Mandrel == 1.5) {
+                        //shorten it by even more
+                        MANDREL_SCALAR = .5
+                    }
+                    //if large mandrel
+                    else if (legs[j - 1].Mandrel == 2.25) {
+                        //shorten it by a lot more
+                        MANDREL_SCALAR = .4;
+                    }
+
                     var tempCoordx, tempCoordy, tempReverseAngle;
-                    tempCoordx = temp_xcoords[j + addedPoints] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR;
-                    tempCoordy = temp_ycoords[j + addedPoints] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR;
+                    tempCoordx = temp_xcoords[j + addedPoints] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR * MANDREL_SCALAR; //HOOKSCALAR;
+                    tempCoordy = temp_ycoords[j + addedPoints] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR * MANDREL_SCALAR; //HOOKSCALAR;
 
                     temp_xcoords[j + 1 + addedPoints] = tempCoordx;
                     temp_ycoords[j + 1 + addedPoints] = tempCoordy;
+
+                    if (temp_xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = temp_xcoords[j + 1 + addedPoints];
+                    } else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = temp_xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (temp_ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = temp_ycoords[j + 1 + addedPoints];
+                    } else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = temp_ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
 
                     //increment j by 1
                     addedPoints = addedPoints + 1;
@@ -425,6 +578,20 @@ if (canvas.getContext) {
                     temp_ycoords[j + 1 + addedPoints] = tempCoordy + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
 
                     curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360;
+
+                    if (temp_xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = temp_xcoords[j + 1 + addedPoints];
+                    } else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = temp_xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (temp_ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = temp_ycoords[j + 1 + addedPoints];
+                    } else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = temp_ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
                 }
 
                 else {
@@ -435,21 +602,34 @@ if (canvas.getContext) {
 
                     curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
 
+                    if (temp_xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = temp_xcoords[j + 1 + addedPoints];
+                    } else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = temp_xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (temp_ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = temp_ycoords[j + 1 + addedPoints];
+                    } else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = temp_ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
                 }
 
-                if (temp_xcoords[j + 1 + addedPoints] < min_x) {
-                    min_x = temp_xcoords[j + 1 + addedPoints];
-                } else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
-                    max_x = temp_xcoords[j + 1 + addedPoints];
-                } else {//they are equal do nothing.
-                }
+                //if (temp_xcoords[j + 1 + addedPoints] < min_x) {
+                //    min_x = temp_xcoords[j + 1 + addedPoints];
+                //} else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
+                //    max_x = temp_xcoords[j + 1 + addedPoints];
+                //} else {//they are equal do nothing.
+                //}
 
-                if (temp_ycoords[j + 1 + addedPoints] < min_y) {
-                    min_y = temp_ycoords[j + 1 + addedPoints];
-                } else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
-                    max_y = temp_ycoords[j + 1 + addedPoints];
-                } else {//They are equal do nothing.
-                }
+                //if (temp_ycoords[j + 1 + addedPoints] < min_y) {
+                //    min_y = temp_ycoords[j + 1 + addedPoints];
+                //} else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
+                //    max_y = temp_ycoords[j + 1 + addedPoints];
+                //} else {//They are equal do nothing.
+                //}
 
             }
         }
@@ -458,14 +638,22 @@ if (canvas.getContext) {
         x_shift = (canvas.width / 2) - ((max_x + min_x) / 2);
         y_shift = (canvas.height / 2) - ((max_y + min_y) / 2);
 
-        temp_xcoords[0] = temp_xcoords[0] + x_shift;
-        temp_ycoords[0] = temp_ycoords[0] + y_shift;
+        var x_start = temp_xcoords[0] + x_shift;
+        var y_start = temp_ycoords[0] + y_shift;
+
+        temp_xcoords = [];
+        temp_ycoords = [];
+
+        temp_xcoords[0] = x_start;
+        temp_ycoords[0] = y_start;
+
 
         curr_unit_val = 0
         addedPoints = 0;
 
         //calculate new positions based on scalar and check new mins and maxes
         for (var j = 0; j < legs.length; j++) {
+
             //if first leg
             if (j == 0) {
                 //reset the min max val
@@ -504,12 +692,47 @@ if (canvas.getContext) {
                 //if degree of the last leg is 180 then find flipped point position, else do nothing different
                 if (legs[j - 1].Degree == 180) {
 
+                    //editing the distance of the hooks depending on the mandrel radius
+                    if (legs[j - 1].Mandrel == .5) {
+                        //don't change the hook distance
+                        MANDREL_SCALAR = 1.1;
+                    }
+                    //if small mandrel
+                    else if (legs[j - 1].Mandrel == 1) {
+                        //shorten it by a little more than what it would be
+                        MANDREL_SCALAR = .6;
+                    }
+                    //if medium
+                    else if (legs[j - 1].Mandrel == 1.5) {
+                        //shorten it by even more
+                        MANDREL_SCALAR = .5
+                    }
+                    //if large mandrel
+                    else if (legs[j - 1].Mandrel == 2.25) {
+                        //shorten it by a lot more
+                        MANDREL_SCALAR = .4;
+                    }
+
                     var tempCoordx, tempCoordy, tempReverseAngle;
-                    tempCoordx = temp_xcoords[j + addedPoints] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR;
-                    tempCoordy = temp_ycoords[j + addedPoints] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR;
+                    tempCoordx = temp_xcoords[j + addedPoints] + scalar * Math.cos(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR * MANDREL_SCALAR;
+                    tempCoordy = temp_ycoords[j + addedPoints] + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 90)) * legs[j - 1].Mandrel * 2 * HOOKSCALAR * MANDREL_SCALAR;
 
                     temp_xcoords[j + 1 + addedPoints] = tempCoordx;
                     temp_ycoords[j + 1 + addedPoints] = tempCoordy;
+
+                    if (temp_xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = temp_xcoords[j + 1 + addedPoints];
+                    } else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = temp_xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (temp_ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = temp_ycoords[j + 1 + addedPoints];
+                    } else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = temp_ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
 
                     //increment j by 1
                     addedPoints = addedPoints + 1;
@@ -522,6 +745,20 @@ if (canvas.getContext) {
                     temp_ycoords[j + 1 + addedPoints] = tempCoordy + scalar * Math.sin(((Math.PI) / 180) * (curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360)) * legs[j].Length;
 
                     curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * 360;
+
+                    if (temp_xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = temp_xcoords[j + 1 + addedPoints];
+                    } else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = temp_xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (temp_ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = temp_ycoords[j + 1 + addedPoints];
+                    } else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = temp_ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
                 }
 
                 else {
@@ -532,22 +769,36 @@ if (canvas.getContext) {
 
                     curr_unit_val = curr_unit_val + (neg_pos) * (180) - (neg_pos) * (legs[j - 1].Degree);
 
+                    if (temp_xcoords[j + 1 + addedPoints] < min_x) {
+                        min_x = temp_xcoords[j + 1 + addedPoints];
+                    } else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
+                        max_x = temp_xcoords[j + 1 + addedPoints];
+                    } else {//they are equal do nothing.
+                    }
+
+                    if (temp_ycoords[j + 1 + addedPoints] < min_y) {
+                        min_y = temp_ycoords[j + 1 + addedPoints];
+                    } else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
+                        max_y = temp_ycoords[j + 1 + addedPoints];
+                    } else {//They are equal do nothing.
+                    }
+
                 }
 
 
-                if (temp_xcoords[j + 1 + addedPoints] < min_x) {
-                    min_x = temp_xcoords[j + 1 + addedPoints];
-                } else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
-                    max_x = temp_xcoords[j + 1 + addedPoints];
-                } else {//they are equal do nothing.
-                }
+                //if (temp_xcoords[j + 1 + addedPoints] < min_x) {
+                //    min_x = temp_xcoords[j + 1 + addedPoints];
+                //} else if (temp_xcoords[j + 1 + addedPoints] > max_x) {
+                //    max_x = temp_xcoords[j + 1 + addedPoints];
+                //} else {//they are equal do nothing.
+                //}
 
-                if (temp_ycoords[j + 1 + addedPoints] < min_y) {
-                    min_y = temp_ycoords[j + 1 + addedPoints];
-                } else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
-                    max_y = temp_ycoords[j + 1 + addedPoints];
-                } else {//They are equal do nothing.
-                }
+                //if (temp_ycoords[j + 1 + addedPoints] < min_y) {
+                //    min_y = temp_ycoords[j + 1 + addedPoints];
+                //} else if (temp_ycoords[j + 1 + addedPoints] > max_y) {
+                //    max_y = temp_ycoords[j + 1 + addedPoints];
+                //} else {//They are equal do nothing.
+                //}
 
             }
         }
@@ -683,7 +934,7 @@ if (canvas.getContext) {
     context.moveTo(xcoords[0], ycoords[0]);
 
 
-                        for (var coord = 1; coord < num_coords - addedPoints; coord++)
+                        for (var coord = 1; coord < num_coords; coord++)
                         {
                             context.lineTo(xcoords[coord], ycoords[coord]);
                             context.stroke();
@@ -750,7 +1001,7 @@ if (canvas.getContext) {
     //Drawing the text onto the shape
     context.beginPath();
     context.moveTo(xcoords[0], ycoords[0]);
-    for (var coord = 1; coord < num_coords - addedPoints; coord++)
+    for (var coord = 1; coord < num_coords; coord++)
     {
         //reset hook_found
         hook_found = 0;
@@ -766,7 +1017,7 @@ if (canvas.getContext) {
 
         //if unit val is at 0 or 180 or -180 THEN shift straight down
         if (unit_val_list[coord - 1 - hooks_skipped] == 0 || unit_val_list[coord - 1 - hooks_skipped] == 180 || unit_val_list[coord - 1 - hooks_skipped] == -180) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -5;
             }
             text_y_shift = -4;
@@ -774,7 +1025,7 @@ if (canvas.getContext) {
 
         //if unit val is between 0 and -30 or between -180 and -150 THEN diagonal down left
         else if (0 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > -30 || -150 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > -180) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -3;
@@ -783,7 +1034,7 @@ if (canvas.getContext) {
 
         //if unit val is at -30 or 150 THEN diagonal down left MORE LEFT THAN DOWN
         else if (unit_val_list[coord - 1 - hooks_skipped] == -30 || unit_val_list[coord - 1 - hooks_skipped] == 150) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -3;
@@ -792,7 +1043,7 @@ if (canvas.getContext) {
 
         //if unit between -30 and -45 or between 135 and 150 THEN diagonal down left
         else if (-30 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > -45 || 150 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > 135) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -3;
@@ -801,14 +1052,14 @@ if (canvas.getContext) {
 
         //if unit val is at -45 or 135 THEN do nothing
         else if (unit_val_list[coord - 1 - hooks_skipped] == -45 || unit_val_list[coord - 1 - hooks_skipped] == 135) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
         }
 
         //if unit between -45 and -60 or between 135 and 120 THEN diagonal down left
         else if (-45 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > -60 || 135 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > 120) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -3;
@@ -817,7 +1068,7 @@ if (canvas.getContext) {
 
         //if unit val is at -60 or 120 THEN diagonal down left
         else if (unit_val_list[coord - 1 - hooks_skipped] == -60 || unit_val_list[coord - 1 - hooks_skipped] == 120) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -4;
@@ -826,7 +1077,7 @@ if (canvas.getContext) {
 
         //if unit is between -60 and -90 or 120 and 90 THEN left
         else if (-60 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > -90 || 120 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > 90) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -3;
@@ -834,7 +1085,7 @@ if (canvas.getContext) {
 
         //if unit val is at -90 or 90 THEN move to the left
         else if (unit_val_list[coord - 1 - hooks_skipped] == -90 || unit_val_list[coord - 1 - hooks_skipped] == 90) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -4;
@@ -842,7 +1093,7 @@ if (canvas.getContext) {
 
         //if unit is between -90 and -120 or 90 and 60 THEN diagonal down left MORE LEFT THAN DOWN
         else if (-90 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > -120 || 90 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > 60) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -4;
@@ -851,7 +1102,7 @@ if (canvas.getContext) {
 
         //if unit val is at -120 or 60 THEN diagonal down left MORE LEFT THAN DOWN
         else if (unit_val_list[coord - 1 - hooks_skipped] == -120 || unit_val_list[coord - 1 - hooks_skipped] == 60) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -4;
             }
             text_x_shift = -4;
@@ -860,7 +1111,7 @@ if (canvas.getContext) {
 
         //if unit is between -120 and -135 or 60 and 45 THEN diagonal down left
         else if (-120 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > -135 || 60 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > 45) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -3;
@@ -869,7 +1120,7 @@ if (canvas.getContext) {
 
         //if unit val is at -135 or 45 THEN diagonal down left
         else if (unit_val_list[coord - 1 - hooks_skipped] == -135 || unit_val_list[coord - 1 - hooks_skipped] == 45) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -4;
             }
             text_x_shift = -4;
@@ -878,7 +1129,7 @@ if (canvas.getContext) {
 
         //if unit val is between -135 and -150 or 45 and 30 THEN diagonal down left MORE DOWN THAN LEFT
         else if (-135 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > -150 || 45 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > 30) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -2;
@@ -887,7 +1138,7 @@ if (canvas.getContext) {
 
         //if unit val is at -150 or 30 THEN diagonal down left MORE DOWN THAN LEFT
         else if (unit_val_list[coord - 1 - hooks_skipped] == -150 || unit_val_list[coord - 1 - hooks_skipped] == 30) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -4;
                 text_2digit_y_shift = -1;
             }
@@ -897,7 +1148,7 @@ if (canvas.getContext) {
 
         //if unit val is between 150 and 180 or -30 and 0 THEN 
         else if (180 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > 150 || 30 > unit_val_list[coord - 1 - hooks_skipped] && unit_val_list[coord - 1 - hooks_skipped] > 0) {
-            if (coord > 9) {
+            if (coord - hooks_skipped > 9) {
                 text_2digit_x_shift = -3;
             }
             text_x_shift = -3;
