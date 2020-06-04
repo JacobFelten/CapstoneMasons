@@ -1755,7 +1755,8 @@ namespace CapstoneMasons.Controllers
             foreach (ReviewShape rS in rSList)
             {
                 numOfBars += rS.NumOfBars;
-                numOfCuts += rS.Qty;
+                if (!(rS.Legs.Count == 1 && rS.Legs[0].Length == KnownObjects.FullBarLength))
+                    numOfCuts += rS.Qty;
                 numOfBends += rS.Qty * (rS.Legs.Count - 1);
             }
 
