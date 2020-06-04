@@ -28,23 +28,28 @@ function validLegCombination(shape) {
         switch (barSize) {
             case "3":
                 document.getElementById(mandrelItem + "None").disabled = false;//every mandrel is available
-                document.getElementById(mandrelItem + "None").checked = true;//preselect lowest mandrel
-                document.getElementById(mandrelItem + "None.Label").classList.add("active");
+                //document.getElementById(mandrelItem + "None.Label").classList.add("active");
+                //document.getElementById(mandrelItem + "None").checked = true;//preselect lowest mandrel
                 $("#" + mandrelItem + "None.Label").tooltip("hide");
+                //document.getElementById(mandrelItem + "None.Label").click();
+                //$("#" + mandrelItem + "None.Label").click(function () {
+                    //$(this).button('toggle');
+                //});
 
                 document.getElementById(mandrelItem + "Small").disabled = false;
-                document.getElementById(mandrelItem + "Small").checked = false;
-                document.getElementById(mandrelItem + "Small.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Small.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Small").checked = false;
                 $("#" + mandrelItem + "Small.Label").popover("hide");
 
 
                 document.getElementById(mandrelItem + "Medium").disabled = false;
-                document.getElementById(mandrelItem + "Medium").checked = false;
-                document.getElementById(mandrelItem + "Medium.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Medium.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Medium").checked = false;
                 $("#" + mandrelItem + "Medium.Label").popover("hide");
 
-                document.getElementById(mandrelItem + "Large").checked = false;
-                document.getElementById(mandrelItem + "Large.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Large.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Large").checked = false;
+                
                 break;
             case "4":
                 document.getElementById(mandrelItem + "None").disabled = true;//small and med and large available
@@ -54,17 +59,20 @@ function validLegCombination(shape) {
                 $("#" + mandrelItem + "None.Label").tooltip();
 
                 document.getElementById(mandrelItem + "Small").disabled = false;
-                document.getElementById(mandrelItem + "Small").checked = true;
-                document.getElementById(mandrelItem + "Small.Label").classList.add("active");
+                //document.getElementById(mandrelItem + "Small").checked = true;
+                //document.getElementById(mandrelItem + "Small.Label").classList.add("active");
                 $("#" + mandrelItem + "Small.Label").popover("hide");
+                //$("#" + mandrelItem + "Small.Label").click(function () {
+                    //$(this).button('toggle');
+                //});
 
                 document.getElementById(mandrelItem + "Medium").disabled = false;
-                document.getElementById(mandrelItem + "Medium").checked = false;
-                document.getElementById(mandrelItem + "Medium.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Medium").checked = false;
+                //document.getElementById(mandrelItem + "Medium.Label").classList.remove("active");
                 $("#" + mandrelItem + "Medium.Label").tooltip("hide");
 
-                document.getElementById(mandrelItem + "Large").checked = false;
-                document.getElementById(mandrelItem + "Large.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Large").checked = false;
+                //document.getElementById(mandrelItem + "Large.Label").classList.remove("active");
                 break;
             case "5":
                 document.getElementById(mandrelItem + "None").disabled = true;
@@ -78,12 +86,12 @@ function validLegCombination(shape) {
                 $("#" + mandrelItem + "Small.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" });
 
                 document.getElementById(mandrelItem + "Medium").disabled = false;//med and large available
-                document.getElementById(mandrelItem + "Medium").checked = true;//medium preselected
-                document.getElementById(mandrelItem + "Medium.Label").classList.add("active");
+                //document.getElementById(mandrelItem + "Medium").checked = true;//medium preselected
+                //document.getElementById(mandrelItem + "Medium.Label").classList.add("active");
                 $("#" + mandrelItem + "Medium.Label").popover("hide");
 
-                document.getElementById(mandrelItem + "Large").checked = false;
-                document.getElementById(mandrelItem + "Large.Label").classList.remove("active");
+                //document.getElementById(mandrelItem + "Large").checked = false;
+                //document.getElementById(mandrelItem + "Large.Label").classList.remove("active");
                 break;
             case "6":
                 document.getElementById(mandrelItem + "None").disabled = true;
@@ -101,8 +109,11 @@ function validLegCombination(shape) {
                 document.getElementById(mandrelItem + "Medium.Label").classList.remove("active");
                 $("#" + mandrelItem + "Medium.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" });
 
-                document.getElementById(mandrelItem + "Large").checked = true;//large available and preselected
-                document.getElementById(mandrelItem + "Large.Label").classList.add("active");
+                //document.getElementById(mandrelItem + "Large").checked = true;//large available and preselected
+                //document.getElementById(mandrelItem + "Large.Label").classList.add("active");
+                $("#" + mandrelItem + "Large.Label").click(function () {
+                    $(this).button('toggle');
+                });
                 break;
         }
     }

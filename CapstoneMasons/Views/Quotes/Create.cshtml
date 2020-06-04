@@ -135,7 +135,7 @@
                                                         <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="3" autocomplete="off" checked hidden>Bar #3
                                                     </label>
                                                     <label class="btn btn-primary" id="Shapes[@(i)].bar4">
-                                                        <input type="radio" name="Shapes[@(i)].BarSize" value="4" autocomplete="off" hidden hidd>Bar #4
+                                                        <input type="radio" name="Shapes[@(i)].BarSize" value="4" autocomplete="off" hidden>Bar #4
                                                     </label>
                                                     <label class="btn btn-primary" id="Shapes[@(i)].bar5">
                                                         <input type="radio" name="Shapes[@(i.ToString())].BarSize" value="5" autocomplete="off" hidden>Bar #5
@@ -193,16 +193,16 @@
                                                     <label for="exampleFormControlSelect2">Mandrel: </label>
                                                     <div class="input-group-btn" data-toggle="buttons">
                                                         <label class="btn btn-info active" id="Shapes[@(i)].leg[@(leg)].Mandrel.None.Label">
-                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.None" value="None" autocomplete="off" checked hidden>None
+                                                            <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.None" value="None" autocomplete="off" checked hidden>None
                                                         </label>
                                                         <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Small.Label">
-                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
+                                                            <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
                                                         </label>
                                                         <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Medium.Label">
-                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Medium" value="Medium" autocomplete="off" hidden>Medium
+                                                            <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Medium" value="Medium" autocomplete="off" hidden>Medium
                                                         </label>
                                                         <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Large.Label">
-                                                            <input type="radio" asp-for="Shapes[i].Legs[leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Large" value="Large" autocomplete="off" hidden>Large
+                                                            <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Large" value="Large" autocomplete="off" hidden>Large
                                                         </label>
                                                     </div>
                                                 </div>
@@ -277,7 +277,7 @@
 
             <div class="card container text-center">
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary" id="CreateQuote.Submit">Review Quote</button>
+                    <button type="submit" class="btn btn-primary" id="CreateQuote.Submit" disabled>Review Quote</button>
                     <input class="form-check-input hidden" asp-for="UseFormulas" id="useFormulas" style="margin-left: 20px; margin-top: 40px;" hidden>
                     <label class="form-check-label" for="defaultCheck1" style="margin-left: 40px; border-top-width: 10px; margin-top: 30px; font-size: large;" hidden>
                         Use Fomulas
