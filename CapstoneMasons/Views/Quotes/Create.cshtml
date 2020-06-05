@@ -99,7 +99,7 @@
                 <div class="card-body quote-body" style="margin-bottom: 10px;" id="shape-body@(i+1)">
                     <div class="panel-group" id="checkout-accordion">
                         <div class="panel panel-default checkout-panel" id="panel-shape@((i+1).ToString())" style="margin-bottom: 15px;"
-                             onchange="checkFormFields('Shapes[@(i.ToString())]');">
+                             onchange="validateShape('Shapes[@(i.ToString())]');">
                             <div class="panel-heading checkout-heading" id="panel-billing-heading">
                                 <h4 class="text-center panel-title checkout-acc-title">
                                     <a data-parent="#checkout-accordion" href="#collapse-shape@((i+1).ToString())" data-toggle="collapse">
@@ -168,7 +168,7 @@
                                                         @((leg + 1).ToString()+"th")
                                                     } Leg Length (Inches):
                                                 </label>
-                                                <input class="form-control" type="number" min="1" step="any" value="@Model.Shapes[i].Legs[leg].Length" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shape@(i+1).Leg@(leg+1).lenght" />
+                                                <input class="form-control" type="number" min="1" step="any" value="@Model.Shapes[i].Legs[leg].Length" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shapes[@(i)].leg[@(leg)].lenght" />
                                             </div>
                                             @if (leg != Model.Shapes[i].Legs.Count - 1)
                                             {
@@ -187,7 +187,7 @@
 
 
                                                     <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
-                                                           id="Shape[@(i+1)].leg[@(leg+1)].degree" value="@Model.Shapes[i].Legs[leg].Degree" />
+                                                           id="Shapes[@(i)].leg[@(leg)].degree" value="@Model.Shapes[i].Legs[leg].Degree" />
                                                 </div>
                                                 <div class="col-5 form-group">
                                                     <label for="exampleFormControlSelect2">Mandrel: </label>

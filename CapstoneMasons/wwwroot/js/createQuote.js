@@ -20,6 +20,121 @@ function validateShapes(shape, legs) {
     }
 }
 
+function checkLegs(form) {
+    var numbLegs = document.getElementById(form + '.LegCount').value;
+    for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
+        var LegsLenght = document.getElementById(`${form}.leg[${legIndex}].lenght`).value;
+        if (LegsLenght > 240) {
+            alert("The leg #" + (legIndex + 1) + " can not be more than 240");//catching longer than vali
+            return false;
+        } else if (LegsLenght < 0) {
+            alert("The leg #" + (legIndex + 1) + " can not be negative");//catching smaller than valid
+            return false;
+        } else if (legIndex < numbLegs && (document.getElementById(`${form}.leg[${legIndex}].degree`).value > 180 ||
+            document.getElementById(`${form}.leg[${legIndex}].degree`).value <= 0)) {
+            alert("Invalid degrees in leg #" + (legIndex + 1));//catching smaller than valid value
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkingCutLenght(shape) {
+    fields = getAllFormValues(shape);
+    var numbLegs = document.getElementById(shape + '.LegCount').value;
+
+    var newShape = {
+        ShapeID: "0",
+        BarSize: document.forms['CreateQuote'][shape + '.BarSize'].value,
+        LegCount: numbLegs,
+        Qty: document.forms['CreateQuote'][shape+'.Qty'].value,
+        NumCompleted: "",
+        Legs: []
+    };
+
+    for (var legIndex = 0; legIndex < numbLegs; ++legIndex) {
+        var leg = { //filling up a leg with all necessary
+            Length: document.forms['CreateQuote'][`${shape}.Legs[${(legIndex)}].Length`].value,
+            SortOrder: (legIndex + 1),
+            Degree: document.forms['CreateQuote'][`${shape}.Legs[${(legIndex)}].Degree`].value,
+            Mandrel: { Name: document.forms['CreateQuote'][`${shape}.Legs[${(legIndex)}].Mandrel.Name`].value },
+            IsRight: document.forms['CreateQuote'][`${shape}.Legs[${(legIndex)}].IsRight`].value
+        };
+        newShape.Legs.push(leg);
+    }
+
+
+    var quote = {
+        q: {}
+    };
+    quote.q.UseFormulas = "true";
+    quote.q.Shapes = [];
+    quote.q.Shapes.push(newShape);
+
+    $.ajax({
+        type: "POST",
+        data: quote,
+        url: "/Quotes/CheckIfValidShape",
+        dataType: 'json',
+        success: function (response) {
+            if (!response) {
+                document.getElementById(shape + '.Validation').classList.add("bg-warning");
+                document.getElementById(shape + '.Validation').innerHTML = "This shape cuts to more than 240 inches"; //styling changes for a invalid shape
+                document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";
+                document.getElementById('CreateQuote.Submit').disabled = true;
+
+            } else {
+                document.getElementById(shape + '.Validation').classList.add("bg-success");
+                document.getElementById(shape + '.Validation').innerHTML = "Valid Shape"; //styling changes for a invalid shape
+                document.getElementById(shape + '.Outline').style.outline = "6px solid #28a745";
+                document.getElementById('CreateQuote.Submit').disabled = false;
+            }
+
+        }
+    });
+    return false;
+}
+
+function validateShape(shape) {
+    if (checkFormFields(shape) && checkLegs(shape)) {
+        checkingCutLenght(shape);
+    }
+        console.log("leave");
+}
+
+function checkLegs(shape) {
+    var result = true;//returning true if valid shape
+    var numbLegs = document.getElementById(shape + '.LegCount').value;
+    for (var legIndex = 0; legIndex <= numbLegs && result >0; ++legIndex) {
+        var LegsLenght = document.getElementById(`${shape}.leg[${legIndex}].lenght`).value;
+        if (LegsLenght > 240) {
+            result = "The leg #" + (legIndex + 1) + " can not be more than 240";//catching longer than validate
+            document.getElementById(shape + '.Validation').classList.add("bg-warning");
+            document.getElementById(shape + '.Validation').innerHTML = result; //styling changes for a invalid shape
+            document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";
+            document.getElementById('CreateQuote.Submit').disabled = true;
+            result = false;
+        } else if (LegsLenght < 0) {
+            result = "The leg #" + (legIndex + 1) + " can not be negative";//catching smaller than valid
+            document.getElementById(shape + '.Validation').classList.add("bg-warning");
+            document.getElementById(shape + '.Validation').innerHTML = result; //styling changes for a invalid shape
+            document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";
+            document.getElementById('CreateQuote.Submit').disabled = true;
+            result = false;
+
+        } else if (legIndex < numbLegs && (document.getElementById(`${shape}.leg[${legIndex}].degree`).value > 180 ||
+            document.getElementById(`${shape}.leg[${legIndex}].degree`).value <= 0)) {
+            result = "Invalid degrees in leg #" + (legIndex + 1);//catching smaller than valid value
+            document.getElementById(shape + '.Validation').classList.add("bg-warning");
+            document.getElementById(shape + '.Validation').innerHTML = result; //styling changes for a invalid shape
+            document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";
+            document.getElementById('CreateQuote.Submit').disabled = true;
+            result = false;
+        }
+    }
+    return result;
+}
+
 function validLegCombination(shape) {
     var barSize = document.querySelector('input[name="'+shape + '.BarSize"]:checked').value;
     var numbLegs = document.getElementById(`${shape}.LegCount`).value;
@@ -130,32 +245,40 @@ function checkFormFields(shape) {
     var fields = getAllFormValues(shape);
     var i, l = fields.length;
     var fieldname;
-    var result = ""
-    for (i = 0; i < l && result.length == 0; i++) {
+    var result = true;
+    for (i = 0; i < l && result; i++) {
         fieldname = shape+fields[i];
         if (document.forms['CreateQuote'][fieldname].value === "" ||
             document.forms['CreateQuote'][fieldname].value === "0") {
             //show invalid shape when empty
-            result = fields[i] + " can not be empty";
+            document.getElementById(shape + '.Validation').classList.add("bg-warning");
+            document.getElementById(shape + '.Validation').innerHTML = fields[i] + " can not be empty"; //styling changes for a invalid shape
+            document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";
+            document.getElementById('CreateQuote.Submit').disabled = true;
+            result = false;
             
 
         } else if (document.forms['CreateQuote'][fieldname].value <= -1) {
             //show invalid shape when negative
-            result = fields[i] + " can not be negative";
+            document.getElementById(shape + '.Validation').classList.add("bg-warning");
+            document.getElementById(shape + '.Validation').innerHTML = fields[i] + " can not be negative";; //styling changes for a invalid shape
+            document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";
+            document.getElementById('CreateQuote.Submit').disabled = true;
+            result = false;
         }
     }
-    if (result.length > 0) {
-        document.getElementById(shape + '.Validation').classList.add("bg-warning");
-        document.getElementById(shape + '.Validation').innerHTML = result; //styling changes for a invalid shape
-        document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";
-        document.getElementById('CreateQuote.Submit').disabled = true;
-    } else {
-        document.getElementById(shape + '.Validation').classList.add("bg-success");
-        document.getElementById(shape + '.Validation').innerHTML = "Valid Shape";//styling changes for a valid shape
-        document.getElementById(shape + '.Outline').style.outline = "6px solid #28a745";
-        document.getElementById('CreateQuote.Submit').disabled = false;
-    }
-
+    //if (result.length > 0) {
+    //    document.getElementById(shape + '.Validation').classList.add("bg-warning");
+    //    document.getElementById(shape + '.Validation').innerHTML = result; //styling changes for a invalid shape
+    //    document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";
+    //    document.getElementById('CreateQuote.Submit').disabled = true;
+    //} else {
+    //    document.getElementById(shape + '.Validation').classList.add("bg-success");
+    //    document.getElementById(shape + '.Validation').innerHTML = "Valid Shape";//styling changes for a valid shape
+    //    document.getElementById(shape + '.Outline').style.outline = "6px solid #28a745";
+    //    document.getElementById('CreateQuote.Submit').disabled = false;
+    //}
+    return result;
 }
 
 function getAllFormValues(shape) {
