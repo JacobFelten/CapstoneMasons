@@ -53,7 +53,7 @@ namespace CapstoneMasons.Email
                     var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
                     {
                         // Cache tokens in ~/CredentialCacheFolder
-                        DataStore = new FileDataStore("~/CredentialCacheFolder", true),
+                        DataStore = new FileDataStore("./CredentialCacheFolder", true),
                         Scopes = new[] { "https://mail.google.com/" },
                         ClientSecrets = clientSecrets
                     });
@@ -66,7 +66,7 @@ namespace CapstoneMasons.Email
                         await credential.RefreshTokenAsync(CancellationToken.None);
                     var oauth2 = new SaslMechanismOAuth2(credential.UserId, credential.Token.AccessToken);
 
-                    //client.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+                    client.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
                     await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, true);
                     await client.AuthenticateAsync(oauth2);
                     
