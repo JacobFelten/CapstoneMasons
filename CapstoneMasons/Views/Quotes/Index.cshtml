@@ -166,7 +166,7 @@
                                         <div class="text-right col">Completed: @(rq.Shapes[i].Completed + "/" + rq.Shapes[i].Qty)</div>
                                     </div>
                                     <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@rq.Shapes[i].Completed" aria-valuemin="0" aria-valuemax="@rq.Shapes[i].Qty">@percentage%</div>
+                                        <div class="progress-bar" role="progressbar" style="width: @percentage%;" aria-valuenow="@rq.Shapes[i].Completed" aria-valuemin="0" aria-valuemax="@(rq.Shapes[i].Qty)">@percentage%</div>
 
                                     </div>
                                 }

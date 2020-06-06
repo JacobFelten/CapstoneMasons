@@ -58,7 +58,7 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account
                     protocol: Request.Scheme);
                 string content ="Reset Password<br/>" +
                                 $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.";
-                _emailSender.SendEmail(new Message(new string[] { Input.Email }, "Reset Password", content));
+                await _emailSender.SendEmailAsync(new Message(new string[] { Input.Email }, "Reset Password", content));
                     
 
                 return RedirectToPage("./ForgotPasswordConfirmation");

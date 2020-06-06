@@ -21,7 +21,7 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
             _userManager = userManager;
             _signInManager = signInManager;
         }
-
+        [TempData]
         public string Username { get; set; }
 
         [TempData]
@@ -35,6 +35,10 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [StringLength(10, MinimumLength = 3, ErrorMessage = "Maximum 10 characters")]
+            [Display(Name = "Username")]
+            public string UserName { get; set; }
         }
 
         private async Task LoadAsync(IdentityUser user)
@@ -42,11 +46,12 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            Username = userName;
+            
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                UserName = userName
             };
         }
 
@@ -84,6 +89,16 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
                 {
                     var userId = await _userManager.GetUserIdAsync(user);
                     throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
+                }
+            }
+            var Username = await _userManager.GetUserNameAsync(user);
+            if (Input.UserName != Username)
+            {
+                var setNameResult = await _userManager.SetUserNameAsync(user, Input.UserName);
+                if (!setNameResult.Succeeded)
+                {
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    throw new InvalidOperationException($"Unexpected error occurred setting User Name for user with ID '{userId}'.");
                 }
             }
 
