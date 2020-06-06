@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CredentialCacheFolder\" />
     <Folder Include="wwwroot\CredentialCacheFolder\" />
   </ItemGroup>
 

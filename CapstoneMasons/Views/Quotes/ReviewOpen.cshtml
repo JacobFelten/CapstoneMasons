@@ -333,14 +333,14 @@
 
 
                                 <script>
-									var leg = {
-										Length: @Model.ReviewQuote.Shapes[i].Legs[j].Length,
-										Degree: @Model.ReviewQuote.Shapes[i].Legs[j].Degree,
-										IsRight: @isRight,
-										Mandrel: @mandrel,
-										Size: @Model.ReviewQuote.Shapes[i].BarSize
+                                    var leg = {
+                                        Length: @(Model.ReviewQuote.Shapes[i].Legs[j].Length),
+                                        Degree: @(Model.ReviewQuote.Shapes[i].Legs[j].Degree),
+                                        IsRight: @(isRight),
+                                        Mandrel: @(mandrel),
+                                        Size: @(Model.ReviewQuote.Shapes[i].BarSize)
 									};
-									legs[@j] = leg;
+									legs[@(j.ToString())] = leg;
                                 </script>
                             }
                         </div>
@@ -353,7 +353,7 @@
 
                             <!---------CANVAS FUNCTION--------->
                             <script>
-									var canvasID = "@canvasID.ToString()";
+									var canvasID = "@(canvasID.ToString())";
 									DrawCanvas(canvasID, legs)
                             </script>
                         </div>
