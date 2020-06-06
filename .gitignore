@@ -349,3 +349,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /CapstoneMasons/Controllers/ErrorController.cs
+/CapstoneMasons/CredentialCacheFolder/CapstoneEmail-56b5235e3ea5.json

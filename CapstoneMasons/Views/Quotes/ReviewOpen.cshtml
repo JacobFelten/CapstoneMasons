@@ -327,7 +327,7 @@
                                     <span class="font-weight-bold">Leg @num: </span><span>@rL.Length.ToString(tostring)"</span>
                                     @if (j < rS.Legs.Count - 1)
                                     {
-                                        <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                                        <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @(rL.Mandrel) Mandrel</span></div>
                                     }
                                 </div>
 
@@ -340,7 +340,7 @@
                                         Mandrel: @(mandrel),
                                         Size: @(Model.ReviewQuote.Shapes[i].BarSize)
 									};
-									legs[@(j.ToString())] = leg;
+									var legs[@(j.ToString())] = leg;
                                 </script>
                             }
                         </div>
