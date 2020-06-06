@@ -127,11 +127,11 @@ function validLegCombination(form) {
         switch (barSize) {
             case "3":
                 document.getElementById(mandrelItem + "None").disabled = false;//every mandrel is available
-                $("#"+mandrelItem+"None.Label").popover("dispose");
+                $("#"+mandrelItem+"None.Label").popover("hide");
                 document.getElementById(mandrelItem + "Small").disabled = false;
-                $("#" + mandrelItem +"Small.Label").popover("dispose");
+                $("#" + mandrelItem +"Small.Label").popover("hide");
                 document.getElementById(mandrelItem + "Medium").disabled = false;
-                $("#" + mandrelItem + "Small.Label").popover("dispose");
+                $("#" + mandrelItem + "Small.Label").popover("hide");
                 break;
             case "4":
                 document.getElementById(mandrelItem + "None").disabled = true;
@@ -140,10 +140,10 @@ function validLegCombination(form) {
                 $("#" + mandrelItem + "None.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
 
                 document.getElementById(mandrelItem + "Small").disabled = false;
-                $("#" + mandrelItem + "Small.Label").popover("dispose");
+                $("#" + mandrelItem + "Small.Label").popover("hide");
 
                 document.getElementById(mandrelItem + "Medium").disabled = false;
-                $("#" + mandrelItem + "Medium.Label").popover("dispose");
+                $("#" + mandrelItem + "Medium.Label").popover("hide");
                 break;
             case "5":
                 document.getElementById(mandrelItem + "None").disabled = true;
@@ -157,7 +157,7 @@ function validLegCombination(form) {
                 $("#" + mandrelItem + "Small.Label").popover({ content: "Invalid Bar Size for this Mandrel", trigger: "hover", placement: "bottom" }).popover('show');
 
                 document.getElementById(mandrelItem + "Medium").disabled = false;
-                $("#" + mandrelItem + "Medium.Label").popover("dispose");
+                $("#" + mandrelItem + "Medium.Label").popover("hide");
                 break;
             case "6":
                 document.getElementById(mandrelItem + "None").disabled = true;
@@ -193,7 +193,6 @@ function getAllFormValues(form) {
 
 function checkLegs(form) {
     var numbLegs = document.getElementById(form+'.LegCount').value;
-    var result;
     for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
         var LegsLenght = document.getElementById(`${form}.leg[${legIndex}].lenght`).value;
         if (LegsLenght > 240) {
