@@ -47,8 +47,8 @@ namespace CapstoneMasons.Email
                     string GMailAccount = _emailConfig.UserName;
                     var clientSecrets = new ClientSecrets  //using oath to send emails
                     {
-                        ClientId = "877331268880-b4ud2o4jn2t252ck57f7tul3cims8nt1.apps.googleusercontent.com",
-                        ClientSecret = "Y2cfQHTg54eV3OanTEwnDzg5"
+                        ClientId = "877331268880-bp7c9d17r8noh385050ltedi6o95pvuu.apps.googleusercontent.com",
+                        ClientSecret = "UzexzqVSI_1UKpLkZoOLkdqy"
                     };
                     var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
                     {
