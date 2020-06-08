@@ -113,7 +113,7 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
                 string content = "Changing Email<br/>" +
                                                 $"Please <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>click here</a> to confirm your new email ({Input.NewEmail}) email.";
 
-                await _emailSender.SendEmailAsync(new Message(new string[] { Input.NewEmail }, "Changing Email: Mason's Order and Formula Tracker", content));
+                _emailSender.SendEmail(new Message(new string[] { Input.NewEmail }, "Changing Email: Mason's Order and Formula Tracker", content));
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
             }else if (Input.NewEmail != email && !prevPassword.Succeeded)

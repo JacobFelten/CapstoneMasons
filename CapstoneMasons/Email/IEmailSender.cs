@@ -7,6 +7,6 @@ namespace CapstoneMasons.Email
 {
     public interface IEmailSender
     {
-        Task SendEmailAsync(Message message);
+        void SendEmail(Message message);
     }
 }
