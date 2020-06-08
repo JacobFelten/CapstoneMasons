@@ -52,7 +52,7 @@ function checkingCutLenght(shape) {
         Legs: []
     };
 
-    for (var legIndex = 0; legIndex < numbLegs; ++legIndex) {
+    for (var legIndex = 0; legIndex <= numbLegs; ++legIndex) {
         var leg = { //filling up a leg with all necessary
             Length: document.forms['CreateQuote'][`${shape}.Legs[${(legIndex)}].Length`].value,
             SortOrder: (legIndex + 1),

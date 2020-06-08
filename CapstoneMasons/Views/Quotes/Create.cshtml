@@ -156,58 +156,68 @@
                                     </div>
                                     @for (int leg = 0; leg < Model.Shapes[i].Legs.Count; leg++)
                                     {<input value="@Model.Shapes[i].Legs[leg].SortOrder" name="Shapes[@(i.ToString())].Legs[@leg].SortOrder" hidden />
-                                        <div class="row" style="padding-left: 10px; padding-right: 10px;">
-                                            <div class="col-4 form-group">
-                                                <label>
-                                                    @if (leg < 13)
-                                                    {
-                                                        @(KnownObjects.NumberPrefix[leg])
-                                                    }
-                                                    else
-                                                    {
-                                                        @((leg + 1).ToString()+"th")
-                                                    } Leg Length (Inches):
-                                                </label>
-                                                <input class="form-control" type="number" min="1" step="any" value="@Model.Shapes[i].Legs[leg].Length" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shapes[@(i)].leg[@(leg)].lenght" />
-                                            </div>
-                                            @if (leg != Model.Shapes[i].Legs.Count - 1)
-                                            {
-                                                <div class="col-3 form-group">
-                                                    <label>
-                                                        @if (leg < 13)
-                                                        {
-                                                            @(KnownObjects.NumberPrefix[leg])
-                                                        }
-                                                        else
-                                                        {
-                                                            @((leg + 1).ToString()+"th ")
-                                                        }
-                                                        Leg Bend (Degrees):
-                                                    </label>
+                                     <div class="row" style="padding-left: 10px; padding-right: 10px;">
+                                         <div class="col-4 form-group">
+                                             <label>
+                                                 @if (leg < 13)
+                                                 {
+                                                     @(KnownObjects.NumberPrefix[leg])
+                                                 }
+                                                 else
+                                                 {
+                                                     @((leg + 1).ToString()+"th")
+                                                 } Leg Length (Inches):
+                                             </label>
+                                             <input class="form-control" type="number" min="1" step="any" value="@Model.Shapes[i].Legs[leg].Length" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Length" id="Shapes[@(i)].leg[@(leg)].lenght" />
+                                         </div>
+                                         @if (leg != Model.Shapes[i].Legs.Count - 1)
+                                         {
+                                             <div class="col-3 form-group">
+                                                 <label>
+                                                     @if (leg < 13)
+                                                     {
+                                                         @(KnownObjects.NumberPrefix[leg])
+                                                     }
+                                                     else
+                                                     {
+                                                         @((leg + 1).ToString()+"th ")
+                                                     }
+                                                     Leg Bend (Degrees):
+                                                 </label>
 
 
-                                                    <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
-                                                           id="Shapes[@(i)].leg[@(leg)].degree" value="@Model.Shapes[i].Legs[leg].Degree" />
-                                                </div>
-                                                <div class="col-5 form-group">
-                                                    <label for="exampleFormControlSelect2">Mandrel: </label>
-                                                    <div class="input-group-btn" data-toggle="buttons">
-                                                        <label class="btn btn-info active" id="Shapes[@(i)].leg[@(leg)].Mandrel.None.Label">
-                                                            <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.None" value="None" autocomplete="off" checked hidden>None
-                                                        </label>
-                                                        <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Small.Label">
-                                                            <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
-                                                        </label>
-                                                        <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Medium.Label">
-                                                            <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Medium" value="Medium" autocomplete="off" hidden>Medium
-                                                        </label>
-                                                        <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Large.Label">
-                                                            <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Large" value="Large" autocomplete="off" hidden>Large
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
+                                                 <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
+                                                        id="Shapes[@(i)].leg[@(leg)].degree" value="@Model.Shapes[i].Legs[leg].Degree" />
+                                             </div>
+                                             <div class="col-5 form-group">
+                                                 <label for="exampleFormControlSelect2">Mandrel: </label>
+                                                 <div class="input-group-btn" data-toggle="buttons">
+                                                     <label class="btn btn-info active" id="Shapes[@(i)].leg[@(leg)].Mandrel.None.Label">
+                                                         <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.None" value="None" autocomplete="off" checked hidden>None
+                                                     </label>
+                                                     <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Small.Label">
+                                                         <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Small" value="Small" autocomplete="off" hidden>Small
+                                                     </label>
+                                                     <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Medium.Label">
+                                                         <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Medium" value="Medium" autocomplete="off" hidden>Medium
+                                                     </label>
+                                                     <label class="btn btn-info" id="Shapes[@(i)].leg[@(leg)].Mandrel.Large.Label">
+                                                         <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" id="Shapes[@(i)].leg[@(leg)].Mandrel.Large" value="Large" autocomplete="off" hidden>Large
+                                                     </label>
+                                                 </div>
+                                             </div>
+                                         }
+                                         else
+                                         {
+                                             <input type="radio" name="Shapes[@i].Legs[@leg].Mandrel.Name" 
+                                                    id="Shapes[@(i)].leg[@(leg)].Mandrel.None" value="" autocomplete="off" hidden>
+                                             <input type="number" min="0" max="180" class="form-control" name="Shapes[@(i.ToString())].Legs[@(leg.ToString())].Degree"
+                                                    id="Shapes[@(i)].leg[@(leg)].degree" value="@Model.Shapes[i].Legs[leg].Degree" hidden />
+                                             <input type="radio" name="Shapes[@(i.ToString())].Legs[@leg].IsRight" value="" autocomplete="off" hidden
+                                                    id="Shapes[@(i.ToString())].IsRight">
+
+                                                              }
+                                     </div>
                                         @if (leg != Model.Shapes[i].Legs.Count - 1)
                                         {
                                             <div class="row">
