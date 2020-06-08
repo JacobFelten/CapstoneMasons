@@ -1,13 +1,8 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Apis.Auth.OAuth2.Flows;
-using Google.Apis.Util.Store;
-using MailKit.Net.Smtp;
-using MailKit.Security;
+﻿using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CapstoneMasons.Email
@@ -21,11 +16,11 @@ namespace CapstoneMasons.Email
             _emailConfig = emailConfig;
         }
 
-        public async Task SendEmailAsync(Message message)
+        public void SendEmail(Message message)
         {
             var emailMessage = CreateEmailMessage(message);
 
-            await SendAsync(emailMessage);
+            Send(emailMessage);
         }
         private MimeMessage CreateEmailMessage(Message message)
         {
@@ -38,39 +33,15 @@ namespace CapstoneMasons.Email
             return emailMessage;
         }
 
-        private async Task SendAsync(MimeMessage mailMessage)
+        private void Send(MimeMessage mailMessage)
         {
             using (var client = new SmtpClient())
             {
                 try
                 {
-                    string GMailAccount = _emailConfig.UserName;
-                    var clientSecrets = new ClientSecrets  //using oath to send emails
-                    {
-                        ClientId = "877331268880-bp7c9d17r8noh385050ltedi6o95pvuu.apps.googleusercontent.com",
-                        ClientSecret = "UzexzqVSI_1UKpLkZoOLkdqy"
-                    };
-                    var codeFlow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
-                    {
-                        // Cache tokens in ~/CredentialCacheFolder
-                        DataStore = new FileDataStore("./CredentialCacheFolder", true),
-                        Scopes = new[] { "https://mail.google.com/" },
-                        ClientSecrets = clientSecrets
-                    });
-
-                    var codeReceiver = new LocalServerCodeReceiver();
-                    var authCode = new AuthorizationCodeInstalledApp(codeFlow, codeReceiver);
-                    var credential = await authCode.AuthorizeAsync(GMailAccount, CancellationToken.None);
-
-                    if (authCode.ShouldRequestAuthorizationCode(credential.Token))
-                        await credential.RefreshTokenAsync(CancellationToken.None);
-                    var oauth2 = new SaslMechanismOAuth2(credential.UserId, credential.Token.AccessToken);
-
-                    client.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
-                    await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, true);
-                    await client.AuthenticateAsync(oauth2);
-                    
-                    //client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
+                    client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
+                    client.AuthenticationMechanisms.Remove("XOAUTH2");
+                    client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
 
                     client.Send(mailMessage);
                 }
@@ -81,7 +52,7 @@ namespace CapstoneMasons.Email
                 }
                 finally
                 {
-                    await client.DisconnectAsync(true);
+                    client.Disconnect(true);
                     client.Dispose();
                 }
             }
