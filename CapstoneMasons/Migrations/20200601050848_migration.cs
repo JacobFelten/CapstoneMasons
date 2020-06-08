@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CapstoneMasons.Migrations
 {
-    public partial class migration : Migration
+    public partial class SortOrder : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

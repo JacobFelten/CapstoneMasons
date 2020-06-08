@@ -1,7 +1,7 @@
 ﻿@model GlobalCosts
 
 @{
-    ViewData["Title"] = "GlobalCosts";
+    ViewData["Title"] = "Bar Cost";
 }
 
 <h1>Prices and Fees</h1>
@@ -133,7 +133,7 @@
 		</tbody>
 	</table>
 
-    <input type="submit" class="btn btn-info text-center" asp-action="GlobalCosts"/>
+    <input type="submit" class="btn btn-info text-center" onclick="alert('Costs Submitted');" asp-action="GlobalCosts"/>
 	<br/>
 	<br/>
 </form>
