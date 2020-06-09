@@ -251,6 +251,24 @@ function checkFormFields(shape) {
         if (document.forms['CreateQuote'][fieldname].value === "" ||
             document.forms['CreateQuote'][fieldname].value === "0") {
             //show invalid shape when empty
+
+            //nicer validation message
+            if (fields[i] == '.Qty') {
+                fields[i] = 'The Quantity'
+            } else if (fields[i].substring(1, 5) == 'Legs') {
+                fields[i] = 'Leg #' + fields[i].substring(6); //nicer validation
+                var legIndex = (parseInt(fields[i].charAt(5)) + 1).toString();
+                if (fields[i].slice(-6) == 'Degree') {
+                    fields[i] = 'Degrees in ' + fields[i].substring(0, 5) + legIndex;
+                } else if (fields[i].slice(-6) == 'l.Name') {
+                    fields[i] = 'Mandrels in ' + fields[i].substring(0, 5) + legIndex;
+                } else if (fields[i].slice(-6) == 'sRight') {
+                    fields[i] = 'The angle in ' + fields[i].substring(0, 5) + legIndex;
+                } else if (fields[i].slice(-6) == 'Length') {
+                    fields[i] = 'The lenght in ' + fields[i].substring(0, 5) + legIndex;
+                }
+            }
+            //
             document.getElementById(shape + '.Validation').classList.add("bg-warning");
             document.getElementById(shape + '.Validation').innerHTML = fields[i] + " can not be empty"; //styling changes for a invalid shape
             document.getElementById(shape + '.Outline').style.outline = "6px solid #ffc107";

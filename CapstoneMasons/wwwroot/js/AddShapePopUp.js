@@ -108,11 +108,34 @@ function checkFormFieldsEmpty(form) {
     var fieldname;
     for (i = 0; i < l; i++) {
         fieldname = fields[i];
+
+
+        //show invalid shape when empty
+
+        //nicer validation message
+        if (fields[i] == 'Qty') {
+            fields[i] = 'The Quantity'
+        } else if (fields[i].substring(0, 4) == 'Legs') {
+            fields[i] = 'Leg #' + fields[i].substring(5); //nicer validation
+            var legIndex = (parseInt(fields[i].charAt(5)) + 1).toString();
+            if (fields[i].slice(-6) == 'Degree') {
+                fields[i] = 'Degrees in ' + fields[i].substring(0, 5) + legIndex;
+            } else if (fields[i].slice(-6) == 'l.Name') {
+                fields[i] = 'Mandrels in ' + fields[i].substring(0, 5) + legIndex;
+            } else if (fields[i].slice(-6) == 'sRight') {
+                fields[i] = 'The angle in ' + fields[i].substring(0, 5) + legIndex;
+            } else if (fields[i].slice(-6) == 'Length') {
+                fields[i] = 'The lenght in ' + fields[i].substring(0, 5) + legIndex;
+            }
+        }
+
         if (document.forms[form][fieldname].value === "" || document.forms[form][fieldname].value === "0") {
-            alert(fieldname + " can not be empty");//testing
+
+
+            alert(fields[i] + " can not be empty");//testing
             return false;
         } else if (document.forms[form][fieldname].value <= -1) {
-            alert(fieldname + " can not be negative");//testing
+            alert(fields[i] + " can not be negative");//testing
             return false;
         }
     }
