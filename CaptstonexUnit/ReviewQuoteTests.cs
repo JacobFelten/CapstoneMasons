@@ -14,7 +14,6 @@ namespace CaptstonexUnit
 {
     public class ReviewQuoteTests
     {
-        private ShapesController controllerS;
         private QuotesController controllerQ;
         private FakeShapeRepository repoS;
         private FakeQuoteRepository repoQ;
@@ -60,7 +59,6 @@ namespace CaptstonexUnit
         public ReviewQuoteTests ()
         {
             repoS = new FakeShapeRepository();
-            controllerS = new ShapesController(repoS);
             quote = new Quote
             {
                 QuoteID = 1
@@ -347,22 +345,6 @@ namespace CaptstonexUnit
             repoC.AddCostAsync(cost18);
             repoC.AddCostAsync(cost19);
             repoC.AddCostAsync(cost20);
-        }
-
-        [Fact]
-        public async Task CreateShapeTest()
-        {
-            // Arrange
-            // Done in the constructor
-
-            // Act
-            await controllerS.Create(cS);
-            List<Shape> shapes = await repoS.Shapes;
-
-            // Assert
-            Assert.Single(shapes);
-            Assert.Single(quote.Shapes);
-            Assert.Equal(3, shape.Legs.Count);
         }
 
         [Fact]

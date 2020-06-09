@@ -14,7 +14,6 @@ namespace CaptstonexUnit
 {
     public class QuoteManipulationTests
     {
-        private ShapesController controllerS;
         private QuotesController controllerQ;
         private FakeShapeRepository repoS;
         private FakeQuoteRepository repoQ;
