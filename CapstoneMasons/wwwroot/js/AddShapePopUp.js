@@ -125,7 +125,7 @@ function checkFormFieldsEmpty(form) {
             } else if (fields[i].slice(-6) == 'sRight') {
                 fields[i] = 'The angle in ' + fields[i].substring(0, 5) + legIndex;
             } else if (fields[i].slice(-6) == 'Length') {
-                fields[i] = 'The lenght in ' + fields[i].substring(0, 5) + legIndex;
+                fields[i] = 'The length in ' + fields[i].substring(0, 5) + legIndex;
             }
         }
 

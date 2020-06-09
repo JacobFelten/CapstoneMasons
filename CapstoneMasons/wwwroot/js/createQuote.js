@@ -264,8 +264,8 @@ function checkFormFields(shape) {
                     fields[i] = 'Mandrels in ' + fields[i].substring(0, 5) + legIndex;
                 } else if (fields[i].slice(-6) == 'sRight') {
                     fields[i] = 'The angle in ' + fields[i].substring(0, 5) + legIndex;
-                } else if (fields[i].slice(-6) == 'Length') {
-                    fields[i] = 'The lenght in ' + fields[i].substring(0, 5) + legIndex;
+                } else if (fields[i].slice(-6) == 'Lenght') {
+                    fields[i] = 'The length in ' + fields[i].substring(0, 5) + legIndex;
                 }
             }
             //
