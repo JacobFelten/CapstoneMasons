@@ -327,20 +327,20 @@
                                     <span class="font-weight-bold">Leg @num: </span><span>@rL.Length.ToString(tostring)"</span>
                                     @if (j < rS.Legs.Count - 1)
                                     {
-                                        <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @rL.Mandrel Mandrel</span></div>
+                                        <div style="margin-left: 20px"><span class="font-weight-bold">Bend @num: </span><span>@rL.Degree&#176;, @(rL.Mandrel) Mandrel</span></div>
                                     }
                                 </div>
 
 
                                 <script>
-									var leg = {
-										Length: @Model.ReviewQuote.Shapes[i].Legs[j].Length,
-										Degree: @Model.ReviewQuote.Shapes[i].Legs[j].Degree,
-										IsRight: @isRight,
-										Mandrel: @mandrel,
-										Size: @Model.ReviewQuote.Shapes[i].BarSize
+                                    var leg = {
+                                        Length: @(Model.ReviewQuote.Shapes[i].Legs[j].Length),
+                                        Degree: @(Model.ReviewQuote.Shapes[i].Legs[j].Degree),
+                                        IsRight: @(isRight),
+                                        Mandrel: @(mandrel),
+                                        Size: @(Model.ReviewQuote.Shapes[i].BarSize)
 									};
-									legs[@j] = leg;
+									legs[@(j.ToString())] = leg;
                                 </script>
                             }
                         </div>
@@ -353,7 +353,7 @@
 
                             <!---------CANVAS FUNCTION--------->
                             <script>
-									var canvasID = "@canvasID.ToString()";
+									var canvasID = "@(canvasID.ToString())";
 									DrawCanvas(canvasID, legs)
                             </script>
                         </div>

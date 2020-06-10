@@ -51,9 +51,10 @@ namespace CapstoneMasons
                     options.HttpsPort = 443;
                 });
             }
-            
+
 
             //database
+            services.AddAuthentication();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddDefaultTokenProviders()

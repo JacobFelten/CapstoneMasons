@@ -48,6 +48,10 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
             [EmailAddress]
             [Display(Name = "New email")]
             public string NewEmail { get; set; }
+
+            [DataType(DataType.Password)]
+            [Display(Name = "Confirm with password")]
+            public string ConfirmPassword { get; set; }
         }
 
         private async Task LoadAsync(IdentityUser user)
@@ -57,7 +61,7 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                NewEmail = email,
+                NewEmail = email
             };
 
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
@@ -89,11 +93,14 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            Username = await _userManager.GetUserNameAsync(user);
+            var prevPassword = await _signInManager.PasswordSignInAsync(Username, Input.ConfirmPassword, false, lockoutOnFailure: false);
             var email = await _userManager.GetEmailAsync(user);
-            if (Input.NewEmail != email)
+            if (Input.NewEmail != email && prevPassword.Succeeded)
             {
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateChangeEmailTokenAsync(user, Input.NewEmail);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Page(
                     "/Account/ConfirmEmailChange",
                     pageHandler: null,
@@ -108,6 +115,10 @@ namespace CapstoneMasons.Areas.Identity.Pages.Account.Manage
 
                 _emailSender.SendEmail(new Message(new string[] { Input.NewEmail }, "Changing Email: Mason's Order and Formula Tracker", content));
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                return RedirectToPage();
+            }else if (Input.NewEmail != email && !prevPassword.Succeeded)
+            {
+                StatusMessage = "Incorrect Password";
                 return RedirectToPage();
             }
 
